@@ -45,6 +45,8 @@ export default function FixtureDetail() {
             awayColor={f.away?.primary_color}
             homeName={f.home?.department_name}
             awayName={f.away?.department_name}
+            homeLogo={f.home?.logo_url}
+            awayLogo={f.away?.logo_url}
             center={live ? `${live.home_score}-${live.away_score}` : "vs"}
             centerClassName="font-display text-5xl font-bold uppercase tabular-nums text-white"
           />

@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
 
 export function PageHeader({
   title,
@@ -58,19 +59,27 @@ export function DepartmentBadge({
   abbr,
   color,
   name,
+  logoUrl,
 }: {
   abbr: string | null;
   color?: string | null;
   name?: string | null;
+  logoUrl?: string | null;
 }) {
+  const resolvedLogo = getDepartmentLogoUrl(abbr, logoUrl);
+
   return (
     <span className="inline-flex items-center gap-2" title={name ?? abbr ?? ""}>
       <span
-        className="grid h-7 w-7 place-items-center rounded-lg text-[10px] font-bold text-white"
-        style={{ backgroundColor: color ?? "rgb(var(--c-primary))" }}
+        className="grid h-8 w-8 place-items-center overflow-hidden rounded-lg bg-white text-[10px] font-bold text-white ring-1 ring-white/20"
+        style={{ backgroundColor: resolvedLogo ? "#fff" : (color ?? "rgb(var(--c-primary))") }}
         aria-hidden
       >
-        {(abbr ?? "?").slice(0, 3)}
+        {resolvedLogo ? (
+          <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" loading="lazy" />
+        ) : (
+          (abbr ?? "?").slice(0, 3)
+        )}
       </span>
       <span className="font-semibold">{abbr ?? "TBD"}</span>
     </span>
@@ -84,6 +93,8 @@ export function MatchupTeams({
   awayColor,
   homeName,
   awayName,
+  homeLogo,
+  awayLogo,
   center = "vs",
   centerClassName = "text-xs font-bold uppercase text-white/42",
 }: {
@@ -93,19 +104,21 @@ export function MatchupTeams({
   awayColor?: string | null;
   homeName?: string | null;
   awayName?: string | null;
+  homeLogo?: string | null;
+  awayLogo?: string | null;
   center?: ReactNode;
   centerClassName?: string;
 }) {
   return (
     <div className="grid w-full grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-2 sm:gap-4">
       <div className="min-w-0 justify-self-start">
-        <DepartmentBadge abbr={home} color={homeColor} name={homeName} />
+        <DepartmentBadge abbr={home} color={homeColor} name={homeName} logoUrl={homeLogo} />
       </div>
       <span className={`justify-self-center text-center ${centerClassName}`}>
         {center}
       </span>
       <div className="min-w-0 justify-self-end text-right">
-        <DepartmentBadge abbr={away} color={awayColor} name={awayName} />
+        <DepartmentBadge abbr={away} color={awayColor} name={awayName} logoUrl={awayLogo} />
       </div>
     </div>
   );

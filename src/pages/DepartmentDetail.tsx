@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { MatchCard } from "@/components/MatchCard";
 import { CardSkeleton } from "@/components/Skeletons";
 import { EmptyState, FollowButton, PageHeader } from "@/components/ui";
+import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import { useFollowStore } from "@/store";
 
 export default function DepartmentDetail() {
@@ -20,6 +21,7 @@ export default function DepartmentDetail() {
     (f) => f.home?.department_abbr === abbr || f.away?.department_abbr === abbr,
   );
   const medalRow = (medals.data ?? []).find((m) => m.department_abbr === abbr);
+  const logo = getDepartmentLogoUrl(dept.data?.abbreviation, dept.data?.logo_url);
 
   return (
     <div>
@@ -33,10 +35,16 @@ export default function DepartmentDetail() {
 
       {dept.data && (
         <div
-          className="card mb-4 p-4"
+          className="card mb-4 flex items-center gap-4 p-4"
           style={{ borderLeft: `6px solid ${dept.data.primary_color}` }}
         >
-          <p className="text-sm text-muted">{dept.data.description ?? "Faculty of Life Sciences department."}</p>
+          {logo && (
+            <span className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white p-2 ring-1 ring-white/15">
+              <img src={logo} alt={`${dept.data.name} logo`} className="h-full w-full object-contain" />
+            </span>
+          )}
+          <div className="min-w-0">
+            <p className="text-sm text-muted">{dept.data.description ?? "Faculty of Life Sciences department."}</p>
           {medalRow && (
             <div className="mt-3 flex gap-4 text-sm">
               <span>🥇 {medalRow.gold}</span>
@@ -45,6 +53,7 @@ export default function DepartmentDetail() {
               <span className="font-bold">#{medalRow.position} · {medalRow.total_points} pts</span>
             </div>
           )}
+          </div>
         </div>
       )}
 

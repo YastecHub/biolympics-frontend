@@ -1,4 +1,5 @@
 import type { Standing } from "@/types";
+import { DepartmentBadge } from "./ui";
 
 export function StandingsTable({ standing }: { standing: Standing }) {
   return (
@@ -30,7 +31,10 @@ export function StandingsTable({ standing }: { standing: Standing }) {
               <tr key={r.team_id} className="border-b border-black/5 last:border-0 dark:border-white/5">
                 <td className="px-3 py-2 text-muted">{r.position}</td>
                 <td className="px-3 py-2 font-semibold">
-                  {r.department_abbr ?? r.team_id.slice(0, 6)}
+                  <DepartmentBadge
+                    abbr={r.department_abbr ?? r.team_id.slice(0, 6)}
+                    name={r.department_name}
+                  />
                 </td>
                 <td className="px-2 py-2 text-center">{r.played}</td>
                 <td className="px-2 py-2 text-center">{r.won}</td>

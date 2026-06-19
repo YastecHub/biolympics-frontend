@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { CardSkeleton } from "@/components/Skeletons";
 import { ErrorState } from "@/components/ui";
 import { Logo } from "@/components/Logo";
+import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import type { Department, MedalRow } from "@/types";
 
 const FALLBACK_DEPARTMENTS: Department[] = [
@@ -21,6 +22,7 @@ type MedalDisplayRow = {
   department_id: string;
   department_abbr: string;
   department_name: string;
+  logo_url: string | null;
   primary_color: string;
   gold: number;
   silver: number;
@@ -124,6 +126,7 @@ function buildMedalRows(departments: Department[], medalRows: MedalRow[]): Medal
         department_id: department.id,
         department_abbr: department.abbreviation,
         department_name: department.name,
+        logo_url: getDepartmentLogoUrl(department.abbreviation, department.logo_url),
         primary_color: department.primary_color,
         gold: medals?.gold ?? 0,
         silver: medals?.silver ?? 0,
@@ -160,7 +163,7 @@ function fallbackDepartment(
     abbreviation,
     short_name: name,
     slug,
-    logo_url: null,
+    logo_url: getDepartmentLogoUrl(abbreviation),
     primary_color: primaryColor,
     secondary_color: primaryColor,
     description: null,
@@ -179,7 +182,7 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
       </span>
 
       <div className="flex min-w-0 items-center gap-3">
-        <DepartmentMark abbr={row.department_abbr} color={row.primary_color} />
+        <DepartmentMark abbr={row.department_abbr} color={row.primary_color} logoUrl={row.logo_url} />
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <p className="truncate font-display text-xl font-bold uppercase tracking-normal text-white sm:text-3xl">
@@ -200,14 +203,18 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
   );
 }
 
-function DepartmentMark({ abbr, color }: { abbr: string; color: string }) {
+function DepartmentMark({ abbr, color, logoUrl }: { abbr: string; color: string; logoUrl: string | null }) {
   return (
     <span
-      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/30 text-[10px] font-black text-white shadow-lg sm:h-12 sm:w-12 sm:text-xs"
-      style={{ backgroundColor: color }}
+      className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-white/30 bg-white text-[10px] font-black text-white shadow-lg sm:h-12 sm:w-12 sm:text-xs"
+      style={{ backgroundColor: logoUrl ? "#fff" : color }}
       aria-hidden
     >
-      {abbr.slice(0, 3)}
+      {logoUrl ? (
+        <img src={logoUrl} alt="" className="h-full w-full object-contain p-1" loading="lazy" />
+      ) : (
+        abbr.slice(0, 3)
+      )}
     </span>
   );
 }

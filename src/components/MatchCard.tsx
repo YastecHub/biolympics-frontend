@@ -11,6 +11,7 @@ function Side({ team, score }: { team: Fixture["home"]; score?: number }) {
         abbr={team?.department_abbr ?? null}
         color={team?.primary_color}
         name={team?.department_name}
+        logoUrl={team?.logo_url}
       />
       {score != null && (
         <span className="font-display text-2xl font-bold tabular-nums">{score}</span>

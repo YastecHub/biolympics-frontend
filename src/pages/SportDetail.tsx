@@ -2,6 +2,7 @@ import { type ReactNode, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import { sportIcon } from "@/lib/sportIcons";
 import { MatchCard } from "@/components/MatchCard";
 import { CardSkeleton } from "@/components/Skeletons";
@@ -598,6 +599,7 @@ function PotCard({
             abbr={abbr}
             color={departments.get(abbr)?.primary_color}
             name={departments.get(abbr)?.name}
+            logoUrl={departments.get(abbr)?.logo_url}
           />
         ))}
       </div>
@@ -609,21 +611,31 @@ function TeamChip({
   abbr,
   color,
   name,
+  logoUrl,
 }: {
   abbr: string;
   color?: string;
   name?: string;
+  logoUrl?: string | null;
 }) {
+  const resolvedLogo = getDepartmentLogoUrl(abbr, logoUrl);
+
   return (
     <span
       title={name}
       className="inline-flex min-h-10 items-center gap-2 rounded-full bg-white/8 px-3 py-2 text-sm font-bold text-white ring-1 ring-white/10"
     >
       <span
-        className="h-2.5 w-2.5 shrink-0 rounded-full"
-        style={{ backgroundColor: color ?? "rgb(var(--c-lime))" }}
+        className="grid h-8 w-8 shrink-0 place-items-center overflow-hidden rounded-full bg-white text-[9px] font-black text-white ring-1 ring-white/20"
+        style={{ backgroundColor: resolvedLogo ? "#fff" : (color ?? "rgb(var(--c-lime))") }}
         aria-hidden
-      />
+      >
+        {resolvedLogo ? (
+          <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" loading="lazy" />
+        ) : (
+          abbr.slice(0, 3)
+        )}
+      </span>
       <span>{abbr}</span>
     </span>
   );
@@ -666,6 +678,8 @@ function IndoorGameFixtureCard({
               awayColor={departments.get(away)?.primary_color}
               homeName={departments.get(home)?.name}
               awayName={departments.get(away)?.name}
+              homeLogo={departments.get(home)?.logo_url}
+              awayLogo={departments.get(away)?.logo_url}
             />
           </div>
         ))}
@@ -815,6 +829,8 @@ function MixedSportMatchCard({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
           centerClassName=""
         />
@@ -899,6 +915,8 @@ function MixedMatchDetailPanel({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
           centerClassName=""
         />
@@ -1084,6 +1102,8 @@ function TableTennisMatchCard({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
           centerClassName=""
         />
@@ -1161,6 +1181,8 @@ function TableTennisMatchDetailPanel({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
           centerClassName=""
         />
@@ -1645,6 +1667,7 @@ function FootballStandingsTable({
                     abbr={row.team}
                     color={departments.get(row.team)?.primary_color}
                     name={departments.get(row.team)?.name}
+                    logoUrl={departments.get(row.team)?.logo_url}
                   />
                 </td>
                 <td className="px-3 py-3 text-center">{row.played}</td>
@@ -1695,6 +1718,8 @@ function FootballMatchCard({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
           centerClassName=""
         />
@@ -1748,6 +1773,8 @@ function MatchDetailPanel({
           awayColor={departments.get(match.away)?.primary_color}
           homeName={departments.get(match.home)?.name}
           awayName={departments.get(match.away)?.name}
+          homeLogo={departments.get(match.home)?.logo_url}
+          awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
           centerClassName=""
         />
