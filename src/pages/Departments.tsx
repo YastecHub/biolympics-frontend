@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { CardSkeleton } from "@/components/Skeletons";
 import { ErrorState, PageHeader } from "@/components/ui";
-import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 
 export default function Departments() {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -22,6 +22,7 @@ export default function Departments() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {(data ?? []).map((d) => {
             const logo = getDepartmentLogoUrl(d.abbreviation, d.logo_url);
+            const abbr = displayDepartmentAbbr(d.abbreviation);
             return (
               <Link
                 key={d.id}
@@ -36,11 +37,11 @@ export default function Departments() {
                   {logo ? (
                     <img src={logo} alt="" className="h-full w-full object-contain p-1" decoding="async" />
                   ) : (
-                    d.abbreviation.slice(0, 3)
+                    abbr.slice(0, 3)
                   )}
                 </span>
                 <span>
-                  <span className="block font-display font-bold leading-tight">{d.abbreviation}</span>
+                  <span className="block font-display font-bold leading-tight">{abbr}</span>
                   <span className="block text-xs text-muted">{d.name}</span>
                 </span>
               </Link>

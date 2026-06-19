@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 import { CardSkeleton } from "@/components/Skeletons";
 import { ErrorState } from "@/components/ui";
 import { Logo } from "@/components/Logo";
-import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import type { Department, MedalRow } from "@/types";
 
 const FALLBACK_DEPARTMENTS: Department[] = [
@@ -15,7 +15,7 @@ const FALLBACK_DEPARTMENTS: Department[] = [
   fallbackDepartment("zly", "Zoology", "ZLY", "#ef6c00"),
   fallbackDepartment("bch", "Biochemistry", "BCH", "#00838f"),
   fallbackDepartment("pre-med", "Pre-Med", "PRE-MED", "#283593"),
-  fallbackDepartment("fisheries", "Fisheries", "FISHERIES", "#558b2f"),
+  fallbackDepartment("fisheries", "Fisheries", "FSH", "#558b2f"),
 ];
 
 const INDOOR_MEDAL_COUNTS: Record<string, { gold: number; silver: number; bronze: number }> = {
@@ -24,11 +24,12 @@ const INDOOR_MEDAL_COUNTS: Record<string, { gold: number; silver: number; bronze
   "PRE-MED": { gold: 1, silver: 0, bronze: 1 },
   BTN: { gold: 1, silver: 0, bronze: 0 },
   MSM: { gold: 0, silver: 1, bronze: 0 },
+  FSH: { gold: 0, silver: 0, bronze: 1 },
   FISHERIES: { gold: 0, silver: 0, bronze: 1 },
   MIC: { gold: 0, silver: 0, bronze: 1 },
 };
 
-const MEDAL_POINTS = { gold: 5, silver: 3, bronze: 1 };
+const MEDAL_POINTS = { gold: 5, silver: 2, bronze: 1 };
 
 type MedalDisplayRow = {
   department_id: string;
@@ -133,7 +134,9 @@ function buildMedalRows(departments: Department[], medalRows: MedalRow[]): Medal
 
   const rows = departments.map((department) => {
     const medals = medalByDepartment.get(department.id);
-    const fallback = INDOOR_MEDAL_COUNTS[department.abbreviation] ?? {
+    const displayAbbr = displayDepartmentAbbr(department.abbreviation);
+    const fallback = INDOOR_MEDAL_COUNTS[department.abbreviation] ??
+      INDOOR_MEDAL_COUNTS[displayAbbr] ?? {
       gold: 0,
       silver: 0,
       bronze: 0,
@@ -146,7 +149,7 @@ function buildMedalRows(departments: Department[], medalRows: MedalRow[]): Medal
 
     return {
       department_id: department.id,
-      department_abbr: department.abbreviation,
+      department_abbr: displayAbbr,
       department_name: department.name,
       logo_url: getDepartmentLogoUrl(department.abbreviation, department.logo_url),
       primary_color: department.primary_color,
@@ -195,7 +198,7 @@ function fallbackDepartment(
 }
 
 function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
-  const hasAnyMedal = row.gold + row.silver + row.bronze > 0;
+  const isTopThree = row.position <= 3;
 
   return (
     <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_repeat(3,2.6rem)] items-center gap-2 px-3 py-3 sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:px-5 sm:py-4">
@@ -208,12 +211,12 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <p className="truncate font-display text-xl font-bold uppercase tracking-normal text-white sm:text-3xl">
-              {row.department_name}
+              {row.department_abbr}
             </p>
-            {hasAnyMedal && <span className="hidden text-brand-accent sm:inline">★</span>}
+            {isTopThree && <TopThreeStar />}
           </div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/42">
-            {row.department_abbr} / {row.total_points} pts
+            {row.department_name} / {row.total_points} pts
           </p>
         </div>
       </div>
@@ -222,6 +225,19 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
       <MedalCount tone="silver" value={row.silver} />
       <MedalCount tone="bronze" value={row.bronze} />
     </div>
+  );
+}
+
+function TopThreeStar() {
+  return (
+    <span
+      className="inline-block h-3 w-3 shrink-0 bg-brand-accent sm:h-3.5 sm:w-3.5"
+      style={{
+        clipPath:
+          "polygon(50% 0%, 61% 34%, 98% 34%, 68% 55%, 79% 91%, 50% 69%, 21% 91%, 32% 55%, 2% 34%, 39% 34%)",
+      }}
+      aria-label="Top three"
+    />
   );
 }
 

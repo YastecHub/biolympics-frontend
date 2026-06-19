@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 import { MatchCard } from "@/components/MatchCard";
 import { CardSkeleton } from "@/components/Skeletons";
 import { EmptyState, FollowButton, PageHeader } from "@/components/ui";
-import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import { useFollowStore } from "@/store";
 
 export default function DepartmentDetail() {
@@ -22,12 +22,13 @@ export default function DepartmentDetail() {
   );
   const medalRow = (medals.data ?? []).find((m) => m.department_abbr === abbr);
   const logo = getDepartmentLogoUrl(dept.data?.abbreviation, dept.data?.logo_url);
+  const displayAbbr = displayDepartmentAbbr(abbr);
 
   return (
     <div>
       <PageHeader
         title={dept.data?.name ?? "Department"}
-        subtitle={dept.data?.abbreviation}
+        subtitle={displayAbbr}
         action={
           <FollowButton following={following} onClick={() => toggle(slug)} label="department" />
         }

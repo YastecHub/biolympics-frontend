@@ -2,7 +2,7 @@ import { type ReactNode, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import { sportIcon } from "@/lib/sportIcons";
 import { MatchCard } from "@/components/MatchCard";
 import { CardSkeleton } from "@/components/Skeletons";
@@ -926,6 +926,7 @@ function TeamChip({
   logoUrl?: string | null;
 }) {
   const resolvedLogo = getDepartmentLogoUrl(abbr, logoUrl);
+  const displayAbbr = displayDepartmentAbbr(abbr);
 
   return (
     <span
@@ -940,10 +941,10 @@ function TeamChip({
         {resolvedLogo ? (
           <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" decoding="async" />
         ) : (
-          abbr.slice(0, 3)
+          displayAbbr.slice(0, 3)
         )}
       </span>
-      <span>{abbr}</span>
+      <span>{displayAbbr}</span>
     </span>
   );
 }

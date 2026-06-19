@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { getDepartmentLogoUrl } from "@/lib/departmentLogos";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 
 export function PageHeader({
   title,
@@ -67,6 +67,7 @@ export function DepartmentBadge({
   logoUrl?: string | null;
 }) {
   const resolvedLogo = getDepartmentLogoUrl(abbr, logoUrl);
+  const displayAbbr = displayDepartmentAbbr(abbr);
 
   return (
     <span className="inline-flex items-center gap-2" title={name ?? abbr ?? ""}>
@@ -78,10 +79,10 @@ export function DepartmentBadge({
         {resolvedLogo ? (
           <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" decoding="async" />
         ) : (
-          (abbr ?? "?").slice(0, 3)
+          displayAbbr.slice(0, 3)
         )}
       </span>
-      <span className="font-semibold">{abbr ?? "TBD"}</span>
+      <span className="font-semibold">{displayAbbr}</span>
     </span>
   );
 }
