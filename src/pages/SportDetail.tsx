@@ -31,39 +31,6 @@ const INDOOR_PAIRINGS = [
   ["MSM", "FISHERIES"],
 ] as const;
 
-const LUDO_RESULTS = [
-  {
-    round: "Quarter Final",
-    matches: [
-      { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
-      { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
-      { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 1 },
-      { home: "MSM", away: "FISHERIES", homeScore: 0, awayScore: 2 },
-    ],
-  },
-  {
-    round: "Semi Final",
-    matches: [
-      { home: "PRE-MED", away: "BCH", homeScore: 2, awayScore: 1 },
-      { home: "FISHERIES", away: "CBG", homeScore: 0, awayScore: 2 },
-    ],
-  },
-  {
-    round: "3rd Place",
-    matches: [{ home: "FISHERIES", away: "BCH", homeScore: 0, awayScore: 2 }],
-  },
-  {
-    round: "Final",
-    matches: [{ home: "CBG", away: "PRE-MED", homeScore: 1, awayScore: 2 }],
-  },
-] as const;
-
-const LUDO_MEDAL_WINNERS = [
-  { medal: "Gold", team: "PRE-MED", names: [] },
-  { medal: "Silver", team: "CBG", names: [] },
-  { medal: "Bronze", team: "BCH", names: [] },
-] as const;
-
 type FootballGender = "male" | "female";
 type FootballView = "table" | "fixtures" | "results";
 type IndoorView = "fixtures" | "results";
@@ -108,6 +75,303 @@ type TableTennisMatch = {
   home: string;
   away: string;
 };
+
+type IndoorMatchResult = {
+  home: string;
+  away: string;
+  homeScore?: number;
+  awayScore?: number;
+  winner?: string;
+  note?: string;
+};
+
+type IndoorResultRound = {
+  round: string;
+  matches: IndoorMatchResult[];
+};
+
+type IndoorMedalWinner = {
+  medal: "Gold" | "Silver" | "Bronze";
+  team: string;
+  names?: string[];
+};
+
+type IndoorResultGroup = {
+  title: string;
+  meta: string;
+  rounds: IndoorResultRound[];
+  medals?: IndoorMedalWinner[];
+};
+
+const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
+  ludo: [
+    {
+      title: "Ludo",
+      meta: "Open knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+            { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
+            { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 1 },
+            { home: "MSM", away: "FISHERIES", homeScore: 0, awayScore: 2 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "PRE-MED", away: "BCH", homeScore: 2, awayScore: 1 },
+            { home: "FISHERIES", away: "CBG", homeScore: 0, awayScore: 2 },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "FISHERIES", away: "BCH", homeScore: 0, awayScore: 2 }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "CBG", away: "PRE-MED", homeScore: 1, awayScore: 2 }],
+        },
+      ],
+      medals: [
+        { medal: "Gold", team: "PRE-MED" },
+        { medal: "Silver", team: "CBG" },
+        { medal: "Bronze", team: "BCH" },
+      ],
+    },
+  ],
+  chess: [
+    {
+      title: "Chess Male",
+      meta: "Male knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+            { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 1 },
+            { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 0 },
+            { home: "MSM", away: "FISHERIES", homeScore: 0, awayScore: 2 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "BCH", away: "PRE-MED", homeScore: 2, awayScore: 0 },
+            { home: "CBG", away: "FISHERIES", homeScore: 2, awayScore: 0 },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "PRE-MED", away: "FISHERIES", homeScore: 0, awayScore: 2 }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "BCH", away: "CBG", homeScore: 1, awayScore: 2 }],
+        },
+      ],
+      medals: [
+        { medal: "Gold", team: "CBG" },
+        { medal: "Silver", team: "BCH" },
+        { medal: "Bronze", team: "FISHERIES" },
+      ],
+    },
+    {
+      title: "Chess Female",
+      meta: "Female knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 1, awayScore: 2 },
+            { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
+            { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 1 },
+            { home: "MSM", away: "FISHERIES", homeScore: 2, awayScore: 0 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "BTN", away: "PRE-MED", homeScore: 1, awayScore: 2 },
+            { home: "MSM", away: "CBG", homeScore: 1, awayScore: 2 },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "BTN", away: "MSM", note: "To be played on Wednesday" }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "CBG", away: "PRE-MED", note: "To be played on Wednesday" }],
+        },
+      ],
+    },
+  ],
+  scrabble: [
+    {
+      title: "Scrabble Male",
+      meta: "Male knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", winner: "BCH" },
+            { home: "PRE-MED", away: "MIC", winner: "PRE-MED" },
+            { home: "CBG", away: "ZLY", winner: "CBG" },
+            { home: "MSM", away: "FISHERIES", winner: "FISHERIES" },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "BCH", away: "PRE-MED", winner: "BCH" },
+            { home: "CBG", away: "FISHERIES", note: "To be completed" },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "PRE-MED", away: "FISHERIES", note: "To be played on Wednesday" }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "BCH", away: "CBG", note: "To be played on Wednesday" }],
+        },
+      ],
+    },
+    {
+      title: "Scrabble Female",
+      meta: "Female knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", winner: "BCH" },
+            { home: "PRE-MED", away: "MIC", winner: "MIC" },
+            { home: "CBG", away: "ZLY", winner: "ZLY" },
+            { home: "MSM", away: "FISHERIES", winner: "FISHERIES" },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "BCH", away: "MIC", winner: "BCH" },
+            { home: "FISHERIES", away: "ZLY", winner: "FISHERIES" },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "MIC", away: "ZLY", note: "To be played on Wednesday" }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "BCH", away: "FISHERIES", note: "To be played on Wednesday" }],
+        },
+      ],
+    },
+  ],
+  "fifa-console": [
+    {
+      title: "FIFA Console",
+      meta: "Console football knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+            { home: "PRE-MED", away: "MIC", homeScore: 0, awayScore: 2 },
+            { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 0 },
+            { home: "MSM", away: "FISHERIES", homeScore: 0, awayScore: 2 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "MIC", away: "BCH", homeScore: 0, awayScore: 2 },
+            { home: "CBG", away: "FISHERIES", homeScore: 2, awayScore: 1 },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "FISHERIES", away: "MIC", homeScore: 0, awayScore: 2 }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "CBG", away: "BCH", homeScore: 0, awayScore: 2 }],
+        },
+      ],
+      medals: [
+        { medal: "Gold", team: "BCH" },
+        { medal: "Silver", team: "CBG" },
+        { medal: "Bronze", team: "MIC" },
+      ],
+    },
+  ],
+  "pes-console": [
+    {
+      title: "PES Console",
+      meta: "Console football knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 1, awayScore: 2 },
+            { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 1 },
+            { home: "CBG", away: "ZLY", homeScore: 1, awayScore: 2 },
+            { home: "MSM", away: "FISHERIES", homeScore: 2, awayScore: 0 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "BTN", away: "PRE-MED", homeScore: 2, awayScore: 0 },
+            { home: "MSM", away: "ZLY", homeScore: 2, awayScore: 0 },
+          ],
+        },
+        {
+          round: "3rd Place",
+          matches: [{ home: "PRE-MED", away: "ZLY", homeScore: 2, awayScore: 0 }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "BTN", away: "MSM", homeScore: 2, awayScore: 1 }],
+        },
+      ],
+      medals: [
+        { medal: "Gold", team: "BTN" },
+        { medal: "Silver", team: "MSM" },
+        { medal: "Bronze", team: "PRE-MED" },
+      ],
+    },
+  ],
+  "cod-mobile": [
+    {
+      title: "COD Mobile",
+      meta: "Mobile team knockout",
+      rounds: [
+        {
+          round: "Quarter Final",
+          matches: [
+            { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+            { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
+            { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 0 },
+            { home: "MSM", away: "FISHERIES", homeScore: 1, awayScore: 2 },
+          ],
+        },
+        {
+          round: "Semi Final",
+          matches: [
+            { home: "PRE-MED", away: "BCH", note: "To be played on Wednesday" },
+            { home: "CBG", away: "FISHERIES", note: "To be played on Wednesday" },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+const LUDO_RESULTS = INDOOR_RESULTS.ludo[0].rounds;
+const LUDO_MEDAL_WINNERS = INDOOR_RESULTS.ludo[0].medals ?? [];
 
 type FootballStanding = {
   team: string;
@@ -552,8 +816,9 @@ function IndoorGameDetail({
 }: {
   game: (typeof INDOOR_GAMES)[number];
 }) {
-  const isLudo = game.slug === "ludo";
-  const [view, setView] = useState<IndoorView>(isLudo ? "results" : "fixtures");
+  const resultGroups = INDOOR_RESULTS[game.slug] ?? [];
+  const hasResults = resultGroups.length > 0;
+  const [view, setView] = useState<IndoorView>(hasResults ? "results" : "fixtures");
   const following = useFollowStore((s) => s.isFollowing("sports", game.slug));
   const toggle = useFollowStore((s) => s.toggleSport);
   const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
@@ -567,8 +832,8 @@ function IndoorGameDetail({
       <SportHero
         title={game.name}
         subtitle={
-          isLudo
-            ? "Ludo is complete. Review the full result flow from quarter finals through the final."
+          hasResults
+            ? "Review the latest result flow from quarter finals through finals and pending matches."
             : "Indoor games use the Pot A vs Pot B fixture draw from the guide."
         }
         label="Indoor Games"
@@ -586,8 +851,8 @@ function IndoorGameDetail({
             </p>
             <h2 className="font-display text-3xl font-bold">{game.name}</h2>
             <p className="mt-1 max-w-2xl text-sm text-white/62">
-              {isLudo
-                ? "Completed bracket results from quarter finals through the final."
+              {hasResults
+                ? "Completed and pending bracket updates for this indoor game."
                 : "Fixtures show who faces who. Results will stay empty until scores are recorded."}
             </p>
           </div>
@@ -612,8 +877,8 @@ function IndoorGameDetail({
 
         {view === "fixtures" ? (
           <IndoorGameFixtureCard game={game} departments={departmentByAbbr} />
-        ) : isLudo ? (
-          <LudoResults departments={departmentByAbbr} />
+        ) : hasResults ? (
+          <IndoorResults groups={resultGroups} departments={departmentByAbbr} />
         ) : (
           <EmptyState title="No indoor results yet." hint="Completed results will appear here once the officials record them." />
         )}
@@ -730,7 +995,148 @@ function IndoorGameFixtureCard({
   );
 }
 
-function LudoResults({ departments }: { departments: Map<string, Department> }) {
+function IndoorResults({
+  groups,
+  departments,
+}: {
+  groups: IndoorResultGroup[];
+  departments: Map<string, Department>;
+}) {
+  return (
+    <div className="space-y-6">
+      {groups.map((group) => (
+        <article key={group.title} className="card overflow-hidden p-4">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+                {group.meta}
+              </p>
+              <h3 className="mt-1 font-display text-3xl font-bold">{group.title}</h3>
+            </div>
+            {group.medals && (
+              <span className="rounded-full bg-brand-accent/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-accent">
+                Podium confirmed
+              </span>
+            )}
+          </div>
+
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
+            <div className="space-y-4">
+              {group.rounds.map((round) => (
+                <section key={`${group.title}-${round.round}`} className="rounded-2xl bg-white/6 p-3 ring-1 ring-white/8">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h4 className="font-display text-2xl font-bold">{round.round}</h4>
+                    <span className="rounded-full bg-brand-lime/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                      {round.matches.some((match) => match.note) ? "Updated" : "Completed"}
+                    </span>
+                  </div>
+
+                  <div className="grid gap-2 lg:grid-cols-2">
+                    {round.matches.map((match) => (
+                      <div
+                        key={`${group.title}-${round.round}-${match.home}-${match.away}`}
+                        className="rounded-2xl bg-white/8 px-3 py-3 ring-1 ring-white/8"
+                      >
+                        <MatchupTeams
+                          home={match.home}
+                          away={match.away}
+                          homeColor={departments.get(match.home)?.primary_color}
+                          awayColor={departments.get(match.away)?.primary_color}
+                          homeName={departments.get(match.home)?.name}
+                          awayName={departments.get(match.away)?.name}
+                          homeLogo={departments.get(match.home)?.logo_url}
+                          awayLogo={departments.get(match.away)?.logo_url}
+                          center={indoorMatchCenter(match)}
+                          centerClassName="font-display text-xl font-bold tabular-nums text-brand-lime"
+                        />
+                        {match.note && (
+                          <p className="mt-2 text-center text-xs font-semibold uppercase tracking-[0.12em] text-white/45">
+                            {match.note}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            {group.medals ? (
+              <IndoorMedalSummary medals={group.medals} departments={departments} title={group.title} />
+            ) : (
+              <aside className="rounded-2xl bg-white/8 p-4 ring-1 ring-white/10">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+                  Podium
+                </p>
+                <h4 className="mt-2 font-display text-2xl font-bold">Pending final results</h4>
+                <p className="mt-2 text-sm leading-6 text-white/58">
+                  Medal winners will show here after the final and third-place match are completed.
+                </p>
+              </aside>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function indoorMatchCenter(match: IndoorMatchResult) {
+  if (match.homeScore != null && match.awayScore != null) {
+    return `${match.homeScore}-${match.awayScore}`;
+  }
+  if (match.winner) return `${match.winner} wins`;
+  return "vs";
+}
+
+function IndoorMedalSummary({
+  medals,
+  departments,
+  title,
+}: {
+  medals: IndoorMedalWinner[];
+  departments: Map<string, Department>;
+  title: string;
+}) {
+  return (
+    <aside className="rounded-2xl bg-white/8 p-4 ring-1 ring-white/10">
+      <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+        {title} medal winners
+      </p>
+      <h4 className="mt-2 font-display text-2xl font-bold">Podium</h4>
+      <div className="mt-4 space-y-3">
+        {medals.map((row, index) => (
+          <div
+            key={`${title}-${row.medal}`}
+            className="rounded-2xl bg-white/8 p-3 ring-1 ring-white/10"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+                  {row.medal}
+                </p>
+                <TeamChip
+                  abbr={row.team}
+                  color={departments.get(row.team)?.primary_color}
+                  name={departments.get(row.team)?.name}
+                  logoUrl={departments.get(row.team)?.logo_url}
+                />
+              </div>
+              <span className="text-3xl" aria-hidden>
+                {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+              </span>
+            </div>
+            <p className="mt-3 text-xs font-semibold text-white/48">
+              Player names pending
+            </p>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
+export function LudoResults({ departments }: { departments: Map<string, Department> }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
       <section className="space-y-4">
@@ -1322,15 +1728,36 @@ function MarathonDetail() {
   const following = useFollowStore((s) => s.isFollowing("sports", "marathon"));
   const toggle = useFollowStore((s) => s.toggleSport);
 
+  function shareMarathon() {
+    const url = `${window.location.origin}/sports/marathon`;
+    navigator.share?.({
+      title: "ULLSSA Marathon 2026",
+      text: "Register for the ULLSSA Marathon happening tomorrow by 6 AM.",
+      url,
+    }).catch(() => {});
+  }
+
   return (
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="A Dean's Games race for fitness, endurance, wellness and sportsmanship across the Faculty of Life Sciences community."
+        subtitle="The Dean's Games marathon is happening tomorrow. Register from the app, show up for your department and start the day with the faculty community."
         label="Home"
-        meta="Registration open"
+        meta="Tomorrow - 6 AM prompt - registration open"
         icon={sportIcon("marathon")}
-        action={<FollowButton following={following} onClick={() => toggle("marathon")} label="sport" />}
+        action={
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={MARATHON_REGISTRATION_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="btn-accent"
+            >
+              Register now
+            </a>
+            <FollowButton following={following} onClick={() => toggle("marathon")} label="sport" />
+          </div>
+        }
       />
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
@@ -1339,9 +1766,15 @@ function MarathonDetail() {
             {sportIcon("marathon")}
           </span>
           <p className="relative text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
-            Race day
+            Race day registration
           </p>
-          <h2 className="relative mt-2 font-display text-4xl font-bold">Saturday, June 20</h2>
+          <h2 className="relative mt-2 font-display text-4xl font-bold">
+            Saturday, June 20
+          </h2>
+          <p className="relative mt-2 max-w-xl text-sm leading-6 text-white/66">
+            Registration is open through BIOLYMPICS LIVE. Pick your category, submit your
+            details and get ready to run.
+          </p>
           <div className="relative mt-5 grid gap-3 sm:grid-cols-2">
             <MarathonInfoCard label="Start time" value="6 AM prompt" />
             <MarathonInfoCard label="Start point" value="Faculty of Sciences Complex" />
@@ -1357,29 +1790,38 @@ function MarathonDetail() {
             href={MARATHON_REGISTRATION_URL}
             target="_blank"
             rel="noreferrer"
-            className="btn-accent relative mt-5 w-full sm:w-auto"
+            className="btn-accent relative mt-5 w-full justify-center sm:w-auto"
           >
             Register for marathon
           </a>
+          <button
+            type="button"
+            className="btn-ghost relative mt-3 w-full justify-center sm:ml-2 sm:w-auto"
+            onClick={shareMarathon}
+          >
+            Share marathon page
+          </button>
         </article>
 
         <article className="card p-5">
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
-            Why run
+            Why everyone should see this
           </p>
-          <h2 className="mt-2 font-display text-3xl font-bold">Run stronger together</h2>
+          <h2 className="mt-2 font-display text-3xl font-bold">
+            Register, run, represent
+          </h2>
           <div className="mt-4 space-y-3 text-sm leading-6 text-white/68">
             <p>
-              Lace up and get ready to hit the track. The ULLSSA Marathon 2026 is a highlight
-              of the Dean&apos;s Games, built to promote endurance, wellness and sportsmanship.
+              Lace up and get ready. The ULLSSA Marathon 2026 is one of the headline moments
+              of the Dean&apos;s Games, built for endurance, wellness and department pride.
             </p>
             <p>
-              Whether you are a seasoned runner or simply looking to challenge yourself, this is
-              a chance to compete, show up for your department and run with the faculty community.
+              Whether you run competitively or simply want to challenge yourself, this is the
+              easiest place to register and stay connected to the event.
             </p>
           </div>
           <div className="mt-5 grid gap-3">
-            {["Fitness", "Endurance", "Wellness", "Sportsmanship"].map((item) => (
+            {["Register from the app", "Represent your department", "Run with the faculty", "6 AM prompt"].map((item) => (
               <div key={item} className="rounded-2xl bg-white/8 p-3 font-bold ring-1 ring-white/10">
                 {item}
               </div>
