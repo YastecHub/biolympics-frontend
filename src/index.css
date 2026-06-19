@@ -1,0 +1,328 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Brand tokens (change here to re-theme the whole app) ---- */
+:root {
+  --c-primary: 21 128 61; /* vivid grass green */
+  --c-secondary: 6 78 59; /* deep emerald */
+  --c-accent: 250 204 21; /* energetic gold */
+  --c-lime: 132 204 22; /* electric lime highlight */
+  --c-bg: 246 248 245;
+  --c-surface: 255 255 255;
+  --c-ink: 15 23 19;
+  --c-muted: 90 107 100;
+  --c-success: 22 163 74;
+  --c-warning: 217 119 6;
+  --c-danger: 220 38 38;
+}
+
+.dark {
+  --c-primary: 45 196 120; /* brighter on dark */
+  --c-secondary: 8 64 44;
+  --c-accent: 250 204 21;
+  --c-lime: 163 230 53;
+  --c-bg: 6 15 11;
+  --c-surface: 15 28 21;
+  --c-ink: 233 240 236;
+  --c-muted: 150 166 158;
+  --c-success: 34 197 94;
+  --c-warning: 245 158 11;
+  --c-danger: 248 113 113;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: rgb(var(--c-bg));
+  color: rgb(var(--c-ink));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.festival-shell {
+  background: #04291f;
+  color: white;
+}
+
+  .festival-app-main {
+    background:
+      linear-gradient(135deg, transparent 0 46%, rgb(255 255 255 / 0.05) 47% 48%, transparent 49% 100%),
+      radial-gradient(circle at 72% 10%, rgb(var(--c-accent) / 0.16), transparent 16rem),
+      radial-gradient(circle at 14% 20%, rgb(var(--c-lime) / 0.12), transparent 21rem),
+      linear-gradient(160deg, #021712 0%, #053529 48%, #07513c 100%);
+    background-size: 150px 150px, auto, auto, auto;
+    color: white;
+  }
+
+/* Visible focus for keyboard users (accessibility). */
+:focus-visible {
+  outline: 2px solid rgb(var(--c-accent));
+  outline-offset: 2px;
+}
+
+.festival-shell .card {
+  background:
+    radial-gradient(circle at 90% 82%, rgb(255 255 255 / 0.08), transparent 5rem),
+    linear-gradient(145deg, rgb(9 70 54 / 0.9), rgb(4 37 31 / 0.96));
+  box-shadow: 0 18px 45px rgb(0 0 0 / 0.22);
+  color: white;
+  --tw-ring-color: rgb(255 255 255 / 0.12);
+}
+
+.festival-shell .card-interactive:hover {
+  --tw-ring-color: rgb(var(--c-lime) / 0.45);
+}
+
+.festival-shell .text-muted {
+  color: rgb(211 232 224 / 0.72);
+}
+
+.festival-shell .text-ink {
+  color: white;
+}
+
+.festival-shell .section-title {
+  color: white;
+}
+
+.festival-shell .btn-ghost {
+  color: white;
+  --tw-ring-color: rgb(255 255 255 / 0.18);
+}
+
+.festival-shell .btn-ghost:hover {
+  background: rgb(255 255 255 / 0.1);
+}
+
+.festival-shell select,
+.festival-shell input,
+.festival-shell textarea {
+  background: rgb(3 27 22 / 0.78);
+  border-color: rgb(255 255 255 / 0.16);
+  color: white;
+}
+
+.festival-shell select option {
+  background: #04251e;
+  color: white;
+}
+
+.festival-shell table tr {
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+.festival-shell .bg-black\/5 {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.festival-shell .bg-black\/10 {
+  background-color: rgb(255 255 255 / 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-surface shadow-sm ring-1 ring-black/5 transition dark:ring-white/10;
+  }
+  .card-interactive {
+    @apply card hover:-translate-y-0.5 hover:shadow-md hover:ring-brand-primary/40;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition active:scale-[0.98] disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand-primary text-white hover:brightness-110;
+  }
+  .btn-accent {
+    @apply btn bg-brand-accent text-brand-secondary hover:brightness-105;
+  }
+  .btn-ghost {
+    @apply btn ring-1 ring-black/10 hover:bg-black/5 dark:ring-white/15 dark:hover:bg-white/5;
+  }
+  .section-title {
+    @apply font-display text-2xl font-bold tracking-tight;
+  }
+  /* Energetic green festival gradient for hero surfaces. */
+  .hero-gradient {
+    background-image:
+      radial-gradient(900px circle at 12% -10%, rgb(var(--c-lime) / 0.35), transparent 45%),
+      radial-gradient(700px circle at 100% 0%, rgb(var(--c-accent) / 0.22), transparent 40%),
+      linear-gradient(135deg, rgb(var(--c-secondary)) 0%, rgb(var(--c-primary)) 100%);
+  }
+  /* Subtle diagonal texture overlay for the hero. */
+  .hero-grid {
+    background-image: linear-gradient(
+        rgb(255 255 255 / 0.06) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-primary to-brand-lime bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .festival-home {
+    background:
+      linear-gradient(180deg, rgb(2 23 18 / 0.58), rgb(2 23 18 / 0.94) 72%, #02120e 100%),
+      linear-gradient(90deg, rgb(2 23 18 / 0.48), rgb(2 23 18 / 0.12), rgb(2 23 18 / 0.58)),
+      url("/assets/biolympics-main-artwork.jpeg") center 18% / cover no-repeat,
+      linear-gradient(160deg, #021712 0%, #053529 45%, #07513c 100%);
+  }
+
+  .festival-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.2;
+    background-image:
+      radial-gradient(circle at 28px 28px, rgb(255 255 255 / 0.14) 0 1px, transparent 1.5px),
+      linear-gradient(135deg, transparent 0 46%, rgb(255 255 255 / 0.08) 47% 48%, transparent 49% 100%),
+      linear-gradient(45deg, transparent 0 48%, rgb(var(--c-lime) / 0.06) 49% 50%, transparent 51% 100%);
+    background-size: 64px 64px, 150px 150px, 220px 220px;
+    mask-image: linear-gradient(to bottom, black 0 78%, transparent 100%);
+  }
+
+  .festival-hero {
+    background:
+      radial-gradient(circle at 80% 18%, rgb(var(--c-accent) / 0.18), transparent 13rem),
+      radial-gradient(circle at 18% 78%, rgb(var(--c-lime) / 0.12), transparent 18rem),
+      linear-gradient(145deg, rgb(3 27 22 / 0.72), rgb(2 18 14 / 0.84));
+    backdrop-filter: blur(2px);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.08),
+      0 32px 90px rgb(0 0 0 / 0.36);
+  }
+
+  .festival-sky {
+    position: absolute;
+    inset: 0;
+    opacity: 0.6;
+    background:
+      radial-gradient(ellipse at 36% 14%, rgb(255 255 255 / 0.16) 0 7rem, transparent 7.4rem),
+      radial-gradient(ellipse at 63% 18%, rgb(var(--c-lime) / 0.12) 0 8rem, transparent 8.5rem),
+      linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 58%);
+  }
+
+  .festival-sports-orbit {
+    position: absolute;
+    inset: 4rem 4rem auto auto;
+    display: flex;
+    gap: 1.2rem;
+    transform: rotate(-12deg);
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    opacity: 0.24;
+    filter: saturate(0.9);
+  }
+
+  .festival-title {
+    background: linear-gradient(90deg, #2d9cf0 0%, #f0139a 28%, #ff7a2f 50%, #ffe536 72%, #9be22d 100%);
+    background-clip: text;
+    color: transparent;
+  }
+
+  .festival-sport-card {
+    background:
+      radial-gradient(circle at 90% 82%, rgb(255 255 255 / 0.1), transparent 4.5rem),
+      linear-gradient(145deg, rgb(9 70 54 / 0.92), rgb(4 37 31 / 0.95));
+    box-shadow: 0 18px 45px rgb(0 0 0 / 0.24);
+  }
+
+  .schedule-page {
+    background:
+      radial-gradient(circle at 10% 8%, rgb(255 255 255 / 0.95), transparent 16rem),
+      radial-gradient(circle at 82% 20%, rgb(var(--c-accent) / 0.18), transparent 18rem),
+      radial-gradient(circle at 30% 100%, rgb(14 165 233 / 0.28), transparent 24rem),
+      linear-gradient(180deg, #eef8f5 0%, #d8ece7 48%, #0d7057 100%);
+  }
+
+  .schedule-poster {
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.58), rgb(255 255 255 / 0.36)),
+      radial-gradient(circle at 0% 72%, rgb(14 165 233 / 0.34), transparent 20rem),
+      radial-gradient(circle at 100% 48%, rgb(var(--c-primary) / 0.2), transparent 18rem);
+  }
+
+  .schedule-clouds {
+    position: absolute;
+    inset: 0;
+    opacity: 0.76;
+    background:
+      radial-gradient(ellipse at 18% 12%, rgb(255 255 255 / 0.95) 0 5.8rem, transparent 6rem),
+      radial-gradient(ellipse at 38% 8%, rgb(255 255 255 / 0.88) 0 7rem, transparent 7.3rem),
+      radial-gradient(ellipse at 64% 14%, rgb(255 255 255 / 0.84) 0 6.5rem, transparent 6.8rem),
+      radial-gradient(ellipse at 82% 9%, rgb(255 255 255 / 0.7) 0 5rem, transparent 5.3rem),
+      linear-gradient(135deg, transparent 0 46%, rgb(var(--c-primary) / 0.08) 47% 48%, transparent 49% 100%);
+    background-size: auto, auto, auto, auto, 140px 140px;
+  }
+
+  .schedule-equipment {
+    position: absolute;
+    inset: 6.5rem -9rem auto auto;
+    display: flex;
+    gap: 1.2rem;
+    transform: rotate(-13deg);
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    opacity: 0.16;
+    filter: saturate(0.9);
+  }
+
+  .schedule-row {
+    backdrop-filter: blur(10px);
+  }
+
+  .schedule-experience {
+    background:
+      radial-gradient(circle at 72% 12%, rgb(var(--c-accent) / 0.2), transparent 17rem),
+      radial-gradient(circle at 18% 28%, rgb(var(--c-lime) / 0.18), transparent 22rem),
+      radial-gradient(circle at 50% 74%, rgb(20 184 166 / 0.2), transparent 28rem),
+      linear-gradient(160deg, #021712 0%, #053529 45%, #07513c 100%);
+  }
+
+  .schedule-hero-panel {
+    background:
+      radial-gradient(circle at 84% 18%, rgb(var(--c-accent) / 0.2), transparent 12rem),
+      radial-gradient(circle at 18% 78%, rgb(var(--c-lime) / 0.18), transparent 17rem),
+      linear-gradient(145deg, rgb(8 69 52 / 0.86), rgb(3 27 22 / 0.92));
+  }
+
+  .schedule-day-card {
+    background:
+      radial-gradient(circle at 92% 80%, rgb(255 255 255 / 0.08), transparent 5rem),
+      linear-gradient(145deg, rgb(9 70 54 / 0.92), rgb(4 37 31 / 0.96));
+  }
+
+  .schedule-day-card:hover {
+    transform: translateY(-2px);
+    border-color: rgb(255 255 255 / 0.26);
+  }
+
+  .schedule-glow-orbit {
+    position: absolute;
+    inset: 6rem 2rem auto auto;
+    display: flex;
+    gap: 1.4rem;
+    transform: rotate(-13deg);
+    font-size: clamp(2rem, 6vw, 5rem);
+    opacity: 0.15;
+    filter: saturate(0.95);
+  }
+}
