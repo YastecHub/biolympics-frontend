@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Logo } from "@/components/Logo";
 import { sportIcon } from "@/lib/sportIcons";
-import { formatDateTime } from "@/lib/time";
-import type { Announcement, Sport } from "@/types";
+import type { Sport } from "@/types";
 
 type HomeSport = {
   title: string;
@@ -66,6 +65,12 @@ const HOME_SPORTS: HomeSport[] = [
   },
 ];
 
+const TOMORROW_SPORTS = [
+  { name: "Marathon", time: "6 AM", route: "/sports/marathon", icon: "marathon" },
+  { name: "Female football", time: "11 AM", route: "/sports/female-football", icon: "football" },
+  { name: "Male football", time: "Time TBA", route: "/sports/male-football", icon: "football" },
+];
+
 function yearFromRange(start?: string | null) {
   return start ? new Date(`${start}T12:00:00`).getFullYear() : 2026;
 }
@@ -80,11 +85,9 @@ export default function Home() {
   const tournament = useQuery({ queryKey: ["tournament"], queryFn: api.currentTournament });
   const sports = useQuery({ queryKey: ["sports"], queryFn: api.sports });
   const live = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures });
-  const announcements = useQuery({ queryKey: ["announcements"], queryFn: api.announcements });
 
   const year = yearFromRange(tournament.data?.start_date);
   const liveCount = live.data?.length ?? 0;
-  const latestAnnouncement = announcements.data?.[0];
 
   return (
     <div className="festival-home relative min-h-screen overflow-hidden px-4 pb-12 text-white">
@@ -129,7 +132,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <HeroUpdateNotice item={latestAnnouncement} isLoading={announcements.isLoading} />
+          <HeroUpdateNotice />
         </div>
       </section>
 
@@ -167,34 +170,42 @@ export default function Home() {
   );
 }
 
-function HeroUpdateNotice({
-  item,
-  isLoading,
-}: {
-  item?: Announcement;
-  isLoading: boolean;
-}) {
+function HeroUpdateNotice() {
   return (
-    <Link
-      to="/announcements"
-      className="relative mx-auto mt-6 flex max-w-2xl flex-col gap-2 rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-left shadow-lg shadow-black/15 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15 sm:flex-row sm:items-center"
+    <div
+      className="relative mx-auto mt-6 max-w-2xl rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-left shadow-lg shadow-black/15 backdrop-blur"
     >
-      <span className="shrink-0 rounded-full bg-brand-accent/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
-        News / Updates
-      </span>
-      <span className="min-w-0 flex-1 text-sm font-semibold text-white/82">
-        {isLoading
-          ? "Checking latest festival updates..."
-          : item
-            ? item.title
-            : "No updates yet. Schedule changes and announcements will appear here."}
-      </span>
-      {item?.published_at && (
-        <span className="shrink-0 text-xs text-white/45">
-          {formatDateTime(item.published_at)}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="rounded-full bg-brand-accent/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
+          News / Updates
         </span>
-      )}
-    </Link>
+        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Tomorrow</span>
+      </div>
+      <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
+        Tomorrow's sports lineup
+      </p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+        {TOMORROW_SPORTS.map((sport) => (
+          <Link
+            key={sport.name}
+            to={sport.route}
+            className="group flex min-w-0 items-center gap-2 rounded-xl border border-white/10 bg-black/15 px-3 py-3 transition hover:-translate-y-0.5 hover:border-brand-lime/50 hover:bg-white/10"
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-lg" aria-hidden>
+              {sportIcon(sport.icon)}
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-black uppercase tracking-normal text-white">
+                {sport.name}
+              </span>
+              <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                {sport.time}
+              </span>
+            </span>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 function SportCard({
