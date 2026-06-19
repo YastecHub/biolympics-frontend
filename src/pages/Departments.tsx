@@ -34,7 +34,7 @@ export default function Departments() {
                   aria-hidden
                 >
                   {logo ? (
-                    <img src={logo} alt="" className="h-full w-full object-contain p-1" loading="lazy" />
+                    <img src={logo} alt="" className="h-full w-full object-contain p-1" decoding="async" />
                   ) : (
                     d.abbreviation.slice(0, 3)
                   )}

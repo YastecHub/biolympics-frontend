@@ -211,7 +211,7 @@ function DepartmentMark({ abbr, color, logoUrl }: { abbr: string; color: string;
       aria-hidden
     >
       {logoUrl ? (
-        <img src={logoUrl} alt="" className="h-full w-full object-contain p-1" loading="lazy" />
+        <img src={logoUrl} alt="" className="h-full w-full object-contain p-1" decoding="async" />
       ) : (
         abbr.slice(0, 3)
       )}

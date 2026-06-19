@@ -76,7 +76,7 @@ export function DepartmentBadge({
         aria-hidden
       >
         {resolvedLogo ? (
-          <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" loading="lazy" />
+          <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-0.5" decoding="async" />
         ) : (
           (abbr ?? "?").slice(0, 3)
         )}
