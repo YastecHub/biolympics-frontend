@@ -14,6 +14,8 @@ const BY_SLUG: Record<string, string> = {
   scrabble: "🔤",
   ludo: "🎲",
   efootball: "🎮",
+  "fifa-console": "🎮",
+  "pes-console": "🎮",
   "cod-mobile": "🎮",
   "indoor-games": "🎯",
 };

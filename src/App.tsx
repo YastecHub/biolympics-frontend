@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { Layout } from "@/components/Layout";
 import { PageSkeleton } from "@/components/Skeletons";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Route-level code splitting for fast first load on mobile.
 const Home = lazy(() => import("@/pages/Home"));
@@ -25,6 +26,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Layout>
         <Suspense fallback={<PageSkeleton />}>
           <Routes>

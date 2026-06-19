@@ -17,10 +17,9 @@ type Tab = (typeof TABS)[number];
 const INDOOR_GAMES = [
   { name: "Chess", slug: "chess", note: "Board discipline" },
   { name: "Scrabble", slug: "scrabble", note: "Word battle" },
-  { name: "E-Football", slug: "efootball", note: "Digital football" },
   { name: "Ludo", slug: "ludo", note: "Knockout board play" },
   { name: "FIFA Console", slug: "fifa-console", note: "Console football" },
-  { name: "E-Football Console", slug: "efootball-console", note: "Console football" },
+  { name: "PES Console", slug: "pes-console", note: "Console football" },
   { name: "CODM", slug: "cod-mobile", note: "Mobile team play" },
 ] as const;
 
@@ -341,7 +340,7 @@ function titleFromSlug(slug: string) {
 }
 
 function indoorIconSlug(slug: string) {
-  return slug === "fifa-console" || slug === "efootball-console" ? "efootball" : slug;
+  return slug === "fifa-console" || slug === "pes-console" ? "efootball" : slug;
 }
 
 function RegularSportDetail({ slug }: { slug: string }) {

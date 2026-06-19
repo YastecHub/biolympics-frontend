@@ -17,7 +17,7 @@ type HomeSport = {
 const HOME_SPORTS: HomeSport[] = [
   {
     title: "Indoor Games",
-    slugs: ["chess", "scrabble", "ludo", "efootball", "cod-mobile", "indoor-games"],
+    slugs: ["chess", "scrabble", "ludo", "fifa-console", "pes-console", "cod-mobile", "indoor-games"],
     accent: "#9be22d",
     route: "/sports/indoor-games",
     meta: "fixtures / bracket",
