@@ -98,7 +98,7 @@ export function MatchupTeams({
   awayLogo,
   center = "vs",
   centerClassName = "text-xs font-bold uppercase text-white/42",
-  layout = "inline",
+  layout = "stacked",
 }: {
   home: string | null;
   away: string | null;
@@ -114,7 +114,7 @@ export function MatchupTeams({
 }) {
   if (layout === "stacked") {
     return (
-      <div className="grid w-full grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] items-center gap-2 sm:gap-4">
+      <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(4rem,max-content)_minmax(0,1fr)] items-center gap-2 sm:gap-4">
         <TeamStack abbr={home} color={homeColor} name={homeName} logoUrl={homeLogo} align="left" />
         <span className={`justify-self-center text-center ${centerClassName}`}>
           {center}

@@ -2318,14 +2318,20 @@ function FootballMatchCard({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
+          center={
+            <span className="flex flex-col items-center gap-1.5">
+              <span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>
+              <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
+                {match.scheduledTime ?? "Time TBA"}
+              </span>
+              <span className="max-w-28 text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-white/45">
+                {match.venue ?? "Venue TBA"}
+              </span>
+            </span>
+          }
           centerClassName=""
           layout="stacked"
         />
-      </div>
-      <div className="relative mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-bold uppercase tracking-[0.14em]">
-        <span className="text-brand-lime">{match.scheduledTime ?? "Time TBA"}</span>
-        <span className="text-white/45">{match.venue ?? "Venue TBA"}</span>
       </div>
     </Link>
   );
