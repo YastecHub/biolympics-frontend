@@ -204,7 +204,7 @@ const TABLE_TENNIS_MATCHES: TableTennisMatch[] = (["Male", "Female"] as const).f
     })),
 );
 
-const MARATHON_REGISTRATION_URL = "https://forms.gle/kVjTXautsvv8upre6";
+const MARATHON_REGISTRATION_URL = "https://forms.gle/TWuKfXSNWCxFaHM49";
 
 const MALE_FOOTBALL_GROUPS = {
   "Group A": ["BTN", "CBG", "MSM", "MIC"],
@@ -1207,7 +1207,11 @@ function MarathonDetail() {
             <MarathonInfoCard label="Start time" value="6 AM prompt" />
             <MarathonInfoCard label="Start point" value="Faculty of Sciences Complex" />
             <MarathonInfoCard label="Male race" value="7.4KM" />
-            <MarathonInfoCard label="Female race" value="3.2KM" />
+            <MarathonInfoCard label="Female race" value="3.7KM" />
+          </div>
+
+          <div className="relative mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/12 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-brand-accent">
+            Registration closes by 11:59PM tonight.
           </div>
 
           <a

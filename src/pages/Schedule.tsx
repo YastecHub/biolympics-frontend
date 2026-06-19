@@ -166,8 +166,10 @@ export default function Schedule() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/12 backdrop-blur">
-      <p className="font-display text-4xl font-bold leading-none text-brand-lime">{value}</p>
+    <div className="min-w-0 rounded-2xl bg-white/10 p-4 ring-1 ring-white/12 backdrop-blur">
+      <p className="whitespace-nowrap font-display text-3xl font-bold leading-none text-brand-lime sm:text-4xl">
+        {value}
+      </p>
       <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-white/58">{label}</p>
     </div>
   );
