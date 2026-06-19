@@ -58,6 +58,12 @@ const LUDO_RESULTS = [
   },
 ] as const;
 
+const LUDO_MEDAL_WINNERS = [
+  { medal: "Gold", team: "PRE-MED", names: [] },
+  { medal: "Silver", team: "CBG", names: [] },
+  { medal: "Bronze", team: "BCH", names: [] },
+] as const;
+
 type FootballGender = "male" | "female";
 type FootballView = "table" | "fixtures" | "results";
 type IndoorView = "fixtures" | "results";
@@ -726,39 +732,76 @@ function IndoorGameFixtureCard({
 
 function LudoResults({ departments }: { departments: Map<string, Department> }) {
   return (
-    <div className="space-y-4">
-      {LUDO_RESULTS.map((round) => (
-        <article key={round.round} className="card overflow-hidden p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h3 className="font-display text-2xl font-bold">{round.round}</h3>
-            <span className="rounded-full bg-brand-lime/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
-              Completed
-            </span>
-          </div>
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
+      <section className="space-y-4">
+        {LUDO_RESULTS.map((round) => (
+          <article key={round.round} className="card overflow-hidden p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="font-display text-2xl font-bold">{round.round}</h3>
+              <span className="rounded-full bg-brand-lime/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                Completed
+              </span>
+            </div>
 
-          <div className="grid gap-2 lg:grid-cols-2">
-            {round.matches.map((match) => (
-              <div
-                key={`${round.round}-${match.home}-${match.away}`}
-                className="rounded-2xl bg-white/8 px-3 py-3 ring-1 ring-white/8"
-              >
-                <MatchupTeams
-                  home={match.home}
-                  away={match.away}
-                  homeColor={departments.get(match.home)?.primary_color}
-                  awayColor={departments.get(match.away)?.primary_color}
-                  homeName={departments.get(match.home)?.name}
-                  awayName={departments.get(match.away)?.name}
-                  homeLogo={departments.get(match.home)?.logo_url}
-                  awayLogo={departments.get(match.away)?.logo_url}
-                  center={`${match.homeScore}-${match.awayScore}`}
-                  centerClassName="font-display text-2xl font-bold tabular-nums text-brand-lime"
-                />
+            <div className="grid gap-2 lg:grid-cols-2">
+              {round.matches.map((match) => (
+                <div
+                  key={`${round.round}-${match.home}-${match.away}`}
+                  className="rounded-2xl bg-white/8 px-3 py-3 ring-1 ring-white/8"
+                >
+                  <MatchupTeams
+                    home={match.home}
+                    away={match.away}
+                    homeColor={departments.get(match.home)?.primary_color}
+                    awayColor={departments.get(match.away)?.primary_color}
+                    homeName={departments.get(match.home)?.name}
+                    awayName={departments.get(match.away)?.name}
+                    homeLogo={departments.get(match.home)?.logo_url}
+                    awayLogo={departments.get(match.away)?.logo_url}
+                    center={`${match.homeScore}-${match.awayScore}`}
+                    centerClassName="font-display text-2xl font-bold tabular-nums text-brand-lime"
+                  />
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <aside className="card h-fit p-5">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+          Ludo medal winners
+        </p>
+        <h3 className="mt-2 font-display text-3xl font-bold">Podium</h3>
+        <div className="mt-4 space-y-3">
+          {LUDO_MEDAL_WINNERS.map((row, index) => (
+            <div
+              key={row.medal}
+              className="rounded-2xl bg-white/8 p-3 ring-1 ring-white/10"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+                    {row.medal}
+                  </p>
+                  <TeamChip
+                    abbr={row.team}
+                    color={departments.get(row.team)?.primary_color}
+                    name={departments.get(row.team)?.name}
+                    logoUrl={departments.get(row.team)?.logo_url}
+                  />
+                </div>
+                <span className="text-3xl" aria-hidden>
+                  {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+                </span>
               </div>
-            ))}
-          </div>
-        </article>
-      ))}
+              <p className="mt-3 text-xs font-semibold text-white/48">
+                Player names pending
+              </p>
+            </div>
+          ))}
+        </div>
+      </aside>
     </div>
   );
 }

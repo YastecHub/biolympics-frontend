@@ -18,6 +18,14 @@ const FALLBACK_DEPARTMENTS: Department[] = [
   fallbackDepartment("fisheries", "Fisheries", "FISHERIES", "#558b2f"),
 ];
 
+const LUDO_MEDAL_COUNTS: Record<string, { gold: number; silver: number; bronze: number }> = {
+  "PRE-MED": { gold: 1, silver: 0, bronze: 0 },
+  CBG: { gold: 0, silver: 1, bronze: 0 },
+  BCH: { gold: 0, silver: 0, bronze: 1 },
+};
+
+const MEDAL_POINTS = { gold: 5, silver: 3, bronze: 1 };
+
 type MedalDisplayRow = {
   department_id: string;
   department_abbr: string;
@@ -118,19 +126,30 @@ export default function MedalTable() {
 
 function buildMedalRows(departments: Department[], medalRows: MedalRow[]): MedalDisplayRow[] {
   const medalByDepartment = new Map(medalRows.map((row) => [row.department_id, row]));
+  const hasApiMedals = medalRows.some((row) => row.gold + row.silver + row.bronze > 0);
 
   const rows = departments.map((department) => {
     const medals = medalByDepartment.get(department.id);
+    const fallback = hasApiMedals
+      ? { gold: 0, silver: 0, bronze: 0 }
+      : (LUDO_MEDAL_COUNTS[department.abbreviation] ?? { gold: 0, silver: 0, bronze: 0 });
+    const gold = medals?.gold ?? fallback.gold;
+    const silver = medals?.silver ?? fallback.silver;
+    const bronze = medals?.bronze ?? fallback.bronze;
+    const totalPoints =
+      medals?.total_points ??
+      gold * MEDAL_POINTS.gold + silver * MEDAL_POINTS.silver + bronze * MEDAL_POINTS.bronze;
+
     return {
       department_id: department.id,
       department_abbr: department.abbreviation,
       department_name: department.name,
       logo_url: getDepartmentLogoUrl(department.abbreviation, department.logo_url),
       primary_color: department.primary_color,
-      gold: medals?.gold ?? 0,
-      silver: medals?.silver ?? 0,
-      bronze: medals?.bronze ?? 0,
-      total_points: medals?.total_points ?? 0,
+      gold,
+      silver,
+      bronze,
+      total_points: totalPoints,
       position: 0,
     };
   });
