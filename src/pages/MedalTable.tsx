@@ -215,8 +215,8 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
             </p>
             {isTopThree && <TopThreeStar />}
           </div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/42">
-            {row.department_name} / {row.total_points} pts
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/42">
+            {row.total_points} pts
           </p>
         </div>
       </div>
