@@ -4,12 +4,40 @@ import type {
   Announcement,
   Department,
   Fixture,
+  MatchEvent,
   MedalRow,
   Sponsor,
   Sport,
   Standing,
+  StatusOut,
   Tournament,
 } from "@/types";
+
+export type ScoreFixtureBody = {
+  expected_version: number;
+  home_score?: number;
+  away_score?: number;
+  home_delta?: number;
+  away_delta?: number;
+  period?: string;
+  clock_text?: string;
+  home_sets?: number;
+  away_sets?: number;
+  extra?: Record<string, unknown>;
+  idempotency_key?: string;
+};
+
+export type AnnouncementCreateBody = {
+  title: string;
+  body: string;
+  type?: string;
+  is_urgent?: boolean;
+  sport_id?: string | null;
+  department_id?: string | null;
+  fixture_id?: string | null;
+  publish?: boolean;
+  expires_at?: string | null;
+};
 
 export const http = axios.create({
   baseURL: config.apiBaseUrl,
@@ -84,10 +112,51 @@ export const api = {
   logout: () => http.post("/auth/logout"),
 
   // Admin / score-official actions
+  adminFixtures: (params?: { sport?: string; status?: string; include_drafts?: boolean }) =>
+    http.get<Fixture[]>("/admin/fixtures", { params }).then((r) => r.data),
+  adminAnnouncements: () =>
+    http.get<Announcement[]>("/admin/announcements").then((r) => r.data),
+  updateFixture: (
+    id: string,
+    body: {
+      scheduled_start?: string | null;
+      scheduled_end?: string | null;
+      round_name?: string | null;
+      match_day?: number | null;
+      label?: string | null;
+      published?: boolean;
+    },
+  ) => http.patch<Fixture>(`/admin/fixtures/${id}`, body).then((r) => r.data),
   startFixture: (id: string) =>
-    http.post(`/admin/fixtures/${id}/start`).then((r) => r.data),
-  scoreFixture: (id: string, body: { expected_version: number; home_delta?: number; away_delta?: number }) =>
-    http.post(`/admin/fixtures/${id}/score`, body).then((r) => r.data),
+    http.post<StatusOut>(`/admin/fixtures/${id}/start`).then((r) => r.data),
+  scoreFixture: (id: string, body: ScoreFixtureBody) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/score`, body).then((r) => r.data),
+  setFixturePeriod: (
+    id: string,
+    body: { expected_version: number; period: string; current_period_number?: number; clock_text?: string },
+  ) => http.post<StatusOut>(`/admin/fixtures/${id}/period`, body).then((r) => r.data),
+  addFixtureEvent: (
+    id: string,
+    body: { type: string; team_id?: string | null; minute?: number | null; period?: string | null; detail?: string | null },
+  ) => http.post<MatchEvent>(`/admin/fixtures/${id}/events`, body).then((r) => r.data),
+  pauseFixture: (id: string) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/pause`).then((r) => r.data),
+  resumeFixture: (id: string) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/resume`).then((r) => r.data),
   completeFixture: (id: string, expected_version: number) =>
-    http.post(`/admin/fixtures/${id}/complete`, { expected_version }).then((r) => r.data),
+    http.post<StatusOut>(`/admin/fixtures/${id}/complete`, { expected_version }).then((r) => r.data),
+  reopenFixture: (id: string, reason: string) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/reopen`, { reason }).then((r) => r.data),
+  correctFixture: (id: string, body: { home_score?: number; away_score?: number; reason: string }) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/correct`, body).then((r) => r.data),
+  postponeFixture: (id: string, reason: string) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/postpone`, { reason }).then((r) => r.data),
+  cancelFixture: (id: string, reason: string) =>
+    http.post<StatusOut>(`/admin/fixtures/${id}/cancel`, { reason }).then((r) => r.data),
+  rescheduleFixture: (
+    id: string,
+    body: { scheduled_start?: string | null; scheduled_end?: string | null; reason?: string | null },
+  ) => http.post<Fixture>(`/admin/fixtures/${id}/reschedule`, body).then((r) => r.data),
+  createAnnouncement: (body: AnnouncementCreateBody) =>
+    http.post<Announcement>("/admin/announcements", body).then((r) => r.data),
 };

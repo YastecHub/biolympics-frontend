@@ -158,6 +158,22 @@ export interface Announcement {
   expires_at: string | null;
 }
 
+export interface MatchEvent {
+  id: string;
+  type: string;
+  team_id: string | null;
+  minute: number | null;
+  period: string | null;
+  detail: string | null;
+  created_at: string;
+}
+
+export interface StatusOut {
+  status: FixtureStatus;
+  version: number;
+  message?: string | null;
+}
+
 export interface Sponsor {
   id: string;
   name: string;
