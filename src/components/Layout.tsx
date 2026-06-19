@@ -57,7 +57,9 @@ export function Layout({ children }: { children: ReactNode }) {
         <footer className="border-t border-white/10 bg-[#02120e]/80 px-4 py-8 text-sm text-white/62">
           <div className="mx-auto flex max-w-6xl flex-col gap-2">
             <p className="font-display text-lg font-bold text-white">BIOLYMPICS LIVE</p>
-            <p>Faculty of Life Sciences Dean&apos;s Games 2026 - June 19-27 - Africa/Lagos</p>
+            <p>Faculty of Life Sciences Biolympics 2026</p>
+            <p>June 19th to June 27th</p>
+            <p>University of Lagos, Lagos, Nigeria.</p>
             <p className="text-xs">
               All times shown in West Africa Time (WAT). Live scores update automatically.
             </p>

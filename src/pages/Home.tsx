@@ -158,10 +158,10 @@ export default function Home() {
 
       <footer className="relative mx-auto mt-14 max-w-5xl text-center text-white/60">
         <p className="font-display text-3xl font-bold text-brand-lime">
-          BIOLYMPICS {year}
+          Faculty of Life Sciences Biolympics {year}
         </p>
-        <p className="mt-1 font-display text-lg font-bold italic">Beyond the Lab</p>
-        <p className="mt-3 text-sm">University of Lagos Life Science Students&apos; Association</p>
+        <p className="mt-1 text-sm font-semibold">June 19th to June 27th</p>
+        <p className="mt-1 text-sm">University of Lagos, Lagos, Nigeria.</p>
       </footer>
     </div>
   );
