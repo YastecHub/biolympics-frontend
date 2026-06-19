@@ -9,6 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
+      injectRegister: "auto",
       includeAssets: ["assets/ullssa-logo-mark.png"],
       manifest: {
         name: "BIOLYMPICS LIVE",
@@ -23,6 +24,9 @@ export default defineConfig({
         ],
       },
       workbox: {
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         // Cache schedule/sports/departments/results for offline viewing.
         runtimeCaching: [
           {
