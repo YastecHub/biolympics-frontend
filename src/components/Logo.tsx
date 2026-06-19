@@ -17,7 +17,7 @@ export function Logo({
       alt="ULLSSA"
       width={size}
       height={size}
-      className="shrink-0 rounded-full object-cover"
+      className="shrink-0 rounded-full object-contain"
       style={{ width: size, height: size }}
     />
   );
