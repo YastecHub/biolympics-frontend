@@ -226,7 +226,7 @@ const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
           round: "Semi Final",
           matches: [
             { home: "BCH", away: "PRE-MED", winner: "BCH" },
-            { home: "CBG", away: "FISHERIES", note: "To be completed" },
+            { home: "CBG", away: "FISHERIES", winner: "CBG" },
           ],
         },
         {
