@@ -66,7 +66,7 @@ const HOME_SPORTS: HomeSport[] = [
 ];
 
 const TODAY_SPORTS = [
-  { name: "Marathon", time: "6 AM", meta: "Register from the app", route: "/sports/marathon", icon: "marathon" },
+  { name: "Marathon", time: "6 AM", meta: "Registration closed", route: "/sports/marathon", icon: "marathon" },
   { name: "Female football", time: "11 AM", meta: "ISL Football Pitch", route: "/sports/female-football", icon: "football" },
   { name: "Male football", time: "12:45 PM", meta: "ISL Football Pitch", route: "/sports/male-football", icon: "football" },
 ];

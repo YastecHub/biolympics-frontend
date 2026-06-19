@@ -503,7 +503,6 @@ const TABLE_TENNIS_MATCHES: TableTennisMatch[] = (["Male", "Female"] as const).f
     })),
 );
 
-const MARATHON_REGISTRATION_URL = "https://forms.gle/TWuKfXSNWCxFaHM49";
 const FOOTBALL_MATCHDAY_DATE = "20/06/2026";
 const FOOTBALL_VENUE = "ISL Football Pitch";
 
@@ -1737,7 +1736,7 @@ function MarathonDetail() {
     const url = `${window.location.origin}/sports/marathon`;
     navigator.share?.({
       title: "ULLSSA Marathon 2026",
-      text: "Register for the ULLSSA Marathon happening today by 6 AM.",
+      text: "The ULLSSA Marathon is happening today by 6 AM. Registration has closed.",
       url,
     }).catch(() => {});
   }
@@ -1746,20 +1745,15 @@ function MarathonDetail() {
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="The Dean's Games marathon is happening today. Register from the app, show up for your department and start the day with the faculty community."
+        subtitle="The Dean's Games marathon is happening today. Registration has closed, but the race details remain available for participants and supporters."
         label="Home"
-        meta="Today - 6 AM prompt - registration open"
+        meta="Today - 6 AM prompt - registration closed"
         icon={sportIcon("marathon")}
         action={
           <div className="flex flex-wrap gap-2">
-            <a
-              href={MARATHON_REGISTRATION_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-accent"
-            >
-              Register now
-            </a>
+            <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-white/68 ring-1 ring-white/15">
+              Registration closed
+            </span>
             <FollowButton following={following} onClick={() => toggle("marathon")} label="sport" />
           </div>
         }
@@ -1771,14 +1765,14 @@ function MarathonDetail() {
             {sportIcon("marathon")}
           </span>
           <p className="relative text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
-            Race day registration
+            Race day notice
           </p>
           <h2 className="relative mt-2 font-display text-4xl font-bold">
             Saturday, June 20
           </h2>
           <p className="relative mt-2 max-w-xl text-sm leading-6 text-white/66">
-            Registration is open through BIOLYMPICS LIVE. Pick your category, submit your
-            details and get ready to run.
+            Registration has closed. Participants can still use this page to confirm the
+            race time, starting point and categories before heading out.
           </p>
           <div className="relative mt-5 grid gap-3 sm:grid-cols-2">
             <MarathonInfoCard label="Start time" value="6 AM prompt" />
@@ -1788,17 +1782,12 @@ function MarathonDetail() {
           </div>
 
           <div className="relative mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/12 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-brand-accent">
-            Registration closes by 11:59PM tonight.
+            Registration has closed. Race starts by 6 AM.
           </div>
 
-          <a
-            href={MARATHON_REGISTRATION_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-accent relative mt-5 w-full justify-center sm:w-auto"
-          >
-            Register for marathon
-          </a>
+          <span className="relative mt-5 inline-flex w-full justify-center rounded-full bg-white/10 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white/60 ring-1 ring-white/15 sm:w-auto">
+            Registration closed
+          </span>
           <button
             type="button"
             className="btn-ghost relative mt-3 w-full justify-center sm:ml-2 sm:w-auto"
@@ -1813,7 +1802,7 @@ function MarathonDetail() {
             Why everyone should see this
           </p>
           <h2 className="mt-2 font-display text-3xl font-bold">
-            Register, run, represent
+            Run, represent, support
           </h2>
           <div className="mt-4 space-y-3 text-sm leading-6 text-white/68">
             <p>
@@ -1821,12 +1810,12 @@ function MarathonDetail() {
               of the Dean&apos;s Games, built for endurance, wellness and department pride.
             </p>
             <p>
-              Whether you run competitively or simply want to challenge yourself, this is the
-              easiest place to register and stay connected to the event.
+              Whether you are running competitively or cheering your department on, this is the
+              easiest place to stay connected to the event details.
             </p>
           </div>
           <div className="mt-5 grid gap-3">
-            {["Register from the app", "Represent your department", "Run with the faculty", "6 AM prompt"].map((item) => (
+            {["Registration closed", "Represent your department", "Run with the faculty", "6 AM prompt"].map((item) => (
               <div key={item} className="rounded-2xl bg-white/8 p-3 font-bold ring-1 ring-white/10">
                 {item}
               </div>
