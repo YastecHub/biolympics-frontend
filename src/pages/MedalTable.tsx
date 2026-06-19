@@ -17,10 +17,6 @@ const FALLBACK_DEPARTMENTS: Department[] = [
   fallbackDepartment("fisheries", "Fisheries", "FISHERIES", "#558b2f"),
 ];
 
-const DEPARTMENT_ORDER = new Map(
-  FALLBACK_DEPARTMENTS.map((department, index) => [department.abbreviation, index]),
-);
-
 type MedalDisplayRow = {
   department_id: string;
   department_abbr: string;
@@ -43,7 +39,7 @@ export default function MedalTable() {
     [departmentList, medals.data],
   );
   const hasMedals = rows.some((row) => row.gold + row.silver + row.bronze > 0);
-  const leader = hasMedals ? rows[0] : null;
+  const leader = hasMedals ? [...rows].sort(compareMedalRank)[0] : null;
 
   if (departments.isLoading && !rows.length) {
     return <CardSkeleton count={4} />;
@@ -103,9 +99,9 @@ export default function MedalTable() {
         <div className="relative grid grid-cols-[2.5rem_minmax(0,1fr)_repeat(3,2.6rem)] items-center gap-2 border-b border-white/10 px-3 py-4 text-xs font-black uppercase tracking-[0.14em] text-white/48 sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:px-5">
           <span>#</span>
           <span>Department</span>
-          <MedalHeader tone="gold" label="G" />
-          <MedalHeader tone="silver" label="S" />
-          <MedalHeader tone="bronze" label="B" />
+          <MedalHeader tone="gold" label="Gold" />
+          <MedalHeader tone="silver" label="Silver" />
+          <MedalHeader tone="bronze" label="Bronze" />
         </div>
 
         <div className="relative divide-y divide-white/8">
@@ -136,21 +132,20 @@ function buildMedalRows(departments: Department[], medalRows: MedalRow[]): Medal
         position: 0,
       };
     })
-    .sort((a, b) => {
-      const byPoints = b.total_points - a.total_points;
-      if (byPoints) return byPoints;
-      const byGold = b.gold - a.gold;
-      if (byGold) return byGold;
-      const bySilver = b.silver - a.silver;
-      if (bySilver) return bySilver;
-      const byBronze = b.bronze - a.bronze;
-      if (byBronze) return byBronze;
-      return (
-        (DEPARTMENT_ORDER.get(a.department_abbr) ?? 999) -
-        (DEPARTMENT_ORDER.get(b.department_abbr) ?? 999)
-      );
-    })
+    .sort((a, b) => a.department_name.localeCompare(b.department_name))
     .map((row, index) => ({ ...row, position: index + 1 }));
+}
+
+function compareMedalRank(a: MedalDisplayRow, b: MedalDisplayRow) {
+  const byPoints = b.total_points - a.total_points;
+  if (byPoints) return byPoints;
+  const byGold = b.gold - a.gold;
+  if (byGold) return byGold;
+  const bySilver = b.silver - a.silver;
+  if (bySilver) return bySilver;
+  const byBronze = b.bronze - a.bronze;
+  if (byBronze) return byBronze;
+  return a.department_name.localeCompare(b.department_name);
 }
 
 function fallbackDepartment(
@@ -220,24 +215,29 @@ function DepartmentMark({ abbr, color }: { abbr: string; color: string }) {
 function MedalHeader({ tone, label }: { tone: "gold" | "silver" | "bronze"; label: string }) {
   return (
     <span className="grid justify-items-center gap-1">
-      <span className={`h-8 w-8 rounded-full ${medalTone(tone)} shadow-lg`} />
-      <span>{label}</span>
+      <span className="text-3xl drop-shadow-lg" aria-hidden>
+        {medalEmoji(tone)}
+      </span>
+      <span className="hidden sm:inline">{label}</span>
     </span>
   );
 }
 
 function MedalCount({ tone, value }: { tone: "gold" | "silver" | "bronze"; value: number }) {
   return (
-    <span className="grid justify-items-center">
-      <span className={`grid h-9 w-9 place-items-center rounded-full text-sm font-black text-[#06150f] ${medalTone(tone)}`}>
+    <span className="grid justify-items-center gap-0.5">
+      <span className="text-3xl drop-shadow-lg" aria-hidden>
+        {medalEmoji(tone)}
+      </span>
+      <span className="font-display text-base font-bold leading-none text-white sm:text-lg">
         {value}
       </span>
     </span>
   );
 }
 
-function medalTone(tone: "gold" | "silver" | "bronze") {
-  if (tone === "gold") return "bg-gradient-to-br from-yellow-200 via-brand-accent to-yellow-700";
-  if (tone === "silver") return "bg-gradient-to-br from-white via-slate-300 to-slate-500";
-  return "bg-gradient-to-br from-orange-200 via-orange-500 to-amber-900";
+function medalEmoji(tone: "gold" | "silver" | "bronze") {
+  if (tone === "gold") return "🥇";
+  if (tone === "silver") return "🥈";
+  return "🥉";
 }
