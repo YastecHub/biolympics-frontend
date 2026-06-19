@@ -569,8 +569,8 @@ function FixtureManageCard({
         >
           <label className="text-xs font-bold uppercase tracking-[0.16em] text-white/45">Correct result</label>
           <div className="mt-2 grid grid-cols-[1fr_1fr_auto] gap-2">
-            <input className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm" value={homeScore} onChange={(e) => setHomeScore(e.target.value)} inputMode="numeric" />
-            <input className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm" value={awayScore} onChange={(e) => setAwayScore(e.target.value)} inputMode="numeric" />
+            <input className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm" value={homeScore} onChange={(e) => setHomeScore(e.target.value)} inputMode="numeric" placeholder="Home" title="Home score" />
+            <input className="rounded-lg border border-white/15 bg-white/10 px-3 py-2 text-sm" value={awayScore} onChange={(e) => setAwayScore(e.target.value)} inputMode="numeric" placeholder="Away" title="Away score" />
             <button className="btn-accent" type="submit">Apply</button>
           </div>
         </form>

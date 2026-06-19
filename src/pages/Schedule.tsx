@@ -156,8 +156,8 @@ export default function Schedule() {
         <p className="text-sm">
           Biolympics 2026 · <span className="font-semibold text-white">Beyond the Lab</span>
         </p>
-        <Link to="/sports" className="rounded-full bg-brand-lime px-5 py-2 text-sm font-bold text-brand-secondary transition hover:-translate-y-0.5">
-          Browse sports
+        <Link to="/admin/login" className="rounded-full bg-brand-lime px-5 py-2 text-sm font-bold text-brand-secondary transition hover:-translate-y-0.5">
+          Official login
         </Link>
       </footer>
     </div>
