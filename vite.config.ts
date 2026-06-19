@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: ["assets/ullssa-logo-mark.png"],
       manifest: {
         name: "BIOLYMPICS LIVE",
         short_name: "Biolympics",
@@ -19,8 +19,7 @@ export default defineConfig({
         display: "standalone",
         start_url: "/",
         icons: [
-          { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
-          { src: "/favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+          { src: "/assets/ullssa-logo-mark.png", sizes: "64x64", type: "image/png", purpose: "any" },
         ],
       },
       workbox: {
