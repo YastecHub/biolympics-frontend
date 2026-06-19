@@ -98,6 +98,7 @@ export function MatchupTeams({
   awayLogo,
   center = "vs",
   centerClassName = "text-xs font-bold uppercase text-white/42",
+  layout = "inline",
 }: {
   home: string | null;
   away: string | null;
@@ -109,7 +110,20 @@ export function MatchupTeams({
   awayLogo?: string | null;
   center?: ReactNode;
   centerClassName?: string;
+  layout?: "inline" | "stacked";
 }) {
+  if (layout === "stacked") {
+    return (
+      <div className="grid w-full grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] items-center gap-2 sm:gap-4">
+        <TeamStack abbr={home} color={homeColor} name={homeName} logoUrl={homeLogo} align="left" />
+        <span className={`justify-self-center text-center ${centerClassName}`}>
+          {center}
+        </span>
+        <TeamStack abbr={away} color={awayColor} name={awayName} logoUrl={awayLogo} align="right" />
+      </div>
+    );
+  }
+
   return (
     <div className="grid w-full grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] items-center gap-2 sm:gap-4">
       <div className="min-w-0 justify-self-start">
@@ -122,6 +136,45 @@ export function MatchupTeams({
         <DepartmentBadge abbr={away} color={awayColor} name={awayName} logoUrl={awayLogo} />
       </div>
     </div>
+  );
+}
+
+function TeamStack({
+  abbr,
+  color,
+  name,
+  logoUrl,
+  align,
+}: {
+  abbr: string | null;
+  color?: string | null;
+  name?: string | null;
+  logoUrl?: string | null;
+  align: "left" | "right";
+}) {
+  const resolvedLogo = getDepartmentLogoUrl(abbr, logoUrl);
+  const displayAbbr = displayDepartmentAbbr(abbr);
+
+  return (
+    <span
+      className={`flex min-w-0 flex-col gap-1.5 ${align === "right" ? "items-end text-right" : "items-start text-left"}`}
+      title={name ?? abbr ?? ""}
+    >
+      <span
+        className="grid h-11 w-11 place-items-center overflow-hidden rounded-xl bg-white text-[10px] font-bold text-white ring-1 ring-white/20 sm:h-12 sm:w-12"
+        style={{ backgroundColor: resolvedLogo ? "#fff" : (color ?? "rgb(var(--c-primary))") }}
+        aria-hidden
+      >
+        {resolvedLogo ? (
+          <img src={resolvedLogo} alt="" className="h-full w-full object-contain p-1" decoding="async" />
+        ) : (
+          displayAbbr.slice(0, 3)
+        )}
+      </span>
+      <span className="max-w-full truncate font-display text-lg font-bold uppercase leading-none tracking-normal text-white sm:text-xl">
+        {displayAbbr}
+      </span>
+    </span>
   );
 }
 

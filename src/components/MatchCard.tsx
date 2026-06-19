@@ -1,21 +1,44 @@
 import { Link } from "react-router-dom";
 import type { Fixture } from "@/types";
 import { LIVE_STATUSES } from "@/types";
+import { displayDepartmentAbbr, getDepartmentLogoUrl } from "@/lib/departmentLogos";
 import { formatDateTime, timeAgo } from "@/lib/time";
-import { DepartmentBadge, LiveBadge } from "./ui";
+import { LiveBadge } from "./ui";
 
-function Side({ team, score }: { team: Fixture["home"]; score?: number }) {
+function FixtureTeam({
+  team,
+  align,
+  won,
+}: {
+  team: Fixture["home"];
+  align: "left" | "right";
+  won: boolean;
+}) {
+  const abbr = team?.department_abbr ?? null;
+  const logo = getDepartmentLogoUrl(abbr, team?.logo_url);
+  const displayAbbr = displayDepartmentAbbr(abbr);
+
   return (
-    <div className="flex items-center justify-between gap-2">
-      <DepartmentBadge
-        abbr={team?.department_abbr ?? null}
-        color={team?.primary_color}
-        name={team?.department_name}
-        logoUrl={team?.logo_url}
-      />
-      {score != null && (
-        <span className="font-display text-2xl font-bold tabular-nums">{score}</span>
-      )}
+    <div
+      className={`flex min-w-0 flex-col gap-1.5 ${align === "right" ? "items-end text-right" : "items-start text-left"} ${
+        won ? "text-white" : "text-white/82"
+      }`}
+      title={team?.department_name ?? displayAbbr}
+    >
+      <span
+        className="grid h-11 w-11 place-items-center overflow-hidden rounded-xl bg-white text-[10px] font-black text-white ring-1 ring-white/20"
+        style={{ backgroundColor: logo ? "#fff" : (team?.primary_color ?? "rgb(var(--c-primary))") }}
+        aria-hidden
+      >
+        {logo ? (
+          <img src={logo} alt="" className="h-full w-full object-contain p-1" decoding="async" />
+        ) : (
+          displayAbbr.slice(0, 3)
+        )}
+      </span>
+      <span className="max-w-full truncate font-display text-lg font-bold uppercase leading-none tracking-normal">
+        {displayAbbr}
+      </span>
     </div>
   );
 }
@@ -31,9 +54,18 @@ export function MatchCard({ fx }: { fx: Fixture }) {
   const awayWon = isDone && (awayScore ?? 0) > (homeScore ?? 0);
 
   // For announcements/screen-readers: a concise score summary.
-  const srLabel = `${fx.home?.department_abbr ?? "?"} ${homeScore ?? ""} ${
-    fx.away?.department_abbr ?? "?"
+  const srLabel = `${displayDepartmentAbbr(fx.home?.department_abbr)} ${homeScore ?? ""} ${
+    displayDepartmentAbbr(fx.away?.department_abbr)
   } ${awayScore ?? ""} ${fx.status}`;
+  const centerLabel = live ? (
+    <span className="flex items-center justify-center gap-1 font-display text-2xl font-bold tabular-nums text-white">
+      <span>{homeScore}</span>
+      <span className="text-white/35">-</span>
+      <span>{awayScore}</span>
+    </span>
+  ) : (
+    <span className="rounded-full bg-white/10 px-3 py-1 font-display text-lg font-bold uppercase text-white">vs</span>
+  );
 
   return (
     <Link
@@ -47,13 +79,10 @@ export function MatchCard({ fx }: { fx: Fixture }) {
       </div>
 
       {fx.home || fx.away ? (
-        <div className="space-y-1">
-          <div className={homeWon ? "font-bold" : ""}>
-            <Side team={fx.home} score={homeScore} />
-          </div>
-          <div className={awayWon ? "font-bold" : ""}>
-            <Side team={fx.away} score={awayScore} />
-          </div>
+        <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2">
+          <FixtureTeam team={fx.home} align="left" won={homeWon} />
+          <span className="justify-self-center text-center">{centerLabel}</span>
+          <FixtureTeam team={fx.away} align="right" won={awayWon} />
         </div>
       ) : (
         <p className="py-2 font-semibold text-muted">

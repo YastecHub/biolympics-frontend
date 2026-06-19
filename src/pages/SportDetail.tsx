@@ -47,6 +47,8 @@ type FootballMatch = {
   matchDay: string;
   home: string;
   away: string;
+  scheduledTime?: string;
+  venue?: string;
 };
 
 type MixedSportMatch = {
@@ -502,6 +504,8 @@ const TABLE_TENNIS_MATCHES: TableTennisMatch[] = (["Male", "Female"] as const).f
 );
 
 const MARATHON_REGISTRATION_URL = "https://forms.gle/TWuKfXSNWCxFaHM49";
+const FOOTBALL_MATCHDAY_DATE = "20/06/2026";
+const FOOTBALL_VENUE = "ISL Football Pitch";
 
 const MALE_FOOTBALL_GROUPS = {
   "Group A": ["BTN", "CBG", "MSM", "MIC"],
@@ -514,22 +518,22 @@ const FEMALE_FOOTBALL_POTS = {
 } as const;
 
 const FOOTBALL_MATCHES: FootballMatch[] = [
-  { id: "male-a-md1-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "BTN", away: "CBG" },
-  { id: "male-a-md1-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "MSM", away: "MIC" },
+  { id: "male-b-md1-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "PRE-MED", away: "FISHERIES", scheduledTime: "12:45 PM", venue: FOOTBALL_VENUE },
+  { id: "male-a-md1-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "MIC", away: "MSM", scheduledTime: "1:45 PM", venue: FOOTBALL_VENUE },
+  { id: "male-a-md1-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "BTN", away: "CBG", scheduledTime: "2:45 PM", venue: FOOTBALL_VENUE },
+  { id: "male-b-md1-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "ZLY", away: "BCH", scheduledTime: "3:45 PM", venue: FOOTBALL_VENUE },
   { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM" },
   { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "CBG", away: "MIC" },
   { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "BTN", away: "MIC" },
   { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM" },
-  { id: "male-b-md1-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "ZLY", away: "BCH" },
-  { id: "male-b-md1-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "PRE-MED", away: "FISHERIES" },
   { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED" },
   { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES" },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES" },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "BCH", away: "PRE-MED" },
-  { id: "female-ko-1", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "MSM", away: "MIC" },
-  { id: "female-ko-2", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "ZLY", away: "BTN" },
-  { id: "female-ko-3", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "FISHERIES", away: "PRE-MED" },
-  { id: "female-ko-4", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "BCH", away: "CBG" },
+  { id: "female-ko-1", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "MIC", away: "MSM", scheduledTime: "11:00 AM", venue: FOOTBALL_VENUE },
+  { id: "female-ko-2", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "BTN", away: "ZLY", scheduledTime: "11:30 AM", venue: FOOTBALL_VENUE },
+  { id: "female-ko-3", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "FISHERIES", away: "PRE-MED", scheduledTime: "12:00 PM", venue: FOOTBALL_VENUE },
+  { id: "female-ko-4", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "CBG", away: "BCH", scheduledTime: "12:30 PM", venue: FOOTBALL_VENUE },
 ];
 
 export default function SportDetail() {
@@ -2058,6 +2062,8 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
           </div>
         </div>
 
+        <FootballMatchdayBriefing gender={gender} />
+
         {view === "table" ? (
           gender === "male" ? (
             <div className="space-y-5">
@@ -2127,8 +2133,8 @@ function FootballMatchDetail({ matchId }: { matchId: string }) {
   return (
     <div className="space-y-7">
       <SportHero
-        title={`${match.home} vs ${match.away}`}
-        subtitle="Match information, scoreline, goal scorers, assists and highlights will live here once the game is played."
+        title={`${displayDepartmentAbbr(match.home)} vs ${displayDepartmentAbbr(match.away)}`}
+        subtitle={`${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, goal scorers, assists and highlights will live here once the game is played.`}
         label="Home"
         meta={`${match.gender} football - ${match.stage} - ${match.matchDay}`}
         icon={sportIcon("football")}
@@ -2181,6 +2187,37 @@ function FootballFixturesList({
         ))}
       </div>
     </section>
+  );
+}
+
+function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
+  return (
+    <article className="relative overflow-hidden rounded-2xl border border-brand-lime/25 bg-brand-lime/10 p-4 ring-1 ring-brand-lime/10">
+      <span className="absolute -right-4 -top-8 text-7xl opacity-[0.08]" aria-hidden>
+        {sportIcon("football")}
+      </span>
+      <div className="relative flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+            {gender === "male" ? "Male football matchday" : "Female knockout stage"}
+          </p>
+          <h3 className="mt-1 font-display text-2xl font-bold text-white">
+            {gender === "male"
+              ? "Group stage kicks off at the ISL Football Pitch"
+              : "The queens are set to battle for glory"}
+          </h3>
+          <p className="mt-1 max-w-2xl text-sm text-white/64">
+            {gender === "male"
+              ? "Four group-stage games are lined up tomorrow, starting with PRE-MED vs FSH."
+              : "Female Football Knockout Stage kicks off on Saturday 20th. One win moves each team closer to the crown."}
+          </p>
+        </div>
+        <div className="grid min-w-48 gap-1 rounded-xl bg-black/15 p-3 text-sm ring-1 ring-white/10">
+          <span className="font-bold text-white">{FOOTBALL_MATCHDAY_DATE}</span>
+          <span className="text-white/62">{FOOTBALL_VENUE}</span>
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -2283,11 +2320,13 @@ function FootballMatchCard({
           awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
           centerClassName=""
+          layout="stacked"
         />
       </div>
-      <p className="relative mt-3 text-xs font-semibold text-white/48">
-        View match details
-      </p>
+      <div className="relative mt-3 flex flex-wrap items-center justify-between gap-2 text-xs font-bold uppercase tracking-[0.14em]">
+        <span className="text-brand-lime">{match.scheduledTime ?? "Time TBA"}</span>
+        <span className="text-white/45">{match.venue ?? "Venue TBA"}</span>
+      </div>
     </Link>
   );
 }
@@ -2338,9 +2377,10 @@ function MatchDetailPanel({
           awayLogo={departments.get(match.away)?.logo_url}
           center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
           centerClassName=""
+          layout="stacked"
         />
         <p className="mt-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-          Scoreline pending
+          {match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
         </p>
       </div>
 

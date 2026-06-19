@@ -66,9 +66,9 @@ const HOME_SPORTS: HomeSport[] = [
 ];
 
 const TOMORROW_SPORTS = [
-  { name: "Marathon", time: "6 AM", route: "/sports/marathon", icon: "marathon" },
-  { name: "Female football", time: "11 AM", route: "/sports/female-football", icon: "football" },
-  { name: "Male football", time: "Time TBA", route: "/sports/male-football", icon: "football" },
+  { name: "Marathon", time: "6 AM", meta: "Register from the app", route: "/sports/marathon", icon: "marathon" },
+  { name: "Female football", time: "11 AM", meta: "ISL Football Pitch", route: "/sports/female-football", icon: "football" },
+  { name: "Male football", time: "12:45 PM", meta: "ISL Football Pitch", route: "/sports/male-football", icon: "football" },
 ];
 
 function yearFromRange(start?: string | null) {
@@ -200,6 +200,9 @@ function HeroUpdateNotice() {
               </span>
               <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
                 {sport.time}
+              </span>
+              <span className="mt-1 block truncate text-[11px] font-semibold text-white/48">
+                {sport.meta}
               </span>
             </span>
           </Link>
