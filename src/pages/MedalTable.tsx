@@ -119,24 +119,23 @@ export default function MedalTable() {
 function buildMedalRows(departments: Department[], medalRows: MedalRow[]): MedalDisplayRow[] {
   const medalByDepartment = new Map(medalRows.map((row) => [row.department_id, row]));
 
-  return departments
-    .map((department) => {
-      const medals = medalByDepartment.get(department.id);
-      return {
-        department_id: department.id,
-        department_abbr: department.abbreviation,
-        department_name: department.name,
-        logo_url: getDepartmentLogoUrl(department.abbreviation, department.logo_url),
-        primary_color: department.primary_color,
-        gold: medals?.gold ?? 0,
-        silver: medals?.silver ?? 0,
-        bronze: medals?.bronze ?? 0,
-        total_points: medals?.total_points ?? 0,
-        position: 0,
-      };
-    })
-    .sort((a, b) => a.department_name.localeCompare(b.department_name))
-    .map((row, index) => ({ ...row, position: index + 1 }));
+  const rows = departments.map((department) => {
+    const medals = medalByDepartment.get(department.id);
+    return {
+      department_id: department.id,
+      department_abbr: department.abbreviation,
+      department_name: department.name,
+      logo_url: getDepartmentLogoUrl(department.abbreviation, department.logo_url),
+      primary_color: department.primary_color,
+      gold: medals?.gold ?? 0,
+      silver: medals?.silver ?? 0,
+      bronze: medals?.bronze ?? 0,
+      total_points: medals?.total_points ?? 0,
+      position: 0,
+    };
+  });
+
+  return rows.sort(compareMedalRank).map((row, index) => ({ ...row, position: index + 1 }));
 }
 
 function compareMedalRank(a: MedalDisplayRow, b: MedalDisplayRow) {

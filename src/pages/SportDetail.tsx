@@ -31,6 +31,39 @@ const INDOOR_PAIRINGS = [
   ["MSM", "FISHERIES"],
 ] as const;
 
+const LUDO_RESULTS = [
+  {
+    round: "Quarter Final",
+    matches: [
+      { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+      { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
+      { home: "CBG", away: "ZLY", homeScore: 2, awayScore: 1 },
+      { home: "MSM", away: "FISHERIES", homeScore: 0, awayScore: 2 },
+    ],
+  },
+  {
+    round: "Semi Final",
+    matches: [
+      { home: "PRE-MED", away: "BCH", homeScore: 2, awayScore: 1 },
+      { home: "FISHERIES", away: "CBG", homeScore: 0, awayScore: 2 },
+    ],
+  },
+  {
+    round: "3rd Place",
+    matches: [{ home: "FISHERIES", away: "BCH", homeScore: 0, awayScore: 2 }],
+  },
+  {
+    round: "Final",
+    matches: [{ home: "CBG", away: "PRE-MED", homeScore: 1, awayScore: 2 }],
+  },
+] as const;
+
+const LUDO_PODIUM = [
+  { place: "Gold", team: "PRE-MED" },
+  { place: "Silver", team: "CBG" },
+  { place: "Bronze", team: "BCH" },
+] as const;
+
 type FootballGender = "male" | "female";
 type FootballView = "table" | "fixtures" | "results";
 type IndoorView = "fixtures" | "results";
@@ -519,7 +552,8 @@ function IndoorGameDetail({
 }: {
   game: (typeof INDOOR_GAMES)[number];
 }) {
-  const [view, setView] = useState<IndoorView>("fixtures");
+  const isLudo = game.slug === "ludo";
+  const [view, setView] = useState<IndoorView>(isLudo ? "results" : "fixtures");
   const following = useFollowStore((s) => s.isFollowing("sports", game.slug));
   const toggle = useFollowStore((s) => s.toggleSport);
   const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
@@ -532,7 +566,11 @@ function IndoorGameDetail({
     <div className="space-y-7">
       <SportHero
         title={game.name}
-        subtitle="Indoor games use the Pot A vs Pot B fixture draw from the guide."
+        subtitle={
+          isLudo
+            ? "Ludo is complete. PRE-MED won gold, CBG took silver and BCH finished with bronze."
+            : "Indoor games use the Pot A vs Pot B fixture draw from the guide."
+        }
         label="Indoor Games"
         meta="Indoor games"
         icon={sportIcon(iconSlug)}
@@ -548,7 +586,9 @@ function IndoorGameDetail({
             </p>
             <h2 className="font-display text-3xl font-bold">{game.name}</h2>
             <p className="mt-1 max-w-2xl text-sm text-white/62">
-              Fixtures show who faces who. Results will stay empty until scores are recorded.
+              {isLudo
+                ? "Completed bracket results from quarter finals through the final."
+                : "Fixtures show who faces who. Results will stay empty until scores are recorded."}
             </p>
           </div>
 
@@ -572,6 +612,8 @@ function IndoorGameDetail({
 
         {view === "fixtures" ? (
           <IndoorGameFixtureCard game={game} departments={departmentByAbbr} />
+        ) : isLudo ? (
+          <LudoResults departments={departmentByAbbr} />
         ) : (
           <EmptyState title="No indoor results yet." hint="Completed results will appear here once the officials record them." />
         )}
@@ -685,6 +727,77 @@ function IndoorGameFixtureCard({
         ))}
       </div>
     </article>
+  );
+}
+
+function LudoResults({ departments }: { departments: Map<string, Department> }) {
+  return (
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
+      <section className="space-y-4">
+        {LUDO_RESULTS.map((round) => (
+          <article key={round.round} className="card overflow-hidden p-4">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="font-display text-2xl font-bold">{round.round}</h3>
+              <span className="rounded-full bg-brand-lime/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                Completed
+              </span>
+            </div>
+
+            <div className="grid gap-2 lg:grid-cols-2">
+              {round.matches.map((match) => (
+                <div
+                  key={`${round.round}-${match.home}-${match.away}`}
+                  className="rounded-2xl bg-white/8 px-3 py-3 ring-1 ring-white/8"
+                >
+                  <MatchupTeams
+                    home={match.home}
+                    away={match.away}
+                    homeColor={departments.get(match.home)?.primary_color}
+                    awayColor={departments.get(match.away)?.primary_color}
+                    homeName={departments.get(match.home)?.name}
+                    awayName={departments.get(match.away)?.name}
+                    homeLogo={departments.get(match.home)?.logo_url}
+                    awayLogo={departments.get(match.away)?.logo_url}
+                    center={`${match.homeScore}-${match.awayScore}`}
+                    centerClassName="font-display text-2xl font-bold tabular-nums text-brand-lime"
+                  />
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <aside className="card h-fit p-5">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
+          Ludo podium
+        </p>
+        <h3 className="mt-2 font-display text-3xl font-bold">Medal winners</h3>
+        <div className="mt-4 space-y-3">
+          {LUDO_PODIUM.map((row, index) => (
+            <div
+              key={row.place}
+              className="flex items-center justify-between gap-3 rounded-2xl bg-white/8 p-3 ring-1 ring-white/10"
+            >
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">
+                  {row.place}
+                </p>
+                <TeamChip
+                  abbr={row.team}
+                  color={departments.get(row.team)?.primary_color}
+                  name={departments.get(row.team)?.name}
+                  logoUrl={departments.get(row.team)?.logo_url}
+                />
+              </div>
+              <span className="text-3xl" aria-hidden>
+                {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </aside>
+    </div>
   );
 }
 
