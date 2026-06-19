@@ -1737,7 +1737,7 @@ function MarathonDetail() {
     const url = `${window.location.origin}/sports/marathon`;
     navigator.share?.({
       title: "ULLSSA Marathon 2026",
-      text: "Register for the ULLSSA Marathon happening tomorrow by 6 AM.",
+      text: "Register for the ULLSSA Marathon happening today by 6 AM.",
       url,
     }).catch(() => {});
   }
@@ -1746,9 +1746,9 @@ function MarathonDetail() {
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="The Dean's Games marathon is happening tomorrow. Register from the app, show up for your department and start the day with the faculty community."
+        subtitle="The Dean's Games marathon is happening today. Register from the app, show up for your department and start the day with the faculty community."
         label="Home"
-        meta="Tomorrow - 6 AM prompt - registration open"
+        meta="Today - 6 AM prompt - registration open"
         icon={sportIcon("marathon")}
         action={
           <div className="flex flex-wrap gap-2">
@@ -2208,7 +2208,7 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "Four group-stage games are lined up tomorrow, starting with PRE-MED vs FSH."
+              ? "Four group-stage games are lined up today, starting with PRE-MED vs FSH."
               : "Female Football Knockout Stage kicks off on Saturday 20th. One win moves each team closer to the crown."}
           </p>
         </div>

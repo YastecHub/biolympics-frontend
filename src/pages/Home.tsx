@@ -65,7 +65,7 @@ const HOME_SPORTS: HomeSport[] = [
   },
 ];
 
-const TOMORROW_SPORTS = [
+const TODAY_SPORTS = [
   { name: "Marathon", time: "6 AM", meta: "Register from the app", route: "/sports/marathon", icon: "marathon" },
   { name: "Female football", time: "11 AM", meta: "ISL Football Pitch", route: "/sports/female-football", icon: "football" },
   { name: "Male football", time: "12:45 PM", meta: "ISL Football Pitch", route: "/sports/male-football", icon: "football" },
@@ -179,13 +179,13 @@ function HeroUpdateNotice() {
         <span className="rounded-full bg-brand-accent/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
           News / Updates
         </span>
-        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Tomorrow</span>
+        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Today</span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
-        Tomorrow's sports lineup
+        Today's sports lineup
       </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-3">
-        {TOMORROW_SPORTS.map((sport) => (
+        {TODAY_SPORTS.map((sport) => (
           <Link
             key={sport.name}
             to={sport.route}
