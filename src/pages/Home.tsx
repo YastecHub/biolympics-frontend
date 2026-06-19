@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Logo } from "@/components/Logo";
 import { sportIcon } from "@/lib/sportIcons";
-import type { Sport } from "@/types";
+import { formatDateTime } from "@/lib/time";
+import type { Announcement, Sport } from "@/types";
 
 type HomeSport = {
   title: string;
@@ -19,49 +20,49 @@ const HOME_SPORTS: HomeSport[] = [
     slugs: ["chess", "scrabble", "ludo", "efootball", "cod-mobile", "indoor-games"],
     accent: "#9be22d",
     route: "/sports/indoor-games",
-    meta: "schedule · bracket",
+    meta: "fixtures / bracket",
   },
   {
     title: "Football",
     slugs: ["male-football", "female-football"],
     accent: "#8ddf29",
     route: "/sports/male-football",
-    meta: "schedule · table",
+    meta: "fixtures / table",
   },
   {
     title: "Track Events",
     slugs: ["athletics", "swimming"],
     accent: "#2d9cf0",
     route: "/sports/athletics",
-    meta: "heats · finals",
+    meta: "heats / finals",
   },
   {
     title: "Basketball",
     slugs: ["basketball"],
     accent: "#ff9f1c",
     route: "/sports/basketball",
-    meta: "schedule · table",
+    meta: "fixtures / draw",
   },
   {
     title: "Volleyball",
     slugs: ["volleyball"],
     accent: "#f0139a",
     route: "/sports/volleyball",
-    meta: "schedule · table",
+    meta: "fixtures / draw",
   },
   {
     title: "Table Tennis",
     slugs: ["table-tennis"],
     accent: "#38bdf8",
     route: "/sports/table-tennis",
-    meta: "schedule · bracket",
+    meta: "fixtures / bracket",
   },
   {
     title: "Marathon",
     slugs: ["marathon"],
     accent: "#f9d620",
     route: "/sports/marathon",
-    meta: "schedule · results",
+    meta: "registration / race",
   },
 ];
 
@@ -79,9 +80,11 @@ export default function Home() {
   const tournament = useQuery({ queryKey: ["tournament"], queryFn: api.currentTournament });
   const sports = useQuery({ queryKey: ["sports"], queryFn: api.sports });
   const live = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures });
+  const announcements = useQuery({ queryKey: ["announcements"], queryFn: api.announcements });
 
   const year = yearFromRange(tournament.data?.start_date);
   const liveCount = live.data?.length ?? 0;
+  const latestAnnouncement = announcements.data?.[0];
 
   return (
     <div className="festival-home relative min-h-screen overflow-hidden px-4 pb-12 text-white">
@@ -91,11 +94,11 @@ export default function Home() {
         <div className="festival-hero relative overflow-hidden rounded-[28px] border border-white/15 px-5 py-14 text-center shadow-2xl sm:px-10 sm:py-20">
           <div className="festival-sky" aria-hidden />
           <div className="festival-sports-orbit" aria-hidden>
-            <span>🏀</span>
-            <span>⚽</span>
-            <span>🏐</span>
-            <span>🏓</span>
-            <span>🎮</span>
+            <span>{sportIcon("basketball")}</span>
+            <span>{sportIcon("football")}</span>
+            <span>{sportIcon("volleyball")}</span>
+            <span>{sportIcon("table-tennis")}</span>
+            <span>{sportIcon("efootball")}</span>
           </div>
           <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-3xl bg-white/90 shadow-xl ring-1 ring-white/40 backdrop-blur">
             <Logo variant="mark" size={80} />
@@ -108,23 +111,34 @@ export default function Home() {
             {year}
           </h1>
           <p className="relative mx-auto mt-5 max-w-md font-display text-2xl font-bold italic text-white/85">
-            “Beyond the Lab”
+            "Beyond the Lab"
           </p>
 
           <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/sports" className="rounded-full bg-brand-lime px-6 py-3 text-sm font-bold text-brand-secondary shadow-lg transition hover:-translate-y-0.5">
-              Browse sports
+            <Link
+              to="/medal-table"
+              className="rounded-full bg-brand-lime px-6 py-3 text-sm font-bold text-brand-secondary shadow-lg shadow-brand-lime/20 transition hover:-translate-y-0.5 hover:shadow-brand-lime/35"
+            >
+              Overall Standings
             </Link>
-            <Link to="/schedule" className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/15">
+            <Link
+              to="/schedule"
+              className="rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
+            >
               Schedule
             </Link>
           </div>
+
+          <HeroUpdateNotice item={latestAnnouncement} isLoading={announcements.isLoading} />
         </div>
       </section>
 
       <section className="relative mx-auto mt-12 max-w-5xl" aria-labelledby="sports-heading">
         <div className="mb-6 flex items-end justify-between gap-4">
-          <h2 id="sports-heading" className="font-display text-4xl font-bold">
+          <h2
+            id="sports-heading"
+            className="font-display text-4xl font-bold text-white drop-shadow-[0_0_18px_rgb(163_230_53_/_0.38)]"
+          >
             Sports
           </h2>
           {liveCount > 0 && <Link to="/live" className="text-sm font-semibold text-brand-lime">{liveCount} live</Link>}
@@ -153,6 +167,36 @@ export default function Home() {
   );
 }
 
+function HeroUpdateNotice({
+  item,
+  isLoading,
+}: {
+  item?: Announcement;
+  isLoading: boolean;
+}) {
+  return (
+    <Link
+      to="/announcements"
+      className="relative mx-auto mt-6 flex max-w-2xl flex-col gap-2 rounded-2xl border border-white/12 bg-white/10 px-4 py-3 text-left shadow-lg shadow-black/15 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15 sm:flex-row sm:items-center"
+    >
+      <span className="shrink-0 rounded-full bg-brand-accent/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
+        News / Updates
+      </span>
+      <span className="min-w-0 flex-1 text-sm font-semibold text-white/82">
+        {isLoading
+          ? "Checking latest festival updates..."
+          : item
+            ? item.title
+            : "No updates yet. Schedule changes and announcements will appear here."}
+      </span>
+      {item?.published_at && (
+        <span className="shrink-0 text-xs text-white/45">
+          {formatDateTime(item.published_at)}
+        </span>
+      )}
+    </Link>
+  );
+}
 function SportCard({
   group,
   related,
@@ -166,7 +210,7 @@ function SportCard({
 
   return (
     <Link
-      to={primary ? `/sports/${primary.slug}` : group.route}
+      to={group.route}
       className="festival-sport-card group relative min-h-44 overflow-hidden rounded-xl border border-white/12 p-5 text-white transition hover:-translate-y-1 hover:border-white/30"
       style={{ ["--sport-accent" as string]: group.accent }}
     >
