@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { Layout } from "@/components/Layout";
 import { PageSkeleton } from "@/components/Skeletons";
 
@@ -23,29 +24,32 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 
 export default function App() {
   return (
-    <Layout>
-      <Suspense fallback={<PageSkeleton />}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/live" element={<Live />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/fixtures" element={<Fixtures />} />
-          <Route path="/results" element={<Results />} />
-          <Route path="/sports" element={<Sports />} />
-          <Route path="/sports/:slug/matches/:matchId" element={<SportDetail />} />
-          <Route path="/sports/:slug" element={<SportDetail />} />
-          <Route path="/departments" element={<Departments />} />
-          <Route path="/departments/:slug" element={<DepartmentDetail />} />
-          <Route path="/standings" element={<Standings />} />
-          <Route path="/medal-table" element={<MedalTable />} />
-          <Route path="/announcements" element={<Announcements />} />
-          <Route path="/fixtures/:id" element={<FixtureDetail />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </Suspense>
-    </Layout>
+    <>
+      <Layout>
+        <Suspense fallback={<PageSkeleton />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/live" element={<Live />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/fixtures" element={<Fixtures />} />
+            <Route path="/results" element={<Results />} />
+            <Route path="/sports" element={<Sports />} />
+            <Route path="/sports/:slug/matches/:matchId" element={<SportDetail />} />
+            <Route path="/sports/:slug" element={<SportDetail />} />
+            <Route path="/departments" element={<Departments />} />
+            <Route path="/departments/:slug" element={<DepartmentDetail />} />
+            <Route path="/standings" element={<Standings />} />
+            <Route path="/medal-table" element={<MedalTable />} />
+            <Route path="/announcements" element={<Announcements />} />
+            <Route path="/fixtures/:id" element={<FixtureDetail />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </Suspense>
+      </Layout>
+      <Analytics />
+    </>
   );
 }
