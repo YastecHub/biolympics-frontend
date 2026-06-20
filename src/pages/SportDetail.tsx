@@ -1805,7 +1805,7 @@ function MarathonDetail() {
     const url = `${window.location.origin}/sports/marathon`;
     navigator.share?.({
       title: "ULLSSA Marathon 2026",
-      text: "The ULLSSA Marathon is live now. Registration has closed.",
+      text: "The ULLSSA Marathon is complete and the podium results are available.",
       url,
     }).catch(() => {});
   }
@@ -1814,14 +1814,14 @@ function MarathonDetail() {
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="The Dean's Games marathon is live now. Registration has closed, but race details remain available for participants and supporters."
+        subtitle="The Dean's Games marathon is complete. Podium results are now available for both male and female races."
         label="Home"
-        meta="Live now - registration closed"
+        meta="Completed - results available"
         icon={sportIcon("marathon")}
         action={
           <div className="flex flex-wrap gap-2">
-            <span className="live-glow rounded-full bg-danger/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-danger ring-1 ring-danger/25">
-              Live now
+            <span className="rounded-full bg-brand-lime/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-brand-lime ring-1 ring-brand-lime/25">
+              Completed
             </span>
             <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-white/68 ring-1 ring-white/15">
               Registration closed
@@ -1837,14 +1837,14 @@ function MarathonDetail() {
             {sportIcon("marathon")}
           </span>
           <p className="relative text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
-            Race live now
+            Race completed
           </p>
           <h2 className="relative mt-2 font-display text-4xl font-bold">
             Saturday, June 20
           </h2>
           <p className="relative mt-2 max-w-xl text-sm leading-6 text-white/66">
-            The marathon is currently live. Registration has closed, and participants can
-            use this page to confirm the starting point and race categories.
+            The marathon has been completed. Registration is closed, and this page now
+            keeps the race details and podium results together for everyone following the games.
           </p>
           <div className="relative mt-5 grid gap-3 sm:grid-cols-2">
             <MarathonInfoCard label="Start time" value="6 AM prompt" />
@@ -1854,7 +1854,7 @@ function MarathonDetail() {
           </div>
 
           <div className="relative mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/12 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-brand-accent">
-            Marathon results are now available. Registration has closed.
+            Marathon completed. Podium results are now available.
           </div>
 
           <span className="relative mt-5 inline-flex w-full justify-center rounded-full bg-white/10 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white/60 ring-1 ring-white/15 sm:w-auto">
@@ -1887,7 +1887,7 @@ function MarathonDetail() {
             </p>
           </div>
           <div className="mt-5 grid gap-3">
-            {["Marathon live now", "Registration closed", "Represent your department", "Run with the faculty"].map((item) => (
+            {["Marathon completed", "Results available", "Registration closed", "Department points updated"].map((item) => (
               <div key={item} className="rounded-2xl bg-white/8 p-3 font-bold ring-1 ring-white/10">
                 {item}
               </div>

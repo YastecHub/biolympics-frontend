@@ -69,19 +69,12 @@ const HOME_SPORTS: HomeSport[] = [
 
 const TODAY_SPORTS = [
   {
-    name: "Marathon",
-    time: "LIVE NOW",
-    meta: "Registration closed",
-    route: "/sports/marathon",
-    icon: "marathon",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "marathon"),
-  },
-  {
     name: "Female football",
-    time: "11 AM",
-    meta: "ISL Football Pitch",
+    time: "UP NEXT",
+    meta: "11 AM / ISL Football Pitch",
     route: "/sports/female-football",
     icon: "football",
+    status: "upNext",
     isLive: (now: Date, liveFixtures: Fixture[]) =>
       isSportLive(liveFixtures, "female-football") ||
       isAnyWindowLive(now, [
@@ -90,6 +83,15 @@ const TODAY_SPORTS = [
         ["2026-06-20T12:00:00+01:00", 30],
         ["2026-06-20T12:30:00+01:00", 30],
       ]),
+  },
+  {
+    name: "Marathon",
+    time: "COMPLETED",
+    meta: "Results available",
+    route: "/sports/marathon",
+    icon: "marathon",
+    status: "completed",
+    isLive: () => false,
   },
   {
     name: "Male football",
@@ -155,7 +157,7 @@ export default function Home() {
   const live = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures, refetchInterval: 30000 });
 
   const year = yearFromRange(tournament.data?.start_date);
-  const liveFixtures = live.data ?? [];
+  const liveFixtures = (live.data ?? []).filter((fixture) => fixture.sport_slug !== "marathon");
   const liveCount = liveFixtures.length;
   const now = useCurrentMinute();
 
@@ -278,6 +280,8 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
       <div className="mt-3 grid gap-2 sm:grid-cols-3">
         {TODAY_SPORTS.map((sport) => {
           const isLive = sport.isLive(now, liveFixtures);
+          const isUpNext = sport.status === "upNext" && !isLive;
+          const isCompleted = sport.status === "completed";
           return (
           <Link
             key={sport.name}
@@ -285,6 +289,10 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
             className={`group flex min-w-0 items-center gap-2 rounded-xl border px-3 py-3 transition hover:-translate-y-0.5 hover:bg-white/10 ${
               isLive
                 ? "live-glow border-danger/40 bg-danger/15"
+                : isUpNext
+                  ? "border-brand-accent/50 bg-brand-accent/15 shadow-lg shadow-brand-accent/10"
+                : isCompleted
+                  ? "border-white/10 bg-white/8 opacity-90"
                 : "border-white/10 bg-black/15 hover:border-brand-lime/50"
             }`}
           >
@@ -296,7 +304,7 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
                 {sport.name}
               </span>
               {isLive ? <LiveNowLabel /> : (
-                <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                <span className={`mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] ${isUpNext ? "text-brand-accent" : isCompleted ? "text-white/55" : "text-brand-lime"}`}>
                   {sport.time}
                 </span>
               )}
