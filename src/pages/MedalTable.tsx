@@ -260,9 +260,7 @@ function DepartmentMark({ abbr, color, logoUrl }: { abbr: string; color: string;
 function MedalHeader({ tone, label }: { tone: "gold" | "silver" | "bronze"; label: string }) {
   return (
     <span className="grid justify-items-center gap-1">
-      <span className="text-3xl drop-shadow-lg" aria-hidden>
-        {medalEmoji(tone)}
-      </span>
+      <MedalBadge tone={tone} label={label} />
       <span className="hidden sm:inline">{label}</span>
     </span>
   );
@@ -271,9 +269,7 @@ function MedalHeader({ tone, label }: { tone: "gold" | "silver" | "bronze"; labe
 function MedalCount({ tone, value }: { tone: "gold" | "silver" | "bronze"; value: number }) {
   return (
     <span className="grid justify-items-center gap-0.5">
-      <span className="text-3xl drop-shadow-lg" aria-hidden>
-        {medalEmoji(tone)}
-      </span>
+      <MedalBadge tone={tone} />
       <span className="font-display text-base font-bold leading-none text-white sm:text-lg">
         {value}
       </span>
@@ -281,8 +277,16 @@ function MedalCount({ tone, value }: { tone: "gold" | "silver" | "bronze"; value
   );
 }
 
-function medalEmoji(tone: "gold" | "silver" | "bronze") {
-  if (tone === "gold") return "🥇";
-  if (tone === "silver") return "🥈";
-  return "🥉";
+function MedalBadge({ tone, label }: { tone: "gold" | "silver" | "bronze"; label?: string }) {
+  const number = tone === "gold" ? "1" : tone === "silver" ? "2" : "3";
+  return (
+    <span
+      className={`medal-badge medal-badge-${tone}`}
+      aria-label={label ?? tone}
+      role="img"
+    >
+      {number}
+    </span>
+  );
 }
+

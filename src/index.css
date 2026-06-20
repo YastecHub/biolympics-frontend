@@ -159,6 +159,40 @@ body {
   .section-title {
     @apply font-display text-2xl font-bold tracking-tight;
   }
+  .medal-badge {
+    @apply relative grid h-8 w-8 place-items-center rounded-full text-sm font-black leading-none text-white shadow-lg ring-1 ring-white/25;
+  }
+  .medal-badge::before,
+  .medal-badge::after {
+    content: "";
+    position: absolute;
+    top: -0.45rem;
+    z-index: -1;
+    width: 0.46rem;
+    height: 0.9rem;
+    border-radius: 0.08rem;
+    background: linear-gradient(180deg, #3154c9, #f5f5f5 48%, #d83333 49%);
+  }
+  .medal-badge::before {
+    left: 0.58rem;
+    transform: rotate(-18deg);
+  }
+  .medal-badge::after {
+    right: 0.58rem;
+    transform: rotate(18deg);
+  }
+  .medal-badge-gold {
+    background: linear-gradient(145deg, #ffe082, #f2a900 55%, #b36b00);
+    color: #422900;
+  }
+  .medal-badge-silver {
+    background: linear-gradient(145deg, #f8fafc, #b6bec8 56%, #6b7280);
+    color: #1f2937;
+  }
+  .medal-badge-bronze {
+    background: linear-gradient(145deg, #f0b57a, #b66a2f 56%, #6f3516);
+    color: #fff7ed;
+  }
   /* Energetic green festival gradient for hero surfaces. */
   .hero-gradient {
     background-image:
