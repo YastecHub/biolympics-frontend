@@ -51,6 +51,18 @@ type FootballMatch = {
   venue?: string;
   startIso?: string;
   durationMinutes?: number;
+  homeScore?: number;
+  awayScore?: number;
+  status?: "scheduled" | "completed";
+  goalEvents?: FootballGoalEvent[];
+  summary?: string;
+};
+
+type FootballGoalEvent = {
+  team: string;
+  scorer: string;
+  minute: string;
+  note?: string;
 };
 
 type MixedSportMatch = {
@@ -544,10 +556,83 @@ const FEMALE_FOOTBALL_POTS = {
 } as const;
 
 const FOOTBALL_MATCHES: FootballMatch[] = [
-  { id: "male-b-md1-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "PRE-MED", away: "FISHERIES", scheduledTime: "12:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md1-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "MIC", away: "MSM", scheduledTime: "1:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T13:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md1-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "BTN", away: "CBG", scheduledTime: "2:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T14:45:00+01:00", durationMinutes: 60 },
-  { id: "male-b-md1-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "ZLY", away: "BCH", scheduledTime: "3:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T15:45:00+01:00", durationMinutes: 60 },
+  {
+    id: "male-b-md1-2",
+    gender: "male",
+    group: "Group B",
+    stage: "Group Stage",
+    matchDay: "MD1",
+    home: "PRE-MED",
+    away: "FISHERIES",
+    scheduledTime: "12:45 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T12:45:00+01:00",
+    durationMinutes: 60,
+    homeScore: 1,
+    awayScore: 2,
+    status: "completed",
+    goalEvents: [
+      { team: "FISHERIES", scorer: "Basit", minute: "30+1'", note: "First-half added time" },
+      { team: "PRE-MED", scorer: "Ridwan", minute: "43'", note: "Midway through second half" },
+      { team: "FISHERIES", scorer: "Migan", minute: "48'", note: "Five minutes after the equalizer" },
+    ],
+    summary: "Fisheries came from a tight first half to edge PRE-MED 2-1.",
+  },
+  {
+    id: "male-a-md1-2",
+    gender: "male",
+    group: "Group A",
+    stage: "Group Stage",
+    matchDay: "MD1",
+    home: "MIC",
+    away: "MSM",
+    scheduledTime: "1:45 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T13:45:00+01:00",
+    durationMinutes: 60,
+    homeScore: 0,
+    awayScore: 3,
+    status: "completed",
+    summary: "MSM opened their group-stage run with a clean 3-0 win over MIC.",
+  },
+  {
+    id: "male-a-md1-1",
+    gender: "male",
+    group: "Group A",
+    stage: "Group Stage",
+    matchDay: "MD1",
+    home: "BTN",
+    away: "CBG",
+    scheduledTime: "2:45 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T14:45:00+01:00",
+    durationMinutes: 60,
+    homeScore: 0,
+    awayScore: 0,
+    status: "completed",
+    summary: "BTN and CBG shared the points after a goalless draw.",
+  },
+  {
+    id: "male-b-md1-1",
+    gender: "male",
+    group: "Group B",
+    stage: "Group Stage",
+    matchDay: "MD1",
+    home: "ZLY",
+    away: "BCH",
+    scheduledTime: "3:45 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T15:45:00+01:00",
+    durationMinutes: 60,
+    homeScore: 2,
+    awayScore: 0,
+    status: "completed",
+    goalEvents: [
+      { team: "ZLY", scorer: "Natty", minute: "11'", note: "First half" },
+      { team: "ZLY", scorer: "Seyi", minute: "24'", note: "First half" },
+    ],
+    summary: "ZLY settled the game in the first half with goals from Natty and Seyi.",
+  },
   { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM" },
   { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "CBG", away: "MIC" },
   { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "BTN", away: "MIC" },
@@ -556,10 +641,87 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES" },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES" },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "BCH", away: "PRE-MED" },
-  { id: "female-ko-1", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "MIC", away: "MSM", scheduledTime: "11:00 AM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T11:00:00+01:00", durationMinutes: 30 },
-  { id: "female-ko-2", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "BTN", away: "ZLY", scheduledTime: "11:30 AM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T11:30:00+01:00", durationMinutes: 30 },
-  { id: "female-ko-3", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "FISHERIES", away: "PRE-MED", scheduledTime: "12:00 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:00:00+01:00", durationMinutes: 30 },
-  { id: "female-ko-4", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "CBG", away: "BCH", scheduledTime: "12:30 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:30:00+01:00", durationMinutes: 30 },
+  {
+    id: "female-ko-1",
+    gender: "female",
+    group: "Knockout",
+    stage: "Quarter Final",
+    matchDay: "K/O",
+    home: "MIC",
+    away: "MSM",
+    scheduledTime: "11:00 AM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T11:00:00+01:00",
+    durationMinutes: 30,
+    homeScore: 4,
+    awayScore: 0,
+    status: "completed",
+    goalEvents: [
+      { team: "MIC", scorer: "Kate", minute: "3'", note: "First half" },
+      { team: "MIC", scorer: "Kate", minute: "8'", note: "First half" },
+      { team: "MIC", scorer: "Kate", minute: "14'", note: "Second half" },
+      { team: "MIC", scorer: "Kate", minute: "19'", note: "Second half" },
+    ],
+    summary: "Kate scored all four goals as MIC powered into the semifinals.",
+  },
+  {
+    id: "female-ko-2",
+    gender: "female",
+    group: "Knockout",
+    stage: "Quarter Final",
+    matchDay: "K/O",
+    home: "BTN",
+    away: "ZLY",
+    scheduledTime: "11:30 AM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T11:30:00+01:00",
+    durationMinutes: 30,
+    homeScore: 0,
+    awayScore: 1,
+    status: "completed",
+    goalEvents: [{ team: "ZLY", scorer: "Folamade", minute: "15'", note: "Second half" }],
+    summary: "Folamade's goal sent ZLY into the semifinals.",
+  },
+  {
+    id: "female-ko-3",
+    gender: "female",
+    group: "Knockout",
+    stage: "Quarter Final",
+    matchDay: "K/O",
+    home: "FISHERIES",
+    away: "PRE-MED",
+    scheduledTime: "12:00 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T12:00:00+01:00",
+    durationMinutes: 30,
+    homeScore: 0,
+    awayScore: 3,
+    status: "completed",
+    summary: "PRE-MED booked a semifinal spot with a 3-0 win over FSH.",
+  },
+  {
+    id: "female-ko-4",
+    gender: "female",
+    group: "Knockout",
+    stage: "Quarter Final",
+    matchDay: "K/O",
+    home: "CBG",
+    away: "BCH",
+    scheduledTime: "12:30 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-20T12:30:00+01:00",
+    durationMinutes: 30,
+    homeScore: 0,
+    awayScore: 2,
+    status: "completed",
+    goalEvents: [
+      { team: "BCH", scorer: "Francesca", minute: "7'", note: "First half" },
+      { team: "BCH", scorer: "Francesca", minute: "17'", note: "Second half" },
+    ],
+    summary: "Francesca's brace carried BCH past CBG.",
+  },
+  { id: "female-sf-1", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "ZLY", venue: FOOTBALL_VENUE },
+  { id: "female-sf-2", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "BCH", away: "PRE-MED", venue: FOOTBALL_VENUE },
 ];
 
 function useCurrentMinute() {
@@ -574,6 +736,7 @@ function useCurrentMinute() {
 }
 
 function isFootballMatchLive(match: FootballMatch, now: Date, liveFixtures: Fixture[] = []) {
+  if (isFootballMatchCompleted(match)) return false;
   if (liveFixtures.some((fixture) => isLiveFixtureForFootballMatch(fixture, match))) return true;
   if (!match.startIso) return false;
   const duration = match.durationMinutes ?? 60;
@@ -581,6 +744,25 @@ function isFootballMatchLive(match: FootballMatch, now: Date, liveFixtures: Fixt
   const end = start + duration * 60 * 1000;
   const current = now.getTime();
   return current >= start && current < end;
+}
+
+function isFootballMatchCompleted(match: FootballMatch) {
+  return match.status === "completed" || (
+    typeof match.homeScore === "number" && typeof match.awayScore === "number"
+  );
+}
+
+function matchScore(match: FootballMatch) {
+  if (!isFootballMatchCompleted(match)) return null;
+  return `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`;
+}
+
+function footballWinner(match: FootballMatch) {
+  if (!isFootballMatchCompleted(match)) return null;
+  const homeScore = match.homeScore ?? 0;
+  const awayScore = match.awayScore ?? 0;
+  if (homeScore === awayScore) return null;
+  return homeScore > awayScore ? match.home : match.away;
 }
 
 function isLiveFixtureForFootballMatch(fixture: Fixture, match: FootballMatch) {
@@ -2090,7 +2272,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
   );
 
   const matches = FOOTBALL_MATCHES.filter((match) => match.gender === gender);
-  const standings = gender === "male" ? createFootballStandings(MALE_FOOTBALL_GROUPS) : {};
+  const standings = gender === "male" ? createFootballStandings(MALE_FOOTBALL_GROUPS, matches) : {};
   const now = useCurrentMinute();
 
   return (
@@ -2192,11 +2374,27 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
                 <PotCard key={title} title={title} teams={[...teams]} departments={departmentByAbbr} />
               ))}
               <div className="card p-5 lg:col-span-2">
-                <p className="font-display text-2xl font-bold">No female group table yet</p>
+                <p className="font-display text-2xl font-bold">Female semifinals confirmed</p>
                 <p className="mt-2 text-sm text-white/62">
-                  Female football starts as a knockout draw, so points and goal difference will not
-                  be tracked like the male group stage.
+                  MIC face ZLY, while BCH meet PRE-MED for the remaining final spots.
                 </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && match.stage === "Semi Final").map((match) => (
+                    <Link
+                      key={match.id}
+                      to={`/sports/female-football/matches/${match.id}`}
+                      className="rounded-2xl bg-white/8 p-4 ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:ring-brand-lime/50"
+                    >
+                      <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-lime">
+                        Semi Final
+                      </p>
+                      <p className="mt-2 font-display text-2xl font-bold">
+                        {displayDepartmentAbbr(match.home)} vs {displayDepartmentAbbr(match.away)}
+                      </p>
+                      <p className="mt-1 text-sm text-white/55">{match.venue ?? "Venue TBA"}</p>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           )
@@ -2212,7 +2410,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
             </div>
           </div>
         ) : (
-          <EmptyState title="No football results yet." hint="Live and completed matches will appear here once play begins." />
+          <FootballResultsList matches={matches} departments={departmentByAbbr} />
         )}
       </section>
     </div>
@@ -2246,7 +2444,11 @@ function FootballMatchDetail({ matchId }: { matchId: string }) {
     <div className="space-y-7">
       <SportHero
         title={`${displayDepartmentAbbr(match.home)} vs ${displayDepartmentAbbr(match.away)}`}
-        subtitle={`${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, goal scorers, assists and highlights will live here once the game is played.`}
+        subtitle={
+          isFootballMatchCompleted(match)
+            ? `Full time: ${displayDepartmentAbbr(match.home)} ${match.homeScore ?? 0} - ${match.awayScore ?? 0} ${displayDepartmentAbbr(match.away)}.`
+            : `${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, goal scorers, assists and highlights will appear once the game is played.`
+        }
         label="Home"
         meta={`${match.gender} football - ${match.stage} - ${match.matchDay}`}
         icon={sportIcon("football")}
@@ -2265,11 +2467,10 @@ function FootballMatchDetail({ matchId }: { matchId: string }) {
   );
 }
 
-function createFootballStandings(groups: typeof MALE_FOOTBALL_GROUPS) {
+function createFootballStandings(groups: typeof MALE_FOOTBALL_GROUPS, matches: FootballMatch[]) {
   return Object.fromEntries(
-    Object.entries(groups).map(([group, teams]) => [
-      group,
-      teams.map((team) => ({
+    Object.entries(groups).map(([group, teams]) => {
+      const rows: FootballStanding[] = teams.map((team) => ({
         team,
         played: 0,
         won: 0,
@@ -2279,8 +2480,53 @@ function createFootballStandings(groups: typeof MALE_FOOTBALL_GROUPS) {
         goalsAgainst: 0,
         goalDifference: 0,
         points: 0,
-      })),
-    ]),
+      }));
+      const rowByTeam = new Map(rows.map((row) => [row.team, row]));
+
+      matches
+        .filter((match) => match.group === group && isFootballMatchCompleted(match))
+        .forEach((match) => {
+          const home = rowByTeam.get(match.home);
+          const away = rowByTeam.get(match.away);
+          if (!home || !away) return;
+          const homeScore = match.homeScore ?? 0;
+          const awayScore = match.awayScore ?? 0;
+
+          home.played += 1;
+          away.played += 1;
+          home.goalsFor += homeScore;
+          home.goalsAgainst += awayScore;
+          away.goalsFor += awayScore;
+          away.goalsAgainst += homeScore;
+
+          if (homeScore > awayScore) {
+            home.won += 1;
+            away.lost += 1;
+            home.points += 3;
+          } else if (awayScore > homeScore) {
+            away.won += 1;
+            home.lost += 1;
+            away.points += 3;
+          } else {
+            home.drawn += 1;
+            away.drawn += 1;
+            home.points += 1;
+            away.points += 1;
+          }
+        });
+
+      rows.forEach((row) => {
+        row.goalDifference = row.goalsFor - row.goalsAgainst;
+      });
+      rows.sort((a, b) =>
+        b.points - a.points ||
+        b.goalDifference - a.goalDifference ||
+        b.goalsFor - a.goalsFor ||
+        a.team.localeCompare(b.team),
+      );
+
+      return [group, rows];
+    }),
   ) as Record<string, FootballStanding[]>;
 }
 
@@ -2306,6 +2552,39 @@ function FootballFixturesList({
   );
 }
 
+function FootballResultsList({
+  matches,
+  departments,
+}: {
+  matches: FootballMatch[];
+  departments: Map<string, Department>;
+}) {
+  const completed = matches.filter(isFootballMatchCompleted);
+
+  if (!completed.length) {
+    return (
+      <EmptyState
+        title="No football results yet."
+        hint="Live and completed matches will appear here once play begins."
+      />
+    );
+  }
+
+  return (
+    <section className="grid gap-3 xl:grid-cols-2">
+      {completed.map((match) => (
+        <FootballMatchCard
+          key={match.id}
+          match={match}
+          departments={departments}
+          now={new Date(0)}
+          liveFixtures={[]}
+        />
+      ))}
+    </section>
+  );
+}
+
 function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
   return (
     <article className="relative overflow-hidden rounded-2xl border border-brand-lime/25 bg-brand-lime/10 p-4 ring-1 ring-brand-lime/10">
@@ -2315,17 +2594,17 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
       <div className="relative flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
-            {gender === "male" ? "Male football matchday" : "Female knockout stage"}
+            {gender === "male" ? "Male football results" : "Female semifinal draw"}
           </p>
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
-              ? "Group stage kicks off at the ISL Football Pitch"
-              : "The queens are set to battle for glory"}
+              ? "Opening group-stage results are in"
+              : "MIC vs ZLY, BCH vs PRE-MED"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "Four group-stage games are lined up today, starting with PRE-MED vs FSH."
-              : "Female Football Knockout Stage kicks off on Saturday 20th. One win moves each team closer to the crown."}
+              ? "Fisheries, MSM and ZLY picked up wins, while BTN and CBG shared points."
+              : "Quarterfinals are complete. The next step is the semifinal fight for a place in the final."}
           </p>
         </div>
         <div className="grid min-w-48 gap-1 rounded-xl bg-black/15 p-3 text-sm ring-1 ring-white/10">
@@ -2416,6 +2695,8 @@ function FootballMatchCard({
 }) {
   const sportSlug = match.gender === "female" ? "female-football" : "male-football";
   const isLive = isFootballMatchLive(match, now, liveFixtures);
+  const isCompleted = isFootballMatchCompleted(match);
+  const score = matchScore(match);
 
   return (
     <Link
@@ -2429,8 +2710,8 @@ function FootballMatchCard({
       </span>
       <div className="relative mb-3 flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
         <span>{match.stage}</span>
-        <span className={`rounded-full px-2 py-1 ${isLive ? "bg-danger text-white" : "bg-white/10 text-brand-lime"}`}>
-          {isLive ? "Live" : match.matchDay}
+        <span className={`rounded-full px-2 py-1 ${isLive ? "bg-danger text-white" : isCompleted ? "bg-brand-lime text-brand-secondary" : "bg-white/10 text-brand-lime"}`}>
+          {isLive ? "Live" : isCompleted ? "FT" : match.matchDay}
         </span>
       </div>
       <div className="relative">
@@ -2445,13 +2726,17 @@ function FootballMatchCard({
           awayLogo={departments.get(match.away)?.logo_url}
           center={
             <span className="flex flex-col items-center gap-1.5">
-              <span className={`rounded-full px-3 py-1 font-display text-xl font-bold ${isLive ? "bg-danger text-white" : "bg-white/10"}`}>
-                vs
+              <span className={`rounded-full px-3 py-1 font-display text-xl font-bold ${isLive ? "bg-danger text-white" : isCompleted ? "bg-brand-lime text-brand-secondary" : "bg-white/10"}`}>
+                {score ?? "vs"}
               </span>
               {isLive ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-danger px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-white">
                   <span className="h-1.5 w-1.5 animate-pulse-live rounded-full bg-white" aria-hidden />
                   Live now
+                </span>
+              ) : isCompleted ? (
+                <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
+                  Full time
                 </span>
               ) : (
                 <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
@@ -2492,6 +2777,8 @@ function MatchDetailPanel({
       </div>
     );
   }
+  const winner = footballWinner(match);
+  const score = matchScore(match);
 
   return (
     <aside className={`card overflow-hidden p-5 ${className}`}>
@@ -2515,21 +2802,86 @@ function MatchDetailPanel({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
+          center={<span className="font-display text-4xl font-bold text-brand-lime">{score ?? "-"}</span>}
           centerClassName=""
           layout="stacked"
         />
         <p className="mt-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-          {match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
+          {isFootballMatchCompleted(match) ? "Full time" : match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
         </p>
       </div>
 
       <div className="mt-4 grid gap-3">
-        <DetailBlock title="Goal scorers" body="No goals recorded yet." />
-        <DetailBlock title="Assists" body="No assists recorded yet." />
-        <DetailBlock title="Highlights" body="Highlights will be added after match media is available." />
+        <DetailBlock title="Result" body={winner ? `${displayDepartmentAbbr(winner)} won the match.` : isFootballMatchCompleted(match) ? "The match ended in a draw." : "Result pending."} />
+        <FootballGoalTimeline match={match} departments={departments} />
+        <DetailBlock title="Highlights" body={match.summary ?? "Highlights will be added after match media is available."} />
       </div>
     </aside>
+  );
+}
+
+function FootballGoalTimeline({
+  match,
+  departments,
+}: {
+  match: FootballMatch;
+  departments: Map<string, Department>;
+}) {
+  const events = match.goalEvents ?? [];
+
+  return (
+    <div className="rounded-2xl bg-white/8 p-4 ring-1 ring-white/10">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-display text-xl font-bold">Goal timeline</p>
+        {isFootballMatchCompleted(match) && (
+          <span className="rounded-full bg-brand-lime/15 px-2.5 py-1 text-xs font-black uppercase tracking-[0.12em] text-brand-lime">
+            FT
+          </span>
+        )}
+      </div>
+
+      {!isFootballMatchCompleted(match) ? (
+        <p className="mt-2 text-sm text-white/62">No goals recorded yet.</p>
+      ) : events.length === 0 ? (
+        <p className="mt-2 text-sm text-white/62">No goals in this match.</p>
+      ) : (
+        <div className="mt-4 space-y-2">
+          {events.map((event, index) => {
+            const department = departments.get(event.team);
+            const logo = getDepartmentLogoUrl(event.team, department?.logo_url);
+            return (
+              <div
+                key={`${event.team}-${event.scorer}-${event.minute}-${index}`}
+                className="grid grid-cols-[3.8rem_minmax(0,1fr)] items-center gap-3 rounded-xl border border-white/10 bg-black/12 px-3 py-2"
+              >
+                <span className="rounded-full bg-brand-lime px-2.5 py-1 text-center font-display text-base font-black text-brand-secondary">
+                  {event.minute}
+                </span>
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-white p-1">
+                    {logo ? (
+                      <img src={logo} alt="" className="h-full w-full object-contain" decoding="async" />
+                    ) : (
+                      <span className="text-[10px] font-black text-brand-secondary">
+                        {displayDepartmentAbbr(event.team).slice(0, 3)}
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-display text-lg font-bold text-white">
+                      {event.scorer}
+                    </span>
+                    <span className="block truncate text-xs font-bold uppercase tracking-[0.12em] text-white/48">
+                      {displayDepartmentAbbr(event.team)}
+                    </span>
+                  </span>
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 

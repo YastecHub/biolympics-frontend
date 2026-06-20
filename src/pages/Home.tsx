@@ -70,19 +70,12 @@ const HOME_SPORTS: HomeSport[] = [
 const TODAY_SPORTS = [
   {
     name: "Female football",
-    time: "UP NEXT",
-    meta: "11 AM / ISL Football Pitch",
+    time: "SEMIFINALS",
+    meta: "MIC vs ZLY / BCH vs PRE-MED",
     route: "/sports/female-football",
     icon: "football",
     status: "upNext",
-    isLive: (now: Date, liveFixtures: Fixture[]) =>
-      isSportLive(liveFixtures, "female-football") ||
-      isAnyWindowLive(now, [
-        ["2026-06-20T11:00:00+01:00", 30],
-        ["2026-06-20T11:30:00+01:00", 30],
-        ["2026-06-20T12:00:00+01:00", 30],
-        ["2026-06-20T12:30:00+01:00", 30],
-      ]),
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
   },
   {
     name: "Marathon",
@@ -95,8 +88,8 @@ const TODAY_SPORTS = [
   },
   {
     name: "Male football",
-    time: "12:45 PM",
-    meta: "ISL Football Pitch",
+    time: "RESULTS IN",
+    meta: "Opening group matches completed",
     route: "/sports/male-football",
     icon: "football",
     isLive: (now: Date, liveFixtures: Fixture[]) =>
