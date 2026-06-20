@@ -126,6 +126,7 @@ export default function AdminDashboard() {
   const scheduled = list.filter((f) => f.status === "SCHEDULED" || f.status === "WARMUP");
   const drafts = list.filter((f) => !f.published || f.status === "DRAFT");
   const terminal = list.filter((f) => ["COMPLETED", "CANCELLED", "WALKOVER", "POSTPONED"].includes(f.status));
+  const canControlLive = canManageTournament(roles) || roles.includes("SCORE_OFFICIAL");
   const docsUrl = `${config.apiBaseUrl.replace(/\/api\/v1\/?$/, "")}/docs`;
 
   const busy =
@@ -233,16 +234,22 @@ export default function AdminDashboard() {
         <FixtureOps
           fixtures={list}
           canManage={canManageTournament(roles)}
+          onStart={(id) => start.mutate(id)}
           onPublish={(id, published) => publish.mutate({ id, published })}
           onReschedule={(id, scheduled_start, reason) => reschedule.mutate({ id, scheduled_start, reason })}
           onStatus={(id, action, reason) => status.mutate({ id, action, reason })}
           onCorrect={(id, home_score, away_score, reason) => correct.mutate({ id, home_score, away_score, reason })}
+          onComplete={(id, version) => complete.mutate({ id, version })}
         />
       ) : (
         <UpdatesDesk
           canManage={canManageContent(roles)}
+          canControlLive={canControlLive}
+          fixtures={list}
           announcements={announcements.data ?? []}
           isLoading={announcements.isLoading}
+          onStart={(id) => start.mutate(id)}
+          onComplete={(id, version) => complete.mutate({ id, version })}
           onCreate={(body) => createAnnouncement.mutate(body)}
         />
       )}
@@ -442,17 +449,21 @@ function ScorePanel({ label, onAdd, onSub }: { label: string; onAdd: () => void;
 function FixtureOps({
   fixtures,
   canManage,
+  onStart,
   onPublish,
   onReschedule,
   onStatus,
   onCorrect,
+  onComplete,
 }: {
   fixtures: Fixture[];
   canManage: boolean;
+  onStart: (id: string) => void;
   onPublish: (id: string, published: boolean) => void;
   onReschedule: (id: string, scheduledStart: string | null, reason: string) => void;
   onStatus: (id: string, action: "postpone" | "cancel" | "reopen", reason: string) => void;
   onCorrect: (id: string, homeScore: number, awayScore: number, reason: string) => void;
+  onComplete: (id: string, version: number) => void;
 }) {
   const grouped = useMemo(() => {
     const byStatus = new Map<FixtureStatus, Fixture[]>();
@@ -479,10 +490,12 @@ function FixtureOps({
                 <FixtureManageCard
                   key={fx.id}
                   fx={fx}
+                  onStart={() => onStart(fx.id)}
                   onPublish={(published) => onPublish(fx.id, published)}
                   onReschedule={(scheduledStart, reason) => onReschedule(fx.id, scheduledStart, reason)}
                   onStatus={(action, reason) => onStatus(fx.id, action, reason)}
                   onCorrect={(homeScore, awayScore, reason) => onCorrect(fx.id, homeScore, awayScore, reason)}
+                  onComplete={() => onComplete(fx.id, fx.version)}
                 />
               ))}
             </div>
@@ -495,16 +508,20 @@ function FixtureOps({
 
 function FixtureManageCard({
   fx,
+  onStart,
   onPublish,
   onReschedule,
   onStatus,
   onCorrect,
+  onComplete,
 }: {
   fx: Fixture;
+  onStart: () => void;
   onPublish: (published: boolean) => void;
   onReschedule: (scheduledStart: string | null, reason: string) => void;
   onStatus: (action: "postpone" | "cancel" | "reopen", reason: string) => void;
   onCorrect: (homeScore: number, awayScore: number, reason: string) => void;
+  onComplete: () => void;
 }) {
   const [date, setDate] = useState(toDatetimeLocal(fx.scheduled_start));
   const [reason, setReason] = useState("");
@@ -530,9 +547,21 @@ function FixtureManageCard({
             {formatDateTime(fx.scheduled_start)} / {fx.venue_name ?? "Venue TBD"} / {fx.published ? "Published" : "Draft"}
           </p>
         </div>
-        <button className={fx.published ? "btn-ghost" : "btn-primary"} onClick={() => onPublish(!fx.published)}>
-          {fx.published ? "Unpublish" : "Publish"}
-        </button>
+        <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
+          {canStartLive(fx) && (
+            <button className="btn-primary" onClick={onStart}>
+              Go live
+            </button>
+          )}
+          {LIVE_STATUSES.includes(fx.status) && (
+            <button className="btn-accent" onClick={onComplete}>
+              End live
+            </button>
+          )}
+          <button className={fx.published ? "btn-ghost" : "btn-primary"} onClick={() => onPublish(!fx.published)}>
+            {fx.published ? "Unpublish" : "Publish"}
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 grid gap-3 xl:grid-cols-[1.2fr_1fr_1fr]">
@@ -581,13 +610,21 @@ function FixtureManageCard({
 
 function UpdatesDesk({
   canManage,
+  canControlLive,
+  fixtures,
   announcements,
   isLoading,
+  onStart,
+  onComplete,
   onCreate,
 }: {
   canManage: boolean;
+  canControlLive: boolean;
+  fixtures: Fixture[];
   announcements: { id: string; title: string; body: string; type: string; is_urgent: boolean; published_at: string | null }[];
   isLoading: boolean;
+  onStart: (id: string) => void;
+  onComplete: (id: string, version: number) => void;
   onCreate: (body: AnnouncementCreateBody) => void;
 }) {
   const [title, setTitle] = useState("");
@@ -599,35 +636,75 @@ function UpdatesDesk({
     return <EmptyState title="Content manager access required." />;
   }
 
+  const liveFixtures = fixtures.filter((fx) => LIVE_STATUSES.includes(fx.status));
+  const readyFixtures = fixtures.filter(canStartLive).slice(0, 8);
+
   return (
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-      <form
-        className="rounded-2xl border border-white/12 bg-white/[0.07] p-5 shadow-xl shadow-black/15"
-        onSubmit={(e) => {
-          e.preventDefault();
-          onCreate({ title, body, type, is_urgent: isUrgent, publish: true });
-          setTitle("");
-          setBody("");
-          setIsUrgent(false);
-          setType("GENERAL");
-        }}
-      >
-        <SectionTitle title="Publish update" />
-        <div className="space-y-3">
-          <input className="w-full rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Update title" required />
-          <textarea className="min-h-32 w-full rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={body} onChange={(e) => setBody(e.target.value)} placeholder="What should everyone know?" required />
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-            <select className="rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={type} onChange={(e) => setType(e.target.value)}>
-              {ANNOUNCEMENT_TYPES.map((option) => <option key={option}>{option}</option>)}
-            </select>
-            <label className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-3 text-sm font-semibold">
-              <input type="checkbox" checked={isUrgent} onChange={(e) => setIsUrgent(e.target.checked)} />
-              Urgent
-            </label>
+      <div className="space-y-5">
+        {canControlLive && (
+          <section className="rounded-2xl border border-white/12 bg-white/[0.07] p-5 shadow-xl shadow-black/15">
+            <SectionTitle title="Live event control" />
+            <p className="mb-3 text-sm text-white/58">
+              Marking an event live updates the public live feed, homepage news card and sport pages.
+            </p>
+            {liveFixtures.length > 0 && (
+              <div className="mb-4 space-y-2">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-danger">Currently live</p>
+                {liveFixtures.map((fx) => (
+                  <LiveEventAdminRow
+                    key={fx.id}
+                    fx={fx}
+                    action={
+                      fx.status === "LIVE" ? (
+                        <button className="btn-accent" onClick={() => onComplete(fx.id, fx.version)}>End live</button>
+                      ) : (
+                        <span className="rounded-full bg-white/10 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white/55">
+                          Manage in Live Desk
+                        </span>
+                      )
+                    }
+                  />
+                ))}
+              </div>
+            )}
+            <div className="space-y-2">
+              {readyFixtures.map((fx) => (
+                <LiveEventAdminRow key={fx.id} fx={fx} action={<button className="btn-primary" onClick={() => onStart(fx.id)}>Go live</button>} />
+              ))}
+              {readyFixtures.length === 0 && liveFixtures.length === 0 && <EmptyState title="No events ready to go live." />}
+            </div>
+          </section>
+        )}
+
+        <form
+          className="rounded-2xl border border-white/12 bg-white/[0.07] p-5 shadow-xl shadow-black/15"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onCreate({ title, body, type, is_urgent: isUrgent, publish: true });
+            setTitle("");
+            setBody("");
+            setIsUrgent(false);
+            setType("GENERAL");
+          }}
+        >
+          <SectionTitle title="Publish update" />
+          <div className="space-y-3">
+            <input className="w-full rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Update title" required />
+            <textarea className="min-h-32 w-full rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={body} onChange={(e) => setBody(e.target.value)} placeholder="What should everyone know?" required />
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <select className="rounded-lg border border-white/15 bg-white/10 px-3 py-3 text-sm" value={type} onChange={(e) => setType(e.target.value)}>
+                {ANNOUNCEMENT_TYPES.map((option) => <option key={option}>{option}</option>)}
+              </select>
+              <label className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-3 text-sm font-semibold">
+                <input type="checkbox" checked={isUrgent} onChange={(e) => setIsUrgent(e.target.checked)} />
+                Urgent
+              </label>
+            </div>
+            <button className="btn-primary w-full" type="submit">Publish to site</button>
           </div>
-          <button className="btn-primary w-full" type="submit">Publish to site</button>
-        </div>
-      </form>
+        </form>
+      </div>
 
       <section>
         <SectionTitle title="Recent updates" />
@@ -657,6 +734,22 @@ function UpdatesDesk({
   );
 }
 
+function LiveEventAdminRow({ fx, action }: { fx: Fixture; action: React.ReactNode }) {
+  return (
+    <article className="rounded-xl bg-white/8 p-3 ring-1 ring-white/10">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="truncate font-display text-xl font-bold">{fixtureTitle(fx)}</p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-white/48">
+            {fx.sport_name} / {formatDateTime(fx.scheduled_start)} / {fx.venue_name ?? "Venue TBD"}
+          </p>
+        </div>
+        {action}
+      </div>
+    </article>
+  );
+}
+
 function FixtureSummary({ fx, action }: { fx: Fixture; action?: React.ReactNode }) {
   return (
     <article className="rounded-2xl border border-white/12 bg-white/[0.07] p-4 shadow-xl shadow-black/15">
@@ -674,6 +767,17 @@ function FixtureSummary({ fx, action }: { fx: Fixture; action?: React.ReactNode 
       </div>
     </article>
   );
+}
+
+function canStartLive(fx: Fixture) {
+  return fx.published && ["SCHEDULED", "WARMUP", "DELAYED"].includes(fx.status);
+}
+
+function fixtureTitle(fx: Fixture) {
+  const home = fx.home?.department_abbr;
+  const away = fx.away?.department_abbr;
+  if (home && away) return `${home} vs ${away}`;
+  return fx.round_name ?? fx.group_name ?? fx.sport_name;
 }
 
 function SectionTitle({ title }: { title: string }) {

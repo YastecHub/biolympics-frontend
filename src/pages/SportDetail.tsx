@@ -9,7 +9,7 @@ import { CardSkeleton } from "@/components/Skeletons";
 import { EmptyState, FollowButton, MatchupTeams } from "@/components/ui";
 import { StandingsTable } from "@/components/StandingsTable";
 import { useFollowStore } from "@/store";
-import type { Department } from "@/types";
+import type { Department, Fixture } from "@/types";
 import { LIVE_STATUSES } from "@/types";
 
 const TABS = ["Overview", "Fixtures", "Results", "Standings"] as const;
@@ -508,6 +508,25 @@ const TABLE_TENNIS_MATCHES: TableTennisMatch[] = (["Male", "Female"] as const).f
 const FOOTBALL_MATCHDAY_DATE = "20/06/2026";
 const FOOTBALL_VENUE = "ISL Football Pitch";
 
+const MARATHON_RESULTS = [
+  {
+    category: "Females",
+    rows: [
+      { place: 1, name: "Shobowale Omoteniola", department: "BCH" },
+      { place: 2, name: "Moses Zipporah", department: "MIC" },
+      { place: 3, name: "Oyewo Oluwatobiloba", department: "BTN" },
+    ],
+  },
+  {
+    category: "Males",
+    rows: [
+      { place: 1, name: "Bakare Abdulquadri Folaranmi", department: "BTN" },
+      { place: 2, name: "Balogun Basit", department: "FISHERIES" },
+      { place: 3, name: "Oluwaleke Atolagbe John", department: "MSM" },
+    ],
+  },
+];
+
 const MALE_FOOTBALL_GROUPS = {
   "Group A": ["BTN", "CBG", "MSM", "MIC"],
   "Group B": ["ZLY", "BCH", "PRE-MED", "FISHERIES"],
@@ -548,13 +567,27 @@ function useCurrentMinute() {
   return now;
 }
 
-function isFootballMatchLive(match: FootballMatch, now: Date) {
+function isFootballMatchLive(match: FootballMatch, now: Date, liveFixtures: Fixture[] = []) {
+  if (liveFixtures.some((fixture) => isLiveFixtureForFootballMatch(fixture, match))) return true;
   if (!match.startIso) return false;
   const duration = match.durationMinutes ?? 60;
   const start = new Date(match.startIso).getTime();
   const end = start + duration * 60 * 1000;
   const current = now.getTime();
   return current >= start && current < end;
+}
+
+function isLiveFixtureForFootballMatch(fixture: Fixture, match: FootballMatch) {
+  const expectedSport = match.gender === "female" ? "female-football" : "male-football";
+  if (fixture.sport_slug !== expectedSport) return false;
+  const home = fixture.home?.department_abbr;
+  const away = fixture.away?.department_abbr;
+  if (!home || !away) return true;
+  return sameDepartment(home, match.home) && sameDepartment(away, match.away);
+}
+
+function sameDepartment(a: string, b: string) {
+  return displayDepartmentAbbr(a) === displayDepartmentAbbr(b);
 }
 
 export default function SportDetail() {
@@ -1807,7 +1840,7 @@ function MarathonDetail() {
           </div>
 
           <div className="relative mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/12 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-brand-accent">
-            Marathon is live now. Registration has closed.
+            Marathon results are now available. Registration has closed.
           </div>
 
           <span className="relative mt-5 inline-flex w-full justify-center rounded-full bg-white/10 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white/60 ring-1 ring-white/15 sm:w-auto">
@@ -1848,7 +1881,50 @@ function MarathonDetail() {
           </div>
         </article>
       </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        {MARATHON_RESULTS.map((group) => (
+          <MarathonResultCard key={group.category} category={group.category} rows={group.rows} />
+        ))}
+      </section>
     </div>
+  );
+}
+
+function MarathonResultCard({
+  category,
+  rows,
+}: {
+  category: string;
+  rows: { place: number; name: string; department: string }[];
+}) {
+  return (
+    <article className="card overflow-hidden p-5">
+      <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
+        Marathon podium
+      </p>
+      <h2 className="mt-2 font-display text-3xl font-bold">{category}</h2>
+      <div className="mt-5 space-y-3">
+        {rows.map((row) => (
+          <div key={`${category}-${row.place}`} className="flex items-center gap-3 rounded-2xl bg-white/8 p-3 ring-1 ring-white/10">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-accent text-lg font-black text-brand-secondary">
+              {row.place}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate font-display text-xl font-bold text-white">
+                {row.name}
+              </span>
+              <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-white/48">
+                {displayDepartmentAbbr(row.department)}
+              </span>
+            </span>
+            <span className="text-2xl" aria-hidden>
+              {row.place === 1 ? "🥇" : row.place === 2 ? "🥈" : "🥉"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </article>
   );
 }
 
@@ -1990,6 +2066,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
   const [gender, setGender] = useState<FootballGender>(initialGender);
   const [view, setView] = useState<FootballView>("table");
   const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
+  const liveFixtures = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures, refetchInterval: 30000 });
   const departmentByAbbr = new Map(
     (departments.data ?? []).map((department) => [department.abbreviation, department]),
   );
@@ -2112,6 +2189,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
                 matches={matches}
                 departments={departmentByAbbr}
                 now={now}
+                liveFixtures={liveFixtures.data ?? []}
               />
             </div>
           </div>
@@ -2192,16 +2270,18 @@ function FootballFixturesList({
   matches,
   departments,
   now,
+  liveFixtures,
 }: {
   matches: FootballMatch[];
   departments: Map<string, Department>;
   now: Date;
+  liveFixtures: Fixture[];
 }) {
   return (
     <section className="space-y-3">
       <div className="grid gap-3 xl:grid-cols-2">
         {matches.map((match) => (
-          <FootballMatchCard key={match.id} match={match} departments={departments} now={now} />
+          <FootballMatchCard key={match.id} match={match} departments={departments} now={now} liveFixtures={liveFixtures} />
         ))}
       </div>
     </section>
@@ -2309,13 +2389,15 @@ function FootballMatchCard({
   match,
   departments,
   now,
+  liveFixtures,
 }: {
   match: FootballMatch;
   departments: Map<string, Department>;
   now: Date;
+  liveFixtures: Fixture[];
 }) {
   const sportSlug = match.gender === "female" ? "female-football" : "male-football";
-  const isLive = isFootballMatchLive(match, now);
+  const isLive = isFootballMatchLive(match, now, liveFixtures);
 
   return (
     <Link

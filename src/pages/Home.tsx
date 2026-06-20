@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Logo } from "@/components/Logo";
+import { displayDepartmentAbbr } from "@/lib/departmentLogos";
 import { sportIcon } from "@/lib/sportIcons";
-import type { Sport } from "@/types";
+import type { Fixture, Sport } from "@/types";
 
 type HomeSport = {
   title: string;
@@ -73,7 +74,7 @@ const TODAY_SPORTS = [
     meta: "Registration closed",
     route: "/sports/marathon",
     icon: "marathon",
-    isLive: () => true,
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "marathon"),
   },
   {
     name: "Female football",
@@ -81,12 +82,14 @@ const TODAY_SPORTS = [
     meta: "ISL Football Pitch",
     route: "/sports/female-football",
     icon: "football",
-    isLive: (now: Date) => isAnyWindowLive(now, [
-      ["2026-06-20T11:00:00+01:00", 30],
-      ["2026-06-20T11:30:00+01:00", 30],
-      ["2026-06-20T12:00:00+01:00", 30],
-      ["2026-06-20T12:30:00+01:00", 30],
-    ]),
+    isLive: (now: Date, liveFixtures: Fixture[]) =>
+      isSportLive(liveFixtures, "female-football") ||
+      isAnyWindowLive(now, [
+        ["2026-06-20T11:00:00+01:00", 30],
+        ["2026-06-20T11:30:00+01:00", 30],
+        ["2026-06-20T12:00:00+01:00", 30],
+        ["2026-06-20T12:30:00+01:00", 30],
+      ]),
   },
   {
     name: "Male football",
@@ -94,12 +97,14 @@ const TODAY_SPORTS = [
     meta: "ISL Football Pitch",
     route: "/sports/male-football",
     icon: "football",
-    isLive: (now: Date) => isAnyWindowLive(now, [
-      ["2026-06-20T12:45:00+01:00", 60],
-      ["2026-06-20T13:45:00+01:00", 60],
-      ["2026-06-20T14:45:00+01:00", 60],
-      ["2026-06-20T15:45:00+01:00", 60],
-    ]),
+    isLive: (now: Date, liveFixtures: Fixture[]) =>
+      isSportLive(liveFixtures, "male-football") ||
+      isAnyWindowLive(now, [
+        ["2026-06-20T12:45:00+01:00", 60],
+        ["2026-06-20T13:45:00+01:00", 60],
+        ["2026-06-20T14:45:00+01:00", 60],
+        ["2026-06-20T15:45:00+01:00", 60],
+      ]),
   },
 ];
 
@@ -133,13 +138,25 @@ function isAnyWindowLive(now: Date, windows: Array<[string, number]>) {
   });
 }
 
+function isSportLive(liveFixtures: Fixture[], sportSlug: string) {
+  return liveFixtures.some((fixture) => fixture.sport_slug === sportSlug);
+}
+
+function liveFixtureTitle(fixture: Fixture) {
+  const home = fixture.home?.department_abbr;
+  const away = fixture.away?.department_abbr;
+  if (home && away) return `${displayDepartmentAbbr(home)} vs ${displayDepartmentAbbr(away)}`;
+  return fixture.round_name ?? fixture.group_name ?? fixture.sport_name;
+}
+
 export default function Home() {
   const tournament = useQuery({ queryKey: ["tournament"], queryFn: api.currentTournament });
   const sports = useQuery({ queryKey: ["sports"], queryFn: api.sports });
-  const live = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures });
+  const live = useQuery({ queryKey: ["live"], queryFn: api.liveFixtures, refetchInterval: 30000 });
 
   const year = yearFromRange(tournament.data?.start_date);
-  const liveCount = live.data?.length ?? 0;
+  const liveFixtures = live.data ?? [];
+  const liveCount = liveFixtures.length;
   const now = useCurrentMinute();
 
   return (
@@ -185,7 +202,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <HeroUpdateNotice now={now} />
+          <HeroUpdateNotice now={now} liveFixtures={liveFixtures} />
         </div>
       </section>
 
@@ -223,7 +240,7 @@ export default function Home() {
   );
 }
 
-function HeroUpdateNotice({ now }: { now: Date }) {
+function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixture[] }) {
   return (
     <div
       className="relative mx-auto mt-6 max-w-2xl rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-left shadow-lg shadow-black/15 backdrop-blur"
@@ -237,9 +254,30 @@ function HeroUpdateNotice({ now }: { now: Date }) {
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
         Today's sports lineup
       </p>
+      {liveFixtures.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {liveFixtures.slice(0, 3).map((fixture) => (
+            <Link
+              key={fixture.id}
+              to={fixture.home || fixture.away ? `/fixtures/${fixture.id}` : `/sports/${fixture.sport_slug}`}
+              className="live-glow flex items-center justify-between gap-3 rounded-xl border border-danger/40 bg-danger/15 px-3 py-2"
+            >
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-black uppercase tracking-normal text-white">
+                  {liveFixtureTitle(fixture)}
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] font-semibold text-white/58">
+                  {fixture.sport_name}
+                </span>
+              </span>
+              <LiveNowLabel />
+            </Link>
+          ))}
+        </div>
+      )}
       <div className="mt-3 grid gap-2 sm:grid-cols-3">
         {TODAY_SPORTS.map((sport) => {
-          const isLive = sport.isLive(now);
+          const isLive = sport.isLive(now, liveFixtures);
           return (
           <Link
             key={sport.name}
