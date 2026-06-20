@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -49,6 +49,8 @@ type FootballMatch = {
   away: string;
   scheduledTime?: string;
   venue?: string;
+  startIso?: string;
+  durationMinutes?: number;
 };
 
 type MixedSportMatch = {
@@ -517,10 +519,10 @@ const FEMALE_FOOTBALL_POTS = {
 } as const;
 
 const FOOTBALL_MATCHES: FootballMatch[] = [
-  { id: "male-b-md1-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "PRE-MED", away: "FISHERIES", scheduledTime: "12:45 PM", venue: FOOTBALL_VENUE },
-  { id: "male-a-md1-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "MIC", away: "MSM", scheduledTime: "1:45 PM", venue: FOOTBALL_VENUE },
-  { id: "male-a-md1-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "BTN", away: "CBG", scheduledTime: "2:45 PM", venue: FOOTBALL_VENUE },
-  { id: "male-b-md1-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "ZLY", away: "BCH", scheduledTime: "3:45 PM", venue: FOOTBALL_VENUE },
+  { id: "male-b-md1-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "PRE-MED", away: "FISHERIES", scheduledTime: "12:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:45:00+01:00", durationMinutes: 60 },
+  { id: "male-a-md1-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "MIC", away: "MSM", scheduledTime: "1:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T13:45:00+01:00", durationMinutes: 60 },
+  { id: "male-a-md1-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD1", home: "BTN", away: "CBG", scheduledTime: "2:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T14:45:00+01:00", durationMinutes: 60 },
+  { id: "male-b-md1-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD1", home: "ZLY", away: "BCH", scheduledTime: "3:45 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T15:45:00+01:00", durationMinutes: 60 },
   { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM" },
   { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "CBG", away: "MIC" },
   { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "BTN", away: "MIC" },
@@ -529,11 +531,31 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES" },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES" },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "BCH", away: "PRE-MED" },
-  { id: "female-ko-1", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "MIC", away: "MSM", scheduledTime: "11:00 AM", venue: FOOTBALL_VENUE },
-  { id: "female-ko-2", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "BTN", away: "ZLY", scheduledTime: "11:30 AM", venue: FOOTBALL_VENUE },
-  { id: "female-ko-3", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "FISHERIES", away: "PRE-MED", scheduledTime: "12:00 PM", venue: FOOTBALL_VENUE },
-  { id: "female-ko-4", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "CBG", away: "BCH", scheduledTime: "12:30 PM", venue: FOOTBALL_VENUE },
+  { id: "female-ko-1", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "MIC", away: "MSM", scheduledTime: "11:00 AM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T11:00:00+01:00", durationMinutes: 30 },
+  { id: "female-ko-2", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "BTN", away: "ZLY", scheduledTime: "11:30 AM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T11:30:00+01:00", durationMinutes: 30 },
+  { id: "female-ko-3", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "FISHERIES", away: "PRE-MED", scheduledTime: "12:00 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:00:00+01:00", durationMinutes: 30 },
+  { id: "female-ko-4", gender: "female", group: "Knockout", stage: "Quarter Final", matchDay: "K/O", home: "CBG", away: "BCH", scheduledTime: "12:30 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-20T12:30:00+01:00", durationMinutes: 30 },
 ];
+
+function useCurrentMinute() {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return now;
+}
+
+function isFootballMatchLive(match: FootballMatch, now: Date) {
+  if (!match.startIso) return false;
+  const duration = match.durationMinutes ?? 60;
+  const start = new Date(match.startIso).getTime();
+  const end = start + duration * 60 * 1000;
+  const current = now.getTime();
+  return current >= start && current < end;
+}
 
 export default function SportDetail() {
   const { slug = "", matchId } = useParams();
@@ -1736,7 +1758,7 @@ function MarathonDetail() {
     const url = `${window.location.origin}/sports/marathon`;
     navigator.share?.({
       title: "ULLSSA Marathon 2026",
-      text: "The ULLSSA Marathon is happening today by 6 AM. Registration has closed.",
+      text: "The ULLSSA Marathon is live now. Registration has closed.",
       url,
     }).catch(() => {});
   }
@@ -1745,12 +1767,15 @@ function MarathonDetail() {
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="The Dean's Games marathon is happening today. Registration has closed, but the race details remain available for participants and supporters."
+        subtitle="The Dean's Games marathon is live now. Registration has closed, but race details remain available for participants and supporters."
         label="Home"
-        meta="Today - 6 AM prompt - registration closed"
+        meta="Live now - registration closed"
         icon={sportIcon("marathon")}
         action={
           <div className="flex flex-wrap gap-2">
+            <span className="live-glow rounded-full bg-danger/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-danger ring-1 ring-danger/25">
+              Live now
+            </span>
             <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-white/68 ring-1 ring-white/15">
               Registration closed
             </span>
@@ -1765,14 +1790,14 @@ function MarathonDetail() {
             {sportIcon("marathon")}
           </span>
           <p className="relative text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
-            Race day notice
+            Race live now
           </p>
           <h2 className="relative mt-2 font-display text-4xl font-bold">
             Saturday, June 20
           </h2>
           <p className="relative mt-2 max-w-xl text-sm leading-6 text-white/66">
-            Registration has closed. Participants can still use this page to confirm the
-            race time, starting point and categories before heading out.
+            The marathon is currently live. Registration has closed, and participants can
+            use this page to confirm the starting point and race categories.
           </p>
           <div className="relative mt-5 grid gap-3 sm:grid-cols-2">
             <MarathonInfoCard label="Start time" value="6 AM prompt" />
@@ -1782,7 +1807,7 @@ function MarathonDetail() {
           </div>
 
           <div className="relative mt-5 rounded-2xl border border-brand-accent/30 bg-brand-accent/12 px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] text-brand-accent">
-            Registration has closed. Race starts by 6 AM.
+            Marathon is live now. Registration has closed.
           </div>
 
           <span className="relative mt-5 inline-flex w-full justify-center rounded-full bg-white/10 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white/60 ring-1 ring-white/15 sm:w-auto">
@@ -1815,7 +1840,7 @@ function MarathonDetail() {
             </p>
           </div>
           <div className="mt-5 grid gap-3">
-            {["Registration closed", "Represent your department", "Run with the faculty", "6 AM prompt"].map((item) => (
+            {["Marathon live now", "Registration closed", "Represent your department", "Run with the faculty"].map((item) => (
               <div key={item} className="rounded-2xl bg-white/8 p-3 font-bold ring-1 ring-white/10">
                 {item}
               </div>
@@ -1971,6 +1996,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
 
   const matches = FOOTBALL_MATCHES.filter((match) => match.gender === gender);
   const standings = gender === "male" ? createFootballStandings(MALE_FOOTBALL_GROUPS) : {};
+  const now = useCurrentMinute();
 
   return (
     <div className="space-y-7">
@@ -2085,6 +2111,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
               <FootballFixturesList
                 matches={matches}
                 departments={departmentByAbbr}
+                now={now}
               />
             </div>
           </div>
@@ -2164,15 +2191,17 @@ function createFootballStandings(groups: typeof MALE_FOOTBALL_GROUPS) {
 function FootballFixturesList({
   matches,
   departments,
+  now,
 }: {
   matches: FootballMatch[];
   departments: Map<string, Department>;
+  now: Date;
 }) {
   return (
     <section className="space-y-3">
       <div className="grid gap-3 xl:grid-cols-2">
         {matches.map((match) => (
-          <FootballMatchCard key={match.id} match={match} departments={departments} />
+          <FootballMatchCard key={match.id} match={match} departments={departments} now={now} />
         ))}
       </div>
     </section>
@@ -2279,23 +2308,30 @@ function FootballStandingsTable({
 function FootballMatchCard({
   match,
   departments,
+  now,
 }: {
   match: FootballMatch;
   departments: Map<string, Department>;
+  now: Date;
 }) {
   const sportSlug = match.gender === "female" ? "female-football" : "male-football";
+  const isLive = isFootballMatchLive(match, now);
 
   return (
     <Link
       to={`/sports/${sportSlug}/matches/${match.id}`}
-      className="card relative block w-full overflow-hidden p-4 text-left transition hover:-translate-y-0.5 hover:ring-brand-lime/50"
+      className={`card relative block w-full overflow-hidden p-4 text-left transition hover:-translate-y-0.5 hover:ring-brand-lime/50 ${
+        isLive ? "live-glow ring-danger/40" : ""
+      }`}
     >
       <span className="absolute -right-5 -top-8 text-8xl opacity-[0.06]" aria-hidden>
         ⚽
       </span>
       <div className="relative mb-3 flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
         <span>{match.stage}</span>
-        <span className="rounded-full bg-white/10 px-2 py-1 text-brand-lime">{match.matchDay}</span>
+        <span className={`rounded-full px-2 py-1 ${isLive ? "bg-danger text-white" : "bg-white/10 text-brand-lime"}`}>
+          {isLive ? "Live" : match.matchDay}
+        </span>
       </div>
       <div className="relative">
         <MatchupTeams
@@ -2309,10 +2345,19 @@ function FootballMatchCard({
           awayLogo={departments.get(match.away)?.logo_url}
           center={
             <span className="flex flex-col items-center gap-1.5">
-              <span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>
-              <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
-                {match.scheduledTime ?? "Time TBA"}
+              <span className={`rounded-full px-3 py-1 font-display text-xl font-bold ${isLive ? "bg-danger text-white" : "bg-white/10"}`}>
+                vs
               </span>
+              {isLive ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-danger px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-white">
+                  <span className="h-1.5 w-1.5 animate-pulse-live rounded-full bg-white" aria-hidden />
+                  Live now
+                </span>
+              ) : (
+                <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
+                  {match.scheduledTime ?? "Time TBA"}
+                </span>
+              )}
               <span className="max-w-28 text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-white/45">
                 {match.venue ?? "Venue TBA"}
               </span>

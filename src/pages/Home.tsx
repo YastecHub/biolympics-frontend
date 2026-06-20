@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -66,9 +67,40 @@ const HOME_SPORTS: HomeSport[] = [
 ];
 
 const TODAY_SPORTS = [
-  { name: "Marathon", time: "6 AM", meta: "Registration closed", route: "/sports/marathon", icon: "marathon" },
-  { name: "Female football", time: "11 AM", meta: "ISL Football Pitch", route: "/sports/female-football", icon: "football" },
-  { name: "Male football", time: "12:45 PM", meta: "ISL Football Pitch", route: "/sports/male-football", icon: "football" },
+  {
+    name: "Marathon",
+    time: "LIVE NOW",
+    meta: "Registration closed",
+    route: "/sports/marathon",
+    icon: "marathon",
+    isLive: () => true,
+  },
+  {
+    name: "Female football",
+    time: "11 AM",
+    meta: "ISL Football Pitch",
+    route: "/sports/female-football",
+    icon: "football",
+    isLive: (now: Date) => isAnyWindowLive(now, [
+      ["2026-06-20T11:00:00+01:00", 30],
+      ["2026-06-20T11:30:00+01:00", 30],
+      ["2026-06-20T12:00:00+01:00", 30],
+      ["2026-06-20T12:30:00+01:00", 30],
+    ]),
+  },
+  {
+    name: "Male football",
+    time: "12:45 PM",
+    meta: "ISL Football Pitch",
+    route: "/sports/male-football",
+    icon: "football",
+    isLive: (now: Date) => isAnyWindowLive(now, [
+      ["2026-06-20T12:45:00+01:00", 60],
+      ["2026-06-20T13:45:00+01:00", 60],
+      ["2026-06-20T14:45:00+01:00", 60],
+      ["2026-06-20T15:45:00+01:00", 60],
+    ]),
+  },
 ];
 
 function yearFromRange(start?: string | null) {
@@ -81,6 +113,26 @@ function categorySports(sports: Sport[] | undefined, group: HomeSport) {
     .sort((a, b) => a.display_order - b.display_order);
 }
 
+function useCurrentMinute() {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return now;
+}
+
+function isAnyWindowLive(now: Date, windows: Array<[string, number]>) {
+  const current = now.getTime();
+  return windows.some(([iso, durationMinutes]) => {
+    const start = new Date(iso).getTime();
+    const end = start + durationMinutes * 60 * 1000;
+    return current >= start && current < end;
+  });
+}
+
 export default function Home() {
   const tournament = useQuery({ queryKey: ["tournament"], queryFn: api.currentTournament });
   const sports = useQuery({ queryKey: ["sports"], queryFn: api.sports });
@@ -88,6 +140,7 @@ export default function Home() {
 
   const year = yearFromRange(tournament.data?.start_date);
   const liveCount = live.data?.length ?? 0;
+  const now = useCurrentMinute();
 
   return (
     <div className="festival-home relative min-h-screen overflow-hidden px-4 pb-12 text-white">
@@ -132,7 +185,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <HeroUpdateNotice />
+          <HeroUpdateNotice now={now} />
         </div>
       </section>
 
@@ -170,7 +223,7 @@ export default function Home() {
   );
 }
 
-function HeroUpdateNotice() {
+function HeroUpdateNotice({ now }: { now: Date }) {
   return (
     <div
       className="relative mx-auto mt-6 max-w-2xl rounded-2xl border border-white/12 bg-white/10 px-4 py-4 text-left shadow-lg shadow-black/15 backdrop-blur"
@@ -185,11 +238,17 @@ function HeroUpdateNotice() {
         Today's sports lineup
       </p>
       <div className="mt-3 grid gap-2 sm:grid-cols-3">
-        {TODAY_SPORTS.map((sport) => (
+        {TODAY_SPORTS.map((sport) => {
+          const isLive = sport.isLive(now);
+          return (
           <Link
             key={sport.name}
             to={sport.route}
-            className="group flex min-w-0 items-center gap-2 rounded-xl border border-white/10 bg-black/15 px-3 py-3 transition hover:-translate-y-0.5 hover:border-brand-lime/50 hover:bg-white/10"
+            className={`group flex min-w-0 items-center gap-2 rounded-xl border px-3 py-3 transition hover:-translate-y-0.5 hover:bg-white/10 ${
+              isLive
+                ? "live-glow border-danger/40 bg-danger/15"
+                : "border-white/10 bg-black/15 hover:border-brand-lime/50"
+            }`}
           >
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-lg" aria-hidden>
               {sportIcon(sport.icon)}
@@ -198,17 +257,29 @@ function HeroUpdateNotice() {
               <span className="block truncate text-sm font-black uppercase tracking-normal text-white">
                 {sport.name}
               </span>
-              <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
-                {sport.time}
-              </span>
+              {isLive ? <LiveNowLabel /> : (
+                <span className="mt-0.5 block text-xs font-bold uppercase tracking-[0.14em] text-brand-lime">
+                  {sport.time}
+                </span>
+              )}
               <span className="mt-1 block truncate text-[11px] font-semibold text-white/48">
                 {sport.meta}
               </span>
             </span>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+function LiveNowLabel() {
+  return (
+    <span className="mt-0.5 inline-flex items-center gap-1.5 rounded-full bg-danger px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.12em] text-white">
+      <span className="h-1.5 w-1.5 animate-pulse-live rounded-full bg-white" aria-hidden />
+      Live now
+    </span>
   );
 }
 function SportCard({
