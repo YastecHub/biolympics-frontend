@@ -1188,7 +1188,7 @@ function IndoorMedalSummary({
                 />
               </div>
               <span
-                  className={`medal-badge medal-badge-${MEDAL_TONES[index]}`}
+                  className={`medal-badge medal-badge-${medalTone(index)}`}
                   aria-label={`${row.medal} medal`}
                   role="img"
                 >
@@ -1267,7 +1267,7 @@ export function LudoResults({ departments }: { departments: Map<string, Departme
                   />
                 </div>
                 <span
-                  className={`medal-badge medal-badge-${MEDAL_TONES[index]}`}
+                  className={`medal-badge medal-badge-${medalTone(index)}`}
                   aria-label={`${row.medal} medal`}
                   role="img"
                 >
