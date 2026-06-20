@@ -47,11 +47,11 @@ export default function DepartmentDetail() {
           <div className="min-w-0">
             <p className="text-sm text-muted">{dept.data.description ?? "Faculty of Life Sciences department."}</p>
           {medalRow && (
-            <div className="mt-3 flex gap-4 text-sm">
-              <span>🥇 {medalRow.gold}</span>
-              <span>🥈 {medalRow.silver}</span>
-              <span>🥉 {medalRow.bronze}</span>
-              <span className="font-bold">#{medalRow.position} · {medalRow.total_points} pts</span>
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+              <MedalMini tone="gold" value={medalRow.gold} />
+              <MedalMini tone="silver" value={medalRow.silver} />
+              <MedalMini tone="bronze" value={medalRow.bronze} />
+              <span className="font-bold">#{medalRow.position} / {medalRow.total_points} pts</span>
             </div>
           )}
           </div>
@@ -73,3 +73,20 @@ export default function DepartmentDetail() {
     </div>
   );
 }
+
+function MedalMini({ tone, value }: { tone: "gold" | "silver" | "bronze"; value: number }) {
+  const number = tone === "gold" ? "1" : tone === "silver" ? "2" : "3";
+  return (
+    <span className="inline-flex items-center gap-1.5 font-bold">
+      <span
+        className={`medal-badge medal-badge-${tone} h-6 w-6 text-xs`}
+        aria-label={tone}
+        role="img"
+      >
+        {number}
+      </span>
+      {value}
+    </span>
+  );
+}
+

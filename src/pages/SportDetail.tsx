@@ -527,6 +527,12 @@ const MARATHON_RESULTS = [
   },
 ];
 
+const MEDAL_TONES = ["gold", "silver", "bronze"] as const;
+
+function medalTone(index: number) {
+  return MEDAL_TONES[index] ?? "bronze";
+}
+
 const MALE_FOOTBALL_GROUPS = {
   "Group A": ["BTN", "CBG", "MSM", "MIC"],
   "Group B": ["ZLY", "BCH", "PRE-MED", "FISHERIES"],
@@ -1181,9 +1187,13 @@ function IndoorMedalSummary({
                   logoUrl={departments.get(row.team)?.logo_url}
                 />
               </div>
-              <span className="text-3xl" aria-hidden>
-                {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-              </span>
+              <span
+                  className={`medal-badge medal-badge-${MEDAL_TONES[index]}`}
+                  aria-label={`${row.medal} medal`}
+                  role="img"
+                >
+                  {index + 1}
+                </span>
             </div>
             <p className="mt-3 text-xs font-semibold text-white/48">
               Player names pending
@@ -1256,8 +1266,12 @@ export function LudoResults({ departments }: { departments: Map<string, Departme
                     logoUrl={departments.get(row.team)?.logo_url}
                   />
                 </div>
-                <span className="text-3xl" aria-hidden>
-                  {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
+                <span
+                  className={`medal-badge medal-badge-${MEDAL_TONES[index]}`}
+                  aria-label={`${row.medal} medal`}
+                  role="img"
+                >
+                  {index + 1}
                 </span>
               </div>
               <p className="mt-3 text-xs font-semibold text-white/48">
@@ -2536,4 +2550,5 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
     </section>
   );
 }
+
 
