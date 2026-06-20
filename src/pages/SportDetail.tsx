@@ -1918,8 +1918,12 @@ function MarathonResultCard({
                 {displayDepartmentAbbr(row.department)}
               </span>
             </span>
-            <span className="text-2xl" aria-hidden>
-              {row.place === 1 ? "🥇" : row.place === 2 ? "🥈" : "🥉"}
+            <span
+              className={`medal-badge ${row.place === 1 ? "medal-badge-gold" : row.place === 2 ? "medal-badge-silver" : "medal-badge-bronze"}`}
+              aria-label={`${row.place === 1 ? "Gold" : row.place === 2 ? "Silver" : "Bronze"} medal`}
+              role="img"
+            >
+              {row.place}
             </span>
           </div>
         ))}
@@ -2532,3 +2536,4 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
     </section>
   );
 }
+
