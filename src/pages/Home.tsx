@@ -71,7 +71,7 @@ const TODAY_SPORTS = [
   {
     name: "Basketball",
     time: "12 PM",
-    meta: "Knockout / Sports Centre",
+    meta: "K/O: MSM vs MIC first / Sports Centre",
     route: "/sports/basketball",
     icon: "basketball",
     status: "upNext",
@@ -80,7 +80,7 @@ const TODAY_SPORTS = [
   {
     name: "Volleyball",
     time: "12 PM",
-    meta: "Knockout / Sports Centre",
+    meta: "K/O: FSH vs ZLY first / Sports Centre",
     route: "/sports/volleyball",
     icon: "volleyball",
     status: "upNext",
@@ -88,8 +88,8 @@ const TODAY_SPORTS = [
   },
   {
     name: "Male football",
-    time: "2 PM",
-    meta: "Matchday 2 / Sports Centre",
+    time: "12:45 PM",
+    meta: "MD2: MIC vs CBG first / Sports Centre",
     route: "/sports/male-football",
     icon: "football",
     status: "upNext",
@@ -230,11 +230,11 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
           News / Updates
         </span>
         <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-          Monday, June 22
+          Sunday, June 21
         </span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
-        Tomorrow's sports lineup
+        Today's sports lineup
       </p>
       {liveFixtures.length > 0 && (
         <div className="mt-3 space-y-2">

@@ -73,6 +73,8 @@ type MixedSportMatch = {
   matchDay: string;
   home: string;
   away: string;
+  scheduledTime?: string;
+  venue?: string;
 };
 
 type TrackEvent = {
@@ -414,8 +416,8 @@ const MIXED_SPORTS: Record<
   basketball: {
     name: "Basketball",
     description: "Mixed-gender knockout basketball with 10 representatives per department.",
-    potA: ["MSM", "BCH", "CBG", "ZLY"],
-    potB: ["MIC", "BTN", "PRE-MED", "FISHERIES"],
+    potA: ["MSM", "BCH", "CBG", "FISHERIES"],
+    potB: ["MIC", "BTN", "PRE-MED", "ZLY"],
     notes: [
       "Mixed-gender team: 10 representatives per department, including coaches.",
       "8 departments compete across 3 days of action.",
@@ -427,8 +429,8 @@ const MIXED_SPORTS: Record<
   volleyball: {
     name: "Volleyball",
     description: "Mixed-gender knockout volleyball with 10 representatives per department.",
-    potA: ["BCH", "CBG", "BTN", "FISHERIES"],
-    potB: ["PRE-MED", "MIC", "MSM", "ZLY"],
+    potA: ["FISHERIES", "BTN", "CBG", "BCH"],
+    potB: ["ZLY", "MSM", "MIC", "PRE-MED"],
     notes: [
       "Mixed-gender team: 10 representatives per department, including coaches.",
       "Competing as a mixed-gender team across all rounds.",
@@ -440,18 +442,16 @@ const MIXED_SPORTS: Record<
   },
 };
 
-const MIXED_SPORT_MATCHES: MixedSportMatch[] = Object.entries(MIXED_SPORTS).flatMap(
-  ([sportSlug, sport]) =>
-    sport.potA.map((home, index) => ({
-      id: `${sportSlug}-prelim-${index + 1}`,
-      sportSlug: sportSlug as MixedSportSlug,
-      sportName: sport.name,
-      stage: "Prelims",
-      matchDay: "Day 1",
-      home,
-      away: sport.potB[index],
-    })),
-);
+const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
+  { id: "basketball-ko-1", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "MSM", away: "MIC", scheduledTime: "12:00 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-2", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "BTN", scheduledTime: "12:20 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-3", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "PRE-MED", scheduledTime: "12:40 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-4", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "1:00 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "1:00 PM", venue: "Sports Centre" },
+];
 
 const TRACK_EVENTS: TrackEvent[] = [
   {
@@ -633,12 +633,12 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     ],
     summary: "ZLY settled the game in the first half with goals from Natty and Seyi.",
   },
-  { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM" },
-  { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "CBG", away: "MIC" },
+  { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "MIC", away: "CBG", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-21T12:45:00+01:00", durationMinutes: 60 },
+  { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-21T13:45:00+01:00", durationMinutes: 60 },
+  { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM", scheduledTime: "2:45 PM", venue: "Sports Centre", startIso: "2026-06-21T14:45:00+01:00", durationMinutes: 60 },
+  { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-21T15:45:00+01:00", durationMinutes: 60 },
   { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "BTN", away: "MIC" },
   { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM" },
-  { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED" },
-  { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES" },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES" },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "BCH", away: "PRE-MED" },
   {
@@ -1610,7 +1610,19 @@ function MixedSportMatchCard({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
+          center={
+            <span className="flex flex-col items-center gap-1.5">
+              <span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">
+                vs
+              </span>
+              <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
+                {match.scheduledTime ?? "Time TBA"}
+              </span>
+              <span className="max-w-28 text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-white/45">
+                {match.venue ?? "Venue TBA"}
+              </span>
+            </span>
+          }
           centerClassName=""
         />
       </div>
@@ -1655,7 +1667,7 @@ function MixedSportMatchDetail({
     <div className="space-y-7">
       <SportHero
         title={`${match.home} vs ${match.away}`}
-        subtitle="Scoreline, key moments and highlights will live here once the match is played."
+        subtitle={`${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, key moments and highlights will appear once the match is played.`}
         label={sport.name}
         meta={`${sport.name} - ${match.stage} - ${match.matchDay}`}
         icon={sportIcon(sportSlug)}
@@ -1700,7 +1712,7 @@ function MixedMatchDetailPanel({
           centerClassName=""
         />
         <p className="mt-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-          Scoreline pending
+          {match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
         </p>
       </div>
 
