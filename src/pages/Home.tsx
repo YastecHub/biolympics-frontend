@@ -69,37 +69,31 @@ const HOME_SPORTS: HomeSport[] = [
 
 const TODAY_SPORTS = [
   {
-    name: "Female football",
-    time: "SEMIFINALS",
-    meta: "MIC vs ZLY / BCH vs PRE-MED",
-    route: "/sports/female-football",
-    icon: "football",
+    name: "Basketball",
+    time: "12 PM",
+    meta: "Knockout / Sports Centre",
+    route: "/sports/basketball",
+    icon: "basketball",
     status: "upNext",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "basketball"),
   },
   {
-    name: "Marathon",
-    time: "COMPLETED",
-    meta: "Results available",
-    route: "/sports/marathon",
-    icon: "marathon",
-    status: "completed",
-    isLive: () => false,
+    name: "Volleyball",
+    time: "12 PM",
+    meta: "Knockout / Sports Centre",
+    route: "/sports/volleyball",
+    icon: "volleyball",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "volleyball"),
   },
   {
     name: "Male football",
-    time: "RESULTS IN",
-    meta: "Opening group matches completed",
+    time: "2 PM",
+    meta: "Matchday 2 / Sports Centre",
     route: "/sports/male-football",
     icon: "football",
-    isLive: (now: Date, liveFixtures: Fixture[]) =>
-      isSportLive(liveFixtures, "male-football") ||
-      isAnyWindowLive(now, [
-        ["2026-06-20T12:45:00+01:00", 60],
-        ["2026-06-20T13:45:00+01:00", 60],
-        ["2026-06-20T14:45:00+01:00", 60],
-        ["2026-06-20T15:45:00+01:00", 60],
-      ]),
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "male-football"),
   },
 ];
 
@@ -122,15 +116,6 @@ function useCurrentMinute() {
   }, []);
 
   return now;
-}
-
-function isAnyWindowLive(now: Date, windows: Array<[string, number]>) {
-  const current = now.getTime();
-  return windows.some(([iso, durationMinutes]) => {
-    const start = new Date(iso).getTime();
-    const end = start + durationMinutes * 60 * 1000;
-    return current >= start && current < end;
-  });
 }
 
 function isSportLive(liveFixtures: Fixture[], sportSlug: string) {
@@ -244,10 +229,12 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
         <span className="rounded-full bg-brand-accent/20 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-brand-accent">
           News / Updates
         </span>
-        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Today</span>
+        <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">
+          Monday, June 22
+        </span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
-        Today's sports lineup
+        Tomorrow's sports lineup
       </p>
       {liveFixtures.length > 0 && (
         <div className="mt-3 space-y-2">
