@@ -69,31 +69,31 @@ const HOME_SPORTS: HomeSport[] = [
 
 const TODAY_SPORTS = [
   {
-    name: "Basketball",
-    time: "12 PM",
-    meta: "K/O: MSM vs MIC first / Sports Centre",
-    route: "/sports/basketball",
-    icon: "basketball",
+    name: "Female football",
+    time: "1:30 PM",
+    meta: "MIC vs ZLY / PRE-MED vs BCH",
+    route: "/sports/female-football",
+    icon: "football",
     status: "upNext",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "basketball"),
-  },
-  {
-    name: "Volleyball",
-    time: "12 PM",
-    meta: "K/O: FSH vs ZLY first / Sports Centre",
-    route: "/sports/volleyball",
-    icon: "volleyball",
-    status: "upNext",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "volleyball"),
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
   },
   {
     name: "Male football",
     time: "12:45 PM",
-    meta: "MD2: MIC vs CBG first / Sports Centre",
+    meta: "MD3: MIC vs BTN first / Sports Centre",
     route: "/sports/male-football",
     icon: "football",
     status: "upNext",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "male-football"),
+  },
+  {
+    name: "Indoor games",
+    time: "2 PM",
+    meta: "BCH vs BTN / PRE-MED vs MIC / CBG vs ZLY / MSM vs FSH",
+    route: "/sports/indoor-games",
+    icon: "indoor-games",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "indoor-games"),
   },
 ];
 
@@ -230,7 +230,7 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
           News / Updates
         </span>
         <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-          Sunday, June 21
+          Tuesday, June 23
         </span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">

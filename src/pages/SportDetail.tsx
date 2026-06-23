@@ -75,6 +75,10 @@ type MixedSportMatch = {
   away: string;
   scheduledTime?: string;
   venue?: string;
+  homeScore?: number;
+  awayScore?: number;
+  status?: "scheduled" | "completed" | "postponed";
+  note?: string;
 };
 
 type TrackEvent = {
@@ -444,14 +448,33 @@ const MIXED_SPORTS: Record<
 
 const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "basketball-ko-1", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "MSM", away: "MIC", scheduledTime: "12:00 PM", venue: "Sports Centre" },
-  { id: "basketball-ko-2", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "BTN", scheduledTime: "12:20 PM", venue: "Sports Centre" },
-  { id: "basketball-ko-3", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "PRE-MED", scheduledTime: "12:40 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-2", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "BTN", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 16, awayScore: 18, status: "completed", note: "BTN won 18-16." },
+  { id: "basketball-ko-3", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "PRE-MED", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 30, awayScore: 16, status: "completed", note: "CBG won 30-16." },
   { id: "basketball-ko-4", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "1:00 PM", venue: "Sports Centre" },
-  { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre" },
-  { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre" },
-  { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre" },
-  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "1:00 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "ZLY won 2-0." },
+  { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "BTN won 2-1." },
+  { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 1, awayScore: 2, status: "completed", note: "MIC won 2-1." },
+  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "1:00 PM", venue: "Sports Centre", status: "postponed", note: "Match postponed." },
 ];
+
+function isMixedSportMatchCompleted(match: MixedSportMatch) {
+  return match.status === "completed" || (
+    typeof match.homeScore === "number" && typeof match.awayScore === "number"
+  );
+}
+
+function mixedSportScore(match: MixedSportMatch) {
+  if (!isMixedSportMatchCompleted(match)) return null;
+  return `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`;
+}
+
+function mixedSportWinner(match: MixedSportMatch) {
+  if (!isMixedSportMatchCompleted(match)) return null;
+  const homeScore = match.homeScore ?? 0;
+  const awayScore = match.awayScore ?? 0;
+  if (homeScore === awayScore) return null;
+  return homeScore > awayScore ? match.home : match.away;
+}
 
 const TRACK_EVENTS: TrackEvent[] = [
   {
@@ -637,10 +660,9 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-21T13:45:00+01:00", durationMinutes: 60 },
   { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM", scheduledTime: "2:45 PM", venue: "Sports Centre", startIso: "2026-06-21T14:45:00+01:00", durationMinutes: 60 },
   { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-21T15:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "BTN", away: "MIC" },
-  { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM" },
-  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES" },
-  { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "BCH", away: "PRE-MED" },
+  { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "MIC", away: "BTN", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-23T12:45:00+01:00", durationMinutes: 60 },
+  { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60 },
+  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-23T15:45:00+01:00", durationMinutes: 60 },
   {
     id: "female-ko-1",
     gender: "female",
@@ -720,8 +742,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     ],
     summary: "Francesca's brace carried BCH past CBG.",
   },
-  { id: "female-sf-1", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "ZLY", venue: FOOTBALL_VENUE },
-  { id: "female-sf-2", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "BCH", away: "PRE-MED", venue: FOOTBALL_VENUE },
+  { id: "female-sf-1", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "ZLY", scheduledTime: "1:30 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-23T13:30:00+01:00", durationMinutes: 40 },
+  { id: "female-sf-2", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "PRE-MED", away: "BCH", scheduledTime: "2:35 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-23T14:35:00+01:00", durationMinutes: 40 },
 ];
 
 function useCurrentMinute() {
@@ -1206,10 +1228,10 @@ function IndoorGameFixtureCard({
     <article className="card relative overflow-hidden p-4">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
-          <p className="font-display text-2xl font-bold">{game.name}</p>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">
-            Pot A vs Pot B
-          </p>
+            <p className="font-display text-2xl font-bold">{game.name}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/55">
+            Pot A vs Pot B / 2 PM
+            </p>
         </div>
         <span className="text-3xl" aria-hidden>
           {sportIcon(game.slug)}
@@ -1234,6 +1256,17 @@ function IndoorGameFixtureCard({
               awayName={departments.get(away)?.name}
               homeLogo={departments.get(home)?.logo_url}
               awayLogo={departments.get(away)?.logo_url}
+              center={
+                <span className="flex flex-col items-center gap-1">
+                  <span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">
+                    vs
+                  </span>
+                  <span className="font-display text-sm font-bold uppercase leading-none text-brand-lime">
+                    2 PM
+                  </span>
+                </span>
+              }
+              centerClassName=""
             />
           </div>
         ))}
@@ -1588,6 +1621,10 @@ function MixedSportMatchCard({
   match: MixedSportMatch;
   departments: Map<string, Department>;
 }) {
+  const score = mixedSportScore(match);
+  const isCompleted = isMixedSportMatchCompleted(match);
+  const isPostponed = match.status === "postponed";
+
   return (
     <Link
       to={`/sports/${match.sportSlug}/matches/${match.id}`}
@@ -1598,7 +1635,15 @@ function MixedSportMatchCard({
       </span>
       <div className="relative mb-3 flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
         <span>{match.stage}</span>
-        <span className="rounded-full bg-white/10 px-2 py-1 text-brand-lime">{match.matchDay}</span>
+        <span className={`rounded-full px-2 py-1 ${
+          isCompleted
+            ? "bg-brand-lime text-brand-secondary"
+            : isPostponed
+              ? "bg-warning/20 text-warning"
+              : "bg-white/10 text-brand-lime"
+        }`}>
+          {isCompleted ? "FT" : isPostponed ? "Postponed" : match.matchDay}
+        </span>
       </div>
       <div className="relative">
         <MatchupTeams
@@ -1612,11 +1657,13 @@ function MixedSportMatchCard({
           awayLogo={departments.get(match.away)?.logo_url}
           center={
             <span className="flex flex-col items-center gap-1.5">
-              <span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">
-                vs
+              <span className={`rounded-full px-3 py-1 font-display text-xl font-bold ${
+                isCompleted ? "bg-brand-lime text-brand-secondary" : isPostponed ? "bg-warning/20 text-warning" : "bg-white/10"
+              }`}>
+                {score ?? (isPostponed ? "PP" : "vs")}
               </span>
               <span className="font-display text-base font-bold uppercase leading-none text-brand-lime">
-                {match.scheduledTime ?? "Time TBA"}
+                {isCompleted ? "Full time" : isPostponed ? "Postponed" : match.scheduledTime ?? "Time TBA"}
               </span>
               <span className="max-w-28 text-[10px] font-bold uppercase leading-tight tracking-[0.12em] text-white/45">
                 {match.venue ?? "Venue TBA"}
@@ -1667,7 +1714,13 @@ function MixedSportMatchDetail({
     <div className="space-y-7">
       <SportHero
         title={`${match.home} vs ${match.away}`}
-        subtitle={`${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, key moments and highlights will appear once the match is played.`}
+        subtitle={
+          isMixedSportMatchCompleted(match)
+            ? `Full time: ${displayDepartmentAbbr(match.home)} ${match.homeScore ?? 0} - ${match.awayScore ?? 0} ${displayDepartmentAbbr(match.away)}.`
+            : match.status === "postponed"
+              ? `${displayDepartmentAbbr(match.home)} vs ${displayDepartmentAbbr(match.away)} has been postponed.`
+              : `${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, key moments and highlights will appear once the match is played.`
+        }
         label={sport.name}
         meta={`${sport.name} - ${match.stage} - ${match.matchDay}`}
         icon={sportIcon(sportSlug)}
@@ -1686,6 +1739,11 @@ function MixedMatchDetailPanel({
   match: MixedSportMatch;
   departments: Map<string, Department>;
 }) {
+  const score = mixedSportScore(match);
+  const winner = mixedSportWinner(match);
+  const isCompleted = isMixedSportMatchCompleted(match);
+  const isPostponed = match.status === "postponed";
+
   return (
     <aside className="card overflow-hidden p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -1708,17 +1766,28 @@ function MixedMatchDetailPanel({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
+          center={<span className="font-display text-4xl font-bold text-brand-lime">{score ?? (isPostponed ? "PP" : "-")}</span>}
           centerClassName=""
         />
         <p className="mt-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-          {match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
+          {isCompleted ? "Full time" : isPostponed ? "Postponed" : match.scheduledTime ?? "Time TBA"} / {match.venue ?? "Venue TBA"}
         </p>
       </div>
 
       <div className="mt-4 grid gap-3">
-        <DetailBlock title="Scorers" body="No points recorded yet." />
-        <DetailBlock title="Key moments" body="Match notes will be added after play." />
+        <DetailBlock
+          title="Result"
+          body={
+            winner
+              ? `${displayDepartmentAbbr(winner)} won the match.`
+              : isCompleted
+                ? "The match ended level."
+                : isPostponed
+                  ? "This match was postponed."
+                  : "Result pending."
+          }
+        />
+        <DetailBlock title="Scoreline" body={score ?? (isPostponed ? "Not played." : "No score recorded yet.")} />
         <DetailBlock title="Highlights" body="Highlights will be added after match media is available." />
       </div>
     </aside>
@@ -2388,7 +2457,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
               <div className="card p-5 lg:col-span-2">
                 <p className="font-display text-2xl font-bold">Female semifinals confirmed</p>
                 <p className="mt-2 text-sm text-white/62">
-                  MIC face ZLY, while BCH meet PRE-MED for the remaining final spots.
+                  MIC face ZLY, while PRE-MED meet BCH for the remaining final spots.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && match.stage === "Semi Final").map((match) => (
@@ -2611,7 +2680,7 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
               ? "Opening group-stage results are in"
-              : "MIC vs ZLY, BCH vs PRE-MED"}
+              : "MIC vs ZLY, PRE-MED vs BCH"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
