@@ -54,6 +54,8 @@ type FootballMatch = {
   homeScore?: number;
   awayScore?: number;
   status?: "scheduled" | "completed";
+  penaltyScore?: string;
+  penaltyWinner?: string;
   goalEvents?: FootballGoalEvent[];
   summary?: string;
 };
@@ -96,6 +98,11 @@ type TableTennisMatch = {
   matchDay: string;
   home: string;
   away: string;
+  homeScore?: number;
+  awayScore?: number;
+  winner?: string;
+  status?: "scheduled" | "completed";
+  note?: string;
 };
 
 type IndoorMatchResult = {
@@ -454,7 +461,9 @@ const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "ZLY won 2-0." },
   { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "BTN won 2-1." },
   { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 1, awayScore: 2, status: "completed", note: "MIC won 2-1." },
-  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "1:00 PM", venue: "Sports Centre", status: "postponed", note: "Match postponed." },
+  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "K/O Spillover", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "12:00 PM", venue: "Sports Centre", note: "Spillover knockout fixture." },
+  { id: "volleyball-sf-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "BTN", away: "ZLY", scheduledTime: "12:30 PM", venue: "Sports Centre" },
+  { id: "volleyball-sf-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "BCH/PRE-MED", away: "MIC", scheduledTime: "2:00 PM", venue: "Sports Centre" },
 ];
 
 function isMixedSportMatchCompleted(match: MixedSportMatch) {
@@ -474,6 +483,28 @@ function mixedSportWinner(match: MixedSportMatch) {
   const awayScore = match.awayScore ?? 0;
   if (homeScore === awayScore) return null;
   return homeScore > awayScore ? match.home : match.away;
+}
+
+function isTableTennisMatchCompleted(match: TableTennisMatch) {
+  return match.status === "completed" || Boolean(match.winner) || (
+    typeof match.homeScore === "number" && typeof match.awayScore === "number"
+  );
+}
+
+function tableTennisScore(match: TableTennisMatch) {
+  if (typeof match.homeScore === "number" && typeof match.awayScore === "number") {
+    return `${match.homeScore} - ${match.awayScore}`;
+  }
+  if (match.winner) return `${displayDepartmentAbbr(match.winner)} wins`;
+  if (isTableTennisMatchCompleted(match)) return "N/C";
+  return null;
+}
+
+function tableTennisWinner(match: TableTennisMatch) {
+  if (match.winner) return match.winner;
+  if (typeof match.homeScore !== "number" || typeof match.awayScore !== "number") return null;
+  if (match.homeScore === match.awayScore) return null;
+  return match.homeScore > match.awayScore ? match.home : match.away;
 }
 
 const TRACK_EVENTS: TrackEvent[] = [
@@ -521,26 +552,91 @@ const TRACK_EVENTS: TrackEvent[] = [
   },
 ];
 
-const TABLE_TENNIS_PAIRINGS = [
-  ["MSM", "MIC"],
-  ["BCH", "BTN"],
-  ["CBG", "PRE-MED"],
-  ["ZLY", "FISHERIES"],
-] as const;
+const TABLE_TENNIS_MATCHES: TableTennisMatch[] = [
+  { id: "table-tennis-male-r1-1", category: "Male", stage: "Round 1", matchDay: "Knockout", home: "BCH", away: "BTN", homeScore: 2, awayScore: 0, status: "completed" },
+  { id: "table-tennis-male-r1-2", category: "Male", stage: "Round 1", matchDay: "Knockout", home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0, status: "completed" },
+  { id: "table-tennis-male-r1-3", category: "Male", stage: "Round 1", matchDay: "Knockout", home: "CBG", away: "ZLY", homeScore: 0, awayScore: 2, status: "completed" },
+  { id: "table-tennis-male-r1-4", category: "Male", stage: "Round 1", matchDay: "Knockout", home: "MSM", away: "FISHERIES", winner: "FISHERIES", status: "completed" },
+  { id: "table-tennis-female-r1-1", category: "Female", stage: "Round 1", matchDay: "Knockout", home: "BCH", away: "BTN", winner: "BTN", status: "completed", note: "BCH did not have a player." },
+  { id: "table-tennis-female-r1-2", category: "Female", stage: "Round 1", matchDay: "Knockout", home: "PRE-MED", away: "MIC", homeScore: 0, awayScore: 2, status: "completed" },
+  { id: "table-tennis-female-r1-3", category: "Female", stage: "Round 1", matchDay: "Knockout", home: "CBG", away: "ZLY", homeScore: 0, awayScore: 2, status: "completed" },
+  { id: "table-tennis-female-r1-4", category: "Female", stage: "Round 1", matchDay: "Knockout", home: "MSM", away: "FISHERIES", status: "completed", note: "MSM and Fisheries did not have players." },
+];
 
-const TABLE_TENNIS_MATCHES: TableTennisMatch[] = (["Male", "Female"] as const).flatMap(
-  (category) =>
-    TABLE_TENNIS_PAIRINGS.map(([home, away], index) => ({
-      id: `table-tennis-${category.toLowerCase()}-r1-${index + 1}`,
-      category,
-      stage: "Round 1",
-      matchDay: "Knockout",
-      home,
-      away,
-    })),
-);
+const TABLE_TENNIS_RESULTS: IndoorResultGroup[] = [
+  {
+    title: "Table Tennis Male",
+    meta: "Male knockout",
+    rounds: [
+      {
+        round: "Round 1",
+        matches: [
+          { home: "BCH", away: "BTN", homeScore: 2, awayScore: 0 },
+          { home: "PRE-MED", away: "MIC", homeScore: 2, awayScore: 0 },
+          { home: "CBG", away: "ZLY", homeScore: 0, awayScore: 2 },
+          { home: "MSM", away: "FISHERIES", winner: "FISHERIES" },
+        ],
+      },
+      {
+        round: "Semi Final",
+        matches: [
+          { home: "BCH", away: "PRE-MED", homeScore: 2, awayScore: 0 },
+          { home: "ZLY", away: "FISHERIES", winner: "FISHERIES" },
+        ],
+      },
+      {
+        round: "Bronze",
+        matches: [{ home: "PRE-MED", away: "ZLY", winner: "PRE-MED", note: "Fourth place ignored." }],
+      },
+      {
+        round: "Final",
+        matches: [{ home: "BCH", away: "FISHERIES", homeScore: 1, awayScore: 2 }],
+      },
+    ],
+    medals: [
+      { medal: "Gold", team: "FISHERIES" },
+      { medal: "Silver", team: "BCH" },
+      { medal: "Bronze", team: "PRE-MED" },
+    ],
+  },
+  {
+    title: "Table Tennis Female",
+    meta: "Female knockout",
+    rounds: [
+      {
+        round: "Round 1",
+        matches: [
+          { home: "BCH", away: "BTN", winner: "BTN", note: "BCH did not have a player." },
+          { home: "PRE-MED", away: "MIC", homeScore: 0, awayScore: 2 },
+          { home: "CBG", away: "ZLY", homeScore: 0, awayScore: 2 },
+          { home: "MSM", away: "FISHERIES", note: "MSM and Fisheries did not have players." },
+        ],
+      },
+      {
+        round: "Semi Final",
+        matches: [
+          { home: "BTN", away: "MIC", homeScore: 0, awayScore: 2 },
+          { home: "ZLY", away: "FISHERIES", winner: "ZLY", note: "Fisheries did not have a player." },
+        ],
+      },
+      {
+        round: "Bronze",
+        matches: [{ home: "CBG", away: "BTN", winner: "CBG", note: "Fourth place ignored." }],
+      },
+      {
+        round: "Final",
+        matches: [{ home: "MIC", away: "ZLY", homeScore: 2, awayScore: 0 }],
+      },
+    ],
+    medals: [
+      { medal: "Gold", team: "MIC" },
+      { medal: "Silver", team: "ZLY" },
+      { medal: "Bronze", team: "CBG" },
+    ],
+  },
+];
 
-const FOOTBALL_MATCHDAY_DATE = "20/06/2026";
+const FOOTBALL_RESULTS_DATE = "Updated through 23/06/2026";
 const FOOTBALL_VENUE = "ISL Football Pitch";
 
 const MARATHON_RESULTS = [
@@ -656,13 +752,14 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     ],
     summary: "ZLY settled the game in the first half with goals from Natty and Seyi.",
   },
-  { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "MIC", away: "CBG", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-21T12:45:00+01:00", durationMinutes: 60 },
-  { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-21T13:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM", scheduledTime: "2:45 PM", venue: "Sports Centre", startIso: "2026-06-21T14:45:00+01:00", durationMinutes: 60 },
-  { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-21T15:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "MIC", away: "BTN", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-23T12:45:00+01:00", durationMinutes: 60 },
-  { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60 },
-  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-23T15:45:00+01:00", durationMinutes: 60 },
+  { id: "male-a-md2-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "MIC", away: "CBG", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-21T12:45:00+01:00", durationMinutes: 60, homeScore: 3, awayScore: 2, status: "completed", summary: "MIC edged CBG 3-2 in a five-goal Matchday 2 game." },
+  { id: "male-b-md2-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "BCH", away: "FISHERIES", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-21T13:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 3, status: "completed", summary: "Fisheries beat BCH 3-0 on Matchday 2." },
+  { id: "male-a-md2-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD2", home: "BTN", away: "MSM", scheduledTime: "2:45 PM", venue: "Sports Centre", startIso: "2026-06-21T14:45:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "BTN and MSM shared points after a 1-1 draw." },
+  { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-21T15:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 3, status: "completed", summary: "PRE-MED beat ZLY 3-0 on Matchday 2." },
+  { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "MIC", away: "BTN", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-23T12:45:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "MIC and BTN played out a 1-1 Matchday 3 draw." },
+  { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 0, status: "completed", summary: "CBG and MSM ended Matchday 3 goalless." },
+  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60 },
+  { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60 },
   {
     id: "female-ko-1",
     gender: "female",
@@ -742,8 +839,45 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     ],
     summary: "Francesca's brace carried BCH past CBG.",
   },
-  { id: "female-sf-1", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "ZLY", scheduledTime: "1:30 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-23T13:30:00+01:00", durationMinutes: 40 },
-  { id: "female-sf-2", gender: "female", group: "Knockout", stage: "Semi Final", matchDay: "SF", home: "PRE-MED", away: "BCH", scheduledTime: "2:35 PM", venue: FOOTBALL_VENUE, startIso: "2026-06-23T14:35:00+01:00", durationMinutes: 40 },
+  {
+    id: "female-sf-1",
+    gender: "female",
+    group: "Knockout",
+    stage: "Semi Final",
+    matchDay: "SF",
+    home: "MIC",
+    away: "ZLY",
+    scheduledTime: "1:30 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-23T13:30:00+01:00",
+    durationMinutes: 40,
+    homeScore: 1,
+    awayScore: 0,
+    status: "completed",
+    goalEvents: [{ team: "MIC", scorer: "Azeezat", minute: "Goal", note: "Match winner" }],
+    summary: "Azeezat scored the winner as MIC beat ZLY 1-0 to reach the final.",
+  },
+  {
+    id: "female-sf-2",
+    gender: "female",
+    group: "Knockout",
+    stage: "Semi Final",
+    matchDay: "SF",
+    home: "PRE-MED",
+    away: "BCH",
+    scheduledTime: "2:35 PM",
+    venue: FOOTBALL_VENUE,
+    startIso: "2026-06-23T14:35:00+01:00",
+    durationMinutes: 40,
+    homeScore: 0,
+    awayScore: 0,
+    status: "completed",
+    penaltyScore: "BCH 3-1",
+    penaltyWinner: "BCH",
+    summary: "BCH advanced to the final after beating PRE-MED 3-1 on penalties.",
+  },
+  { id: "female-third", gender: "female", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "ZLY", venue: FOOTBALL_VENUE },
+  { id: "female-final", gender: "female", group: "Knockout", stage: "Final", matchDay: "Final", home: "MIC", away: "BCH", venue: FOOTBALL_VENUE },
 ];
 
 function useCurrentMinute() {
@@ -776,14 +910,15 @@ function isFootballMatchCompleted(match: FootballMatch) {
 
 function matchScore(match: FootballMatch) {
   if (!isFootballMatchCompleted(match)) return null;
-  return `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`;
+  const score = `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`;
+  return match.penaltyScore ? `${score} (${match.penaltyScore} pens)` : score;
 }
 
 function footballWinner(match: FootballMatch) {
   if (!isFootballMatchCompleted(match)) return null;
   const homeScore = match.homeScore ?? 0;
   const awayScore = match.awayScore ?? 0;
-  if (homeScore === awayScore) return null;
+  if (homeScore === awayScore) return match.penaltyWinner ?? null;
   return homeScore > awayScore ? match.home : match.away;
 }
 
@@ -1556,6 +1691,8 @@ function MixedSportDetail({ sportSlug }: { sportSlug: MixedSportSlug }) {
           <MixedSportDraw sport={sport} departments={departmentByAbbr} />
         ) : view === "fixtures" ? (
           <MixedSportFixtures matches={matches} departments={departmentByAbbr} />
+        ) : matches.some(isMixedSportMatchCompleted) ? (
+          <MixedSportFixtures matches={matches.filter(isMixedSportMatchCompleted)} departments={departmentByAbbr} />
         ) : (
           <EmptyState title={`No ${sport.name.toLowerCase()} results yet.`} hint="Live and completed matches will appear here once play begins." />
         )}
@@ -1849,7 +1986,7 @@ function TableTennisDetail() {
         ) : view === "fixtures" ? (
           <TableTennisFixtures matches={TABLE_TENNIS_MATCHES} departments={departmentByAbbr} />
         ) : (
-          <EmptyState title="No table tennis results yet." hint="Completed match results will appear here once recorded." />
+          <IndoorResults groups={TABLE_TENNIS_RESULTS} departments={departmentByAbbr} />
         )}
       </section>
     </div>
@@ -1942,6 +2079,9 @@ function TableTennisMatchCard({
   match: TableTennisMatch;
   departments: Map<string, Department>;
 }) {
+  const isCompleted = isTableTennisMatchCompleted(match);
+  const score = tableTennisScore(match);
+
   return (
     <Link
       to={`/sports/table-tennis/matches/${match.id}`}
@@ -1952,7 +2092,9 @@ function TableTennisMatchCard({
       </span>
       <div className="relative mb-3 flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
         <span>{match.category}</span>
-        <span className="rounded-full bg-white/10 px-2 py-1 text-brand-lime">{match.stage}</span>
+        <span className={`rounded-full px-2 py-1 ${isCompleted ? "bg-brand-lime text-brand-secondary" : "bg-white/10 text-brand-lime"}`}>
+          {isCompleted ? "FT" : match.stage}
+        </span>
       </div>
       <div className="relative">
         <MatchupTeams
@@ -1964,7 +2106,16 @@ function TableTennisMatchCard({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="rounded-full bg-white/10 px-3 py-1 font-display text-xl font-bold">vs</span>}
+          center={
+            <span className="flex flex-col items-center gap-1.5">
+              <span className={`rounded-full px-3 py-1 font-display text-xl font-bold ${isCompleted ? "bg-brand-lime text-brand-secondary" : "bg-white/10"}`}>
+                {score ?? "vs"}
+              </span>
+              <span className="max-w-28 text-center font-display text-sm font-bold uppercase leading-none text-brand-lime">
+                {match.note ?? (isCompleted ? "Full time" : match.stage)}
+              </span>
+            </span>
+          }
           centerClassName=""
         />
       </div>
@@ -2002,7 +2153,11 @@ function TableTennisMatchDetail({ matchId }: { matchId: string }) {
     <div className="space-y-7">
       <SportHero
         title={`${match.home} vs ${match.away}`}
-        subtitle="Scoreline and highlights will live here once the match is played."
+        subtitle={
+          isTableTennisMatchCompleted(match)
+            ? `${tableTennisScore(match) ?? "Completed"}${match.note ? ` - ${match.note}` : ""}`
+            : "Scoreline and highlights will live here once the match is played."
+        }
         label="Table Tennis"
         meta={`${match.category} - ${match.stage}`}
         icon={sportIcon("table-tennis")}
@@ -2021,6 +2176,10 @@ function TableTennisMatchDetailPanel({
   match: TableTennisMatch;
   departments: Map<string, Department>;
 }) {
+  const isCompleted = isTableTennisMatchCompleted(match);
+  const winner = tableTennisWinner(match);
+  const score = tableTennisScore(match);
+
   return (
     <aside className="card overflow-hidden p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -2043,18 +2202,18 @@ function TableTennisMatchDetailPanel({
           awayName={departments.get(match.away)?.name}
           homeLogo={departments.get(match.home)?.logo_url}
           awayLogo={departments.get(match.away)?.logo_url}
-          center={<span className="font-display text-4xl font-bold text-brand-lime">-</span>}
+          center={<span className="font-display text-4xl font-bold text-brand-lime">{score ?? "-"}</span>}
           centerClassName=""
         />
         <p className="mt-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-white/45">
-          Scoreline pending
+          {isCompleted ? "Full time" : "Scoreline pending"}
         </p>
       </div>
 
       <div className="mt-4 grid gap-3">
-        <DetailBlock title="Winner" body="No winner recorded yet." />
-        <DetailBlock title="Set scores" body="Set-by-set scores will appear after the match." />
-        <DetailBlock title="Highlights" body="Highlights will be added after match media is available." />
+        <DetailBlock title="Winner" body={winner ? `${displayDepartmentAbbr(winner)} won the match.` : isCompleted ? "No contest recorded." : "No winner recorded yet."} />
+        <DetailBlock title="Set scores" body={score ?? "Set-by-set scores will appear after the match."} />
+        <DetailBlock title="Notes" body={match.note ?? "Highlights will be added after match media is available."} />
       </div>
     </aside>
   );
@@ -2077,7 +2236,7 @@ function MarathonDetail() {
     <div className="space-y-7">
       <SportHero
         title="ULLSSA Marathon 2026"
-        subtitle="The Dean's Games marathon is complete. Podium results are now available for both male and female races."
+        subtitle="The Dean's Games marathon is complete. The podium winners are shown first for both races."
         label="Home"
         meta="Completed - results available"
         icon={sportIcon("marathon")}
@@ -2093,6 +2252,12 @@ function MarathonDetail() {
           </div>
         }
       />
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        {MARATHON_RESULTS.map((group) => (
+          <MarathonResultCard key={group.category} category={group.category} rows={group.rows} />
+        ))}
+      </section>
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <article className="card relative overflow-hidden p-5">
@@ -2159,11 +2324,6 @@ function MarathonDetail() {
         </article>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        {MARATHON_RESULTS.map((group) => (
-          <MarathonResultCard key={group.category} category={group.category} rows={group.rows} />
-        ))}
-      </section>
     </div>
   );
 }
@@ -2455,19 +2615,19 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
                 <PotCard key={title} title={title} teams={[...teams]} departments={departmentByAbbr} />
               ))}
               <div className="card p-5 lg:col-span-2">
-                <p className="font-display text-2xl font-bold">Female semifinals confirmed</p>
+                <p className="font-display text-2xl font-bold">Female final fixtures confirmed</p>
                 <p className="mt-2 text-sm text-white/62">
-                  MIC face ZLY, while PRE-MED meet BCH for the remaining final spots.
+                  MIC face BCH in the final, while PRE-MED meet ZLY for third place.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && match.stage === "Semi Final").map((match) => (
+                  {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && ["Final", "Third Place"].includes(match.stage)).map((match) => (
                     <Link
                       key={match.id}
                       to={`/sports/female-football/matches/${match.id}`}
                       className="rounded-2xl bg-white/8 p-4 ring-1 ring-white/10 transition hover:-translate-y-0.5 hover:ring-brand-lime/50"
                     >
                       <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-lime">
-                        Semi Final
+                        {match.stage}
                       </p>
                       <p className="mt-2 font-display text-2xl font-bold">
                         {displayDepartmentAbbr(match.home)} vs {displayDepartmentAbbr(match.away)}
@@ -2527,7 +2687,7 @@ function FootballMatchDetail({ matchId }: { matchId: string }) {
         title={`${displayDepartmentAbbr(match.home)} vs ${displayDepartmentAbbr(match.away)}`}
         subtitle={
           isFootballMatchCompleted(match)
-            ? `Full time: ${displayDepartmentAbbr(match.home)} ${match.homeScore ?? 0} - ${match.awayScore ?? 0} ${displayDepartmentAbbr(match.away)}.`
+            ? `Full time: ${displayDepartmentAbbr(match.home)} ${matchScore(match) ?? ""} ${displayDepartmentAbbr(match.away)}.`
             : `${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, goal scorers, assists and highlights will appear once the game is played.`
         }
         label="Home"
@@ -2622,10 +2782,21 @@ function FootballFixturesList({
   now: Date;
   liveFixtures: Fixture[];
 }) {
+  const upcoming = matches.filter((match) => !isFootballMatchCompleted(match));
+
+  if (!upcoming.length) {
+    return (
+      <EmptyState
+        title="No upcoming football fixtures."
+        hint="Completed matches are available under Results."
+      />
+    );
+  }
+
   return (
     <section className="space-y-3">
       <div className="grid gap-3 xl:grid-cols-2">
-        {matches.map((match) => (
+        {upcoming.map((match) => (
           <FootballMatchCard key={match.id} match={match} departments={departments} now={now} liveFixtures={liveFixtures} />
         ))}
       </div>
@@ -2675,22 +2846,22 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
       <div className="relative flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-lime">
-            {gender === "male" ? "Male football results" : "Female semifinal draw"}
+            {gender === "male" ? "Male football results" : "Female football results"}
           </p>
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
-              ? "Opening group-stage results are in"
-              : "MIC vs ZLY, PRE-MED vs BCH"}
+              ? "Group A complete, Group B still has two"
+              : "MIC vs BCH final confirmed"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "Fisheries, MSM and ZLY picked up wins, while BTN and CBG shared points."
-              : "Quarterfinals are complete. The next step is the semifinal fight for a place in the final."}
+              ? "Group A has finished its group-stage matches. PRE-MED vs BCH and ZLY vs FSH are the remaining Group B fixtures at Sports Centre."
+              : "MIC beat ZLY 1-0, and BCH advanced past PRE-MED on penalties after a 0-0 draw."}
           </p>
         </div>
         <div className="grid min-w-48 gap-1 rounded-xl bg-black/15 p-3 text-sm ring-1 ring-white/10">
-          <span className="font-bold text-white">{FOOTBALL_MATCHDAY_DATE}</span>
-          <span className="text-white/62">{FOOTBALL_VENUE}</span>
+          <span className="font-bold text-white">{gender === "male" ? FOOTBALL_RESULTS_DATE : "Final pairings set"}</span>
+          <span className="text-white/62">{gender === "male" ? "Sports Centre" : FOOTBALL_VENUE}</span>
         </div>
       </div>
     </article>
@@ -2893,7 +3064,18 @@ function MatchDetailPanel({
       </div>
 
       <div className="mt-4 grid gap-3">
-        <DetailBlock title="Result" body={winner ? `${displayDepartmentAbbr(winner)} won the match.` : isFootballMatchCompleted(match) ? "The match ended in a draw." : "Result pending."} />
+        <DetailBlock
+          title="Result"
+          body={
+            winner
+              ? match.penaltyScore
+                ? `${displayDepartmentAbbr(winner)} won ${match.penaltyScore} on penalties.`
+                : `${displayDepartmentAbbr(winner)} won the match.`
+              : isFootballMatchCompleted(match)
+                ? "The match ended in a draw."
+                : "Result pending."
+          }
+        />
         <FootballGoalTimeline match={match} departments={departments} />
         <DetailBlock title="Highlights" body={match.summary ?? "Highlights will be added after match media is available."} />
       </div>
