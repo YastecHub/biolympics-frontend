@@ -807,8 +807,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-b-md2-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD2", home: "ZLY", away: "PRE-MED", scheduledTime: "3:45 PM", venue: "Sports Centre", startIso: "2026-06-21T15:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 3, status: "completed", summary: "PRE-MED beat ZLY 3-0 on Matchday 2." },
   { id: "male-a-md3-1", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "MIC", away: "BTN", scheduledTime: "12:45 PM", venue: "Sports Centre", startIso: "2026-06-23T12:45:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "MIC and BTN played out a 1-1 Matchday 3 draw." },
   { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 0, status: "completed", summary: "CBG and MSM ended Matchday 3 goalless." },
-  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60 },
-  { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "ZLY", away: "FISHERIES", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60 },
+  { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "PRE-MED and BCH shared points after a 1-1 draw." },
+  { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "FISHERIES", away: "ZLY", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "Fisheries and ZLY ended the final Group B match 1-1." },
   {
     id: "female-ko-1",
     gender: "female",
@@ -2984,12 +2984,12 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           </p>
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
-              ? "Group A complete, Group B still has two"
+              ? "Group stage complete"
               : "MIC vs BCH final confirmed"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "Group A has finished its group-stage matches. PRE-MED vs BCH and ZLY vs FSH are the remaining Group B fixtures at Sports Centre."
+              ? "Group B closed with two 1-1 draws: PRE-MED vs BCH and FSH vs ZLY."
               : "MIC beat ZLY 1-0, and BCH advanced past PRE-MED on penalties after a 0-0 draw."}
           </p>
         </div>

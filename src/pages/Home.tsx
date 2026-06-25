@@ -79,11 +79,11 @@ const TODAY_SPORTS = [
   },
   {
     name: "Male football",
-    time: "Group B today",
-    meta: "PRE-MED vs BCH / ZLY vs FSH at Sports Centre",
+    time: "Groups complete",
+    meta: "Latest: PRE-MED 1-1 BCH / FSH 1-1 ZLY",
     route: "/sports/male-football",
     icon: "football",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "male-football"),
   },
   {
