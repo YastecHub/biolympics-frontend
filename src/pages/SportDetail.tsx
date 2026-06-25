@@ -228,12 +228,17 @@ const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
         },
         {
           round: "3rd Place",
-          matches: [{ home: "BTN", away: "MSM", note: "To be played on Wednesday" }],
+          matches: [{ home: "BTN", away: "MSM", winner: "BTN" }],
         },
         {
           round: "Final",
-          matches: [{ home: "CBG", away: "PRE-MED", note: "To be played on Wednesday" }],
+          matches: [{ home: "CBG", away: "PRE-MED", winner: "CBG" }],
         },
+      ],
+      medals: [
+        { medal: "Gold", team: "CBG" },
+        { medal: "Silver", team: "PRE-MED" },
+        { medal: "Bronze", team: "BTN" },
       ],
     },
   ],
@@ -260,12 +265,17 @@ const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
         },
         {
           round: "3rd Place",
-          matches: [{ home: "PRE-MED", away: "FISHERIES", note: "To be played on Wednesday" }],
+          matches: [{ home: "PRE-MED", away: "FISHERIES", winner: "FISHERIES" }],
         },
         {
           round: "Final",
-          matches: [{ home: "BCH", away: "CBG", note: "To be played on Wednesday" }],
+          matches: [{ home: "BCH", away: "CBG", winner: "CBG" }],
         },
+      ],
+      medals: [
+        { medal: "Gold", team: "CBG" },
+        { medal: "Silver", team: "BCH" },
+        { medal: "Bronze", team: "FISHERIES" },
       ],
     },
     {
@@ -290,12 +300,17 @@ const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
         },
         {
           round: "3rd Place",
-          matches: [{ home: "MIC", away: "ZLY", note: "To be played on Wednesday" }],
+          matches: [{ home: "MIC", away: "ZLY", winner: "MIC" }],
         },
         {
           round: "Final",
-          matches: [{ home: "BCH", away: "FISHERIES", note: "To be played on Wednesday" }],
+          matches: [{ home: "BCH", away: "FISHERIES", winner: "FISHERIES" }],
         },
+      ],
+      medals: [
+        { medal: "Gold", team: "FISHERIES" },
+        { medal: "Silver", team: "BCH" },
+        { medal: "Bronze", team: "MIC" },
       ],
     },
   ],
@@ -390,10 +405,23 @@ const INDOOR_RESULTS: Record<string, IndoorResultGroup[]> = {
         {
           round: "Semi Final",
           matches: [
-            { home: "PRE-MED", away: "BCH", note: "To be played on Wednesday" },
-            { home: "CBG", away: "FISHERIES", note: "To be played on Wednesday" },
+            { home: "PRE-MED", away: "BCH", winner: "BCH" },
+            { home: "CBG", away: "FISHERIES", winner: "CBG" },
           ],
         },
+        {
+          round: "3rd Place",
+          matches: [{ home: "PRE-MED", away: "FISHERIES", winner: "PRE-MED" }],
+        },
+        {
+          round: "Final",
+          matches: [{ home: "CBG", away: "BCH", winner: "CBG" }],
+        },
+      ],
+      medals: [
+        { medal: "Gold", team: "CBG" },
+        { medal: "Silver", team: "BCH" },
+        { medal: "Bronze", team: "PRE-MED" },
       ],
     },
   ],
@@ -461,9 +489,11 @@ const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "ZLY won 2-0." },
   { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "BTN won 2-1." },
   { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 1, awayScore: 2, status: "completed", note: "MIC won 2-1." },
-  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "K/O Spillover", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "12:00 PM", venue: "Sports Centre", note: "Spillover knockout fixture." },
-  { id: "volleyball-sf-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "BTN", away: "ZLY", scheduledTime: "12:30 PM", venue: "Sports Centre" },
-  { id: "volleyball-sf-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "BCH/PRE-MED", away: "MIC", scheduledTime: "2:00 PM", venue: "Sports Centre" },
+  { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "K/O Spillover", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "PRE-MED advanced to the semifinal." },
+  { id: "volleyball-sf-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "ZLY", away: "BTN", scheduledTime: "12:30 PM", venue: "Sports Centre", homeScore: 2, awayScore: 0, status: "completed", note: "ZLY won 2-0." },
+  { id: "volleyball-sf-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "PRE-MED", scheduledTime: "2:00 PM", venue: "Sports Centre", homeScore: 2, awayScore: 0, status: "completed", note: "MIC won 2-0." },
+  { id: "volleyball-third", sportSlug: "volleyball", sportName: "Volleyball", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "BTN", venue: "Sports Centre" },
+  { id: "volleyball-final", sportSlug: "volleyball", sportName: "Volleyball", stage: "Final", matchDay: "Final", home: "ZLY", away: "MIC", venue: "Sports Centre" },
 ];
 
 function isMixedSportMatchCompleted(match: MixedSportMatch) {
@@ -654,6 +684,25 @@ const MARATHON_RESULTS = [
       { place: 1, name: "Bakare Abdulquadri Folaranmi", department: "BTN" },
       { place: 2, name: "Balogun Basit", department: "FISHERIES" },
       { place: 3, name: "Oluwaleke Atolagbe John", department: "MSM" },
+    ],
+  },
+];
+
+const SWIMMING_RESULTS = [
+  {
+    category: "Female",
+    rows: [
+      { place: 1, department: "PRE-MED" },
+      { place: 2, department: "FISHERIES" },
+      { place: 3, department: "MIC" },
+    ],
+  },
+  {
+    category: "Male",
+    rows: [
+      { place: 1, department: "ZLY" },
+      { place: 2, department: "MSM" },
+      { place: 3, department: "PRE-MED" },
     ],
   },
 ];
@@ -965,6 +1014,10 @@ export default function SportDetail() {
 
   if (isMixedSportSlug(slug)) {
     return <MixedSportDetail sportSlug={slug} />;
+  }
+
+  if (slug === "swimming") {
+    return <SwimmingDetail />;
   }
 
   if (isTrackSportSlug(slug)) {
@@ -2375,6 +2428,87 @@ function MarathonInfoCard({ label, value }: { label: string; value: string }) {
       <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/45">{label}</p>
       <p className="mt-2 font-display text-2xl font-bold text-white">{value}</p>
     </div>
+  );
+}
+
+function SwimmingDetail() {
+  const following = useFollowStore((s) => s.isFollowing("sports", "swimming"));
+  const toggle = useFollowStore((s) => s.toggleSport);
+  const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
+  const departmentByAbbr = new Map(
+    (departments.data ?? []).map((department) => [department.abbreviation, department]),
+  );
+
+  return (
+    <div className="space-y-7">
+      <SportHero
+        title="Swimming"
+        subtitle="Swimming is complete. The male and female podium winners are now available."
+        label="Home"
+        meta="Completed - podium confirmed"
+        icon={sportIcon("swimming")}
+        action={
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-brand-lime/15 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-brand-lime ring-1 ring-brand-lime/25">
+              Completed
+            </span>
+            <FollowButton following={following} onClick={() => toggle("swimming")} label="sport" />
+          </div>
+        }
+      />
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        {SWIMMING_RESULTS.map((group) => (
+          <DepartmentPodiumCard
+            key={group.category}
+            title={`${group.category} swimming`}
+            rows={group.rows}
+            departments={departmentByAbbr}
+          />
+        ))}
+      </section>
+    </div>
+  );
+}
+
+function DepartmentPodiumCard({
+  title,
+  rows,
+  departments,
+}: {
+  title: string;
+  rows: { place: number; department: string }[];
+  departments: Map<string, Department>;
+}) {
+  return (
+    <article className="card overflow-hidden p-5">
+      <p className="text-sm font-bold uppercase tracking-[0.18em] text-brand-lime">
+        Podium confirmed
+      </p>
+      <h2 className="mt-2 font-display text-3xl font-bold">{title}</h2>
+      <div className="mt-5 space-y-3">
+        {rows.map((row) => {
+          const department = departments.get(row.department);
+          return (
+            <div key={`${title}-${row.place}`} className="flex items-center gap-3 rounded-2xl bg-white/8 p-3 ring-1 ring-white/10">
+              <span
+                className={`medal-badge ${row.place === 1 ? "medal-badge-gold" : row.place === 2 ? "medal-badge-silver" : "medal-badge-bronze"}`}
+                aria-label={`${row.place === 1 ? "Gold" : row.place === 2 ? "Silver" : "Bronze"} medal`}
+                role="img"
+              >
+                {row.place}
+              </span>
+              <TeamChip
+                abbr={row.department}
+                color={department?.primary_color}
+                name={department?.name}
+                logoUrl={department?.logo_url}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </article>
   );
 }
 

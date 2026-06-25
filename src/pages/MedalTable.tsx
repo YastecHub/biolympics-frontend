@@ -19,15 +19,15 @@ const FALLBACK_DEPARTMENTS: Department[] = [
 ];
 
 const INDOOR_MEDAL_COUNTS: Record<string, { gold: number; silver: number; bronze: number }> = {
-  CBG: { gold: 1, silver: 2, bronze: 1 },
-  BCH: { gold: 2, silver: 2, bronze: 1 },
-  "PRE-MED": { gold: 1, silver: 0, bronze: 2 },
-  BTN: { gold: 2, silver: 0, bronze: 1 },
-  MSM: { gold: 0, silver: 1, bronze: 1 },
-  FSH: { gold: 1, silver: 1, bronze: 1 },
-  FISHERIES: { gold: 1, silver: 1, bronze: 1 },
-  MIC: { gold: 1, silver: 1, bronze: 1 },
-  ZLY: { gold: 0, silver: 1, bronze: 0 },
+  CBG: { gold: 4, silver: 2, bronze: 1 },
+  BCH: { gold: 2, silver: 5, bronze: 1 },
+  "PRE-MED": { gold: 2, silver: 1, bronze: 4 },
+  BTN: { gold: 2, silver: 0, bronze: 2 },
+  MSM: { gold: 0, silver: 2, bronze: 1 },
+  FSH: { gold: 2, silver: 2, bronze: 2 },
+  FISHERIES: { gold: 2, silver: 2, bronze: 2 },
+  MIC: { gold: 1, silver: 1, bronze: 3 },
+  ZLY: { gold: 1, silver: 1, bronze: 0 },
 };
 
 const MEDAL_POINTS = { gold: 5, silver: 2, bronze: 1 };

@@ -88,11 +88,11 @@ const TODAY_SPORTS = [
   },
   {
     name: "Volleyball",
-    time: "12 PM",
-    meta: "BCH vs PRE-MED / BTN vs ZLY / BCH-PRE-MED vs MIC",
+    time: "Final set",
+    meta: "Final: ZLY vs MIC / 3rd: PRE-MED vs BTN",
     route: "/sports/volleyball",
     icon: "volleyball",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "volleyball"),
   },
 ];
