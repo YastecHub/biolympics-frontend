@@ -481,6 +481,14 @@ const MIXED_SPORTS: Record<
   },
 };
 
+const MIXED_SPORT_MEDALS: Partial<Record<MixedSportSlug, IndoorMedalWinner[]>> = {
+  volleyball: [
+    { medal: "Gold", team: "MIC" },
+    { medal: "Silver", team: "ZLY" },
+    { medal: "Bronze", team: "PRE-MED" },
+  ],
+};
+
 const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "basketball-ko-1", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "MSM", away: "MIC", scheduledTime: "12:00 PM", venue: "Sports Centre" },
   { id: "basketball-ko-2", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "BTN", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 16, awayScore: 18, status: "completed", note: "BTN won 18-16." },
@@ -492,8 +500,8 @@ const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "volleyball-ko-4", sportSlug: "volleyball", sportName: "Volleyball", stage: "K/O Spillover", matchDay: "K/O", home: "BCH", away: "PRE-MED", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "PRE-MED advanced to the semifinal." },
   { id: "volleyball-sf-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "ZLY", away: "BTN", scheduledTime: "12:30 PM", venue: "Sports Centre", homeScore: 2, awayScore: 0, status: "completed", note: "ZLY won 2-0." },
   { id: "volleyball-sf-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "PRE-MED", scheduledTime: "2:00 PM", venue: "Sports Centre", homeScore: 2, awayScore: 0, status: "completed", note: "MIC won 2-0." },
-  { id: "volleyball-third", sportSlug: "volleyball", sportName: "Volleyball", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "BTN", venue: "Sports Centre" },
-  { id: "volleyball-final", sportSlug: "volleyball", sportName: "Volleyball", stage: "Final", matchDay: "Final", home: "ZLY", away: "MIC", venue: "Sports Centre" },
+  { id: "volleyball-third", sportSlug: "volleyball", sportName: "Volleyball", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "BTN", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "PRE-MED won bronze 2-1." },
+  { id: "volleyball-final", sportSlug: "volleyball", sportName: "Volleyball", stage: "Final", matchDay: "Final", home: "ZLY", away: "MIC", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "MIC won gold 2-0." },
 ];
 
 function isMixedSportMatchCompleted(match: MixedSportMatch) {
@@ -1698,6 +1706,7 @@ function MixedSportDetail({ sportSlug }: { sportSlug: MixedSportSlug }) {
     (departments.data ?? []).map((department) => [department.abbreviation, department]),
   );
   const matches = MIXED_SPORT_MATCHES.filter((match) => match.sportSlug === sportSlug);
+  const medals = MIXED_SPORT_MEDALS[sportSlug] ?? null;
 
   return (
     <div className="space-y-7">
@@ -1745,7 +1754,12 @@ function MixedSportDetail({ sportSlug }: { sportSlug: MixedSportSlug }) {
         ) : view === "fixtures" ? (
           <MixedSportFixtures matches={matches} departments={departmentByAbbr} />
         ) : matches.some(isMixedSportMatchCompleted) ? (
-          <MixedSportFixtures matches={matches.filter(isMixedSportMatchCompleted)} departments={departmentByAbbr} />
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
+            <MixedSportFixtures matches={matches.filter(isMixedSportMatchCompleted)} departments={departmentByAbbr} />
+            {medals && (
+              <IndoorMedalSummary medals={medals} departments={departmentByAbbr} title={sport.name} />
+            )}
+          </div>
         ) : (
           <EmptyState title={`No ${sport.name.toLowerCase()} results yet.`} hint="Live and completed matches will appear here once play begins." />
         )}

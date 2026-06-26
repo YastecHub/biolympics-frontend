@@ -88,8 +88,8 @@ const TODAY_SPORTS = [
   },
   {
     name: "Volleyball",
-    time: "Final set",
-    meta: "Final: ZLY vs MIC / 3rd: PRE-MED vs BTN",
+    time: "Completed",
+    meta: "Gold: MIC 2-0 ZLY / Bronze: PRE-MED 2-1 BTN",
     route: "/sports/volleyball",
     icon: "volleyball",
     status: "completed",
