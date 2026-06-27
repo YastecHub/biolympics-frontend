@@ -66,53 +66,53 @@ export default function MedalTable() {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[30px] border border-white/12 bg-white/[0.07] px-5 py-7 shadow-2xl shadow-black/25 sm:px-8">
+    <div className="space-y-4 sm:space-y-6">
+      <section className="relative overflow-hidden rounded-2xl border border-white/12 bg-white/[0.07] px-4 py-5 shadow-2xl shadow-black/25 sm:rounded-[30px] sm:px-8 sm:py-7">
         <div className="absolute inset-x-0 top-0 h-1 bg-brand-lime" />
         <div className="absolute -right-10 -top-16 h-52 w-52 rounded-full bg-brand-lime/10 blur-3xl" />
         <div className="absolute -bottom-20 left-0 h-56 w-56 rounded-full bg-brand-accent/10 blur-3xl" />
 
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="mb-6 flex w-fit items-center gap-3 rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15">
-              <Logo variant="mark" size={34} />
-              <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+            <div className="mb-4 flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-2 ring-1 ring-white/15 sm:mb-6 sm:gap-3 sm:px-4">
+              <Logo variant="mark" size={30} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70 sm:text-xs sm:tracking-[0.18em]">
                 ULLSSA Biolympics 2026
               </span>
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-brand-lime">
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-brand-lime sm:text-xs sm:tracking-[0.3em]">
               Overall Standing
             </p>
-            <h1 className="mt-3 font-display text-5xl font-bold uppercase tracking-[0.18em] sm:text-6xl">
+            <h1 className="mt-2 font-display text-4xl font-bold uppercase tracking-[0.08em] sm:mt-3 sm:text-6xl sm:tracking-[0.18em]">
               Medal Table
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/64">
+            <p className="mt-2 max-w-2xl text-xs leading-5 text-white/64 sm:mt-3 sm:text-sm sm:leading-6">
               Departments climb by medals won across the games. Gold leads, then silver,
               then bronze. Everyone starts at zero until results are awarded.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/48">
+          <div className="rounded-xl bg-white/10 p-3 ring-1 ring-white/10 sm:rounded-2xl sm:p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/48 sm:text-xs sm:tracking-[0.2em]">
               Current leader
             </p>
-            <p className="mt-2 font-display text-3xl font-bold text-brand-lime">
+            <p className="mt-1 font-display text-2xl font-bold text-brand-lime sm:mt-2 sm:text-3xl">
               {leader ? leader.department_abbr : "Awaiting first medal"}
             </p>
-            <p className="mt-1 text-sm text-white/60">
+            <p className="mt-0.5 text-xs text-white/60 sm:mt-1 sm:text-sm">
               {leader ? `${leader.total_points} pts` : "All departments on 0"}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[28px] border border-white/12 bg-[#031813]/90 shadow-2xl shadow-black/30">
+      <section className="relative overflow-hidden rounded-2xl border border-white/12 bg-[#031813]/90 shadow-2xl shadow-black/30 sm:rounded-[28px]">
         <div className="absolute inset-0 opacity-25">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(163,230,53,0.18),transparent_14rem),radial-gradient(circle_at_85%_18%,rgba(250,204,21,0.12),transparent_15rem)]" />
           <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0_46%,rgba(255,255,255,0.05)_47%_48%,transparent_49%_100%)] bg-[length:120px_120px]" />
         </div>
 
-        <div className="relative grid grid-cols-[2.5rem_minmax(0,1fr)_repeat(3,2.6rem)] items-center gap-2 border-b border-white/10 px-3 py-4 text-xs font-black uppercase tracking-[0.14em] text-white/48 sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:px-5">
+        <div className="relative grid grid-cols-[1.65rem_minmax(0,1fr)_repeat(3,2rem)] items-center gap-1 border-b border-white/10 px-2 py-2.5 text-[9px] font-black uppercase tracking-[0.08em] text-white/48 min-[380px]:grid-cols-[1.9rem_minmax(0,1fr)_repeat(3,2.25rem)] sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:gap-2 sm:px-5 sm:py-4 sm:text-xs sm:tracking-[0.14em]">
           <span>#</span>
           <span>Department</span>
           <MedalHeader tone="gold" label="Gold" />
@@ -202,21 +202,21 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
   const isTopThree = row.position <= 3;
 
   return (
-    <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_repeat(3,2.6rem)] items-center gap-2 px-3 py-3 sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:px-5 sm:py-4">
-      <span className="font-display text-2xl font-bold italic text-white/70">
+    <div className="grid grid-cols-[1.65rem_minmax(0,1fr)_repeat(3,2rem)] items-center gap-1 px-2 py-2 min-[380px]:grid-cols-[1.9rem_minmax(0,1fr)_repeat(3,2.25rem)] sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:gap-2 sm:px-5 sm:py-4">
+      <span className="font-display text-base font-bold italic text-white/70 sm:text-2xl">
         {row.position}
       </span>
 
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
         <DepartmentMark abbr={row.department_abbr} color={row.primary_color} logoUrl={row.logo_url} />
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="truncate font-display text-xl font-bold uppercase tracking-normal text-white sm:text-3xl">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <p className="truncate font-display text-base font-bold uppercase tracking-normal text-white min-[380px]:text-lg sm:text-3xl">
               {row.department_abbr}
             </p>
             {isTopThree && <TopThreeStar />}
           </div>
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/42">
+          <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-white/42 sm:text-xs sm:tracking-[0.12em]">
             {row.total_points} pts
           </p>
         </div>
@@ -245,7 +245,7 @@ function TopThreeStar() {
 function DepartmentMark({ abbr, color, logoUrl }: { abbr: string; color: string; logoUrl: string | null }) {
   return (
     <span
-      className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-white/30 bg-white text-[10px] font-black text-white shadow-lg sm:h-12 sm:w-12 sm:text-xs"
+      className="grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-full border border-white/30 bg-white text-[8px] font-black text-white shadow-lg min-[380px]:h-8 min-[380px]:w-8 sm:h-12 sm:w-12 sm:text-xs"
       style={{ backgroundColor: logoUrl ? "#fff" : color }}
       aria-hidden
     >
@@ -260,7 +260,7 @@ function DepartmentMark({ abbr, color, logoUrl }: { abbr: string; color: string;
 
 function MedalHeader({ tone, label }: { tone: "gold" | "silver" | "bronze"; label: string }) {
   return (
-    <span className="grid justify-items-center gap-1">
+    <span className="grid justify-items-center gap-0.5 sm:gap-1">
       <MedalBadge tone={tone} label={label} />
       <span className="hidden sm:inline">{label}</span>
     </span>
@@ -271,7 +271,7 @@ function MedalCount({ tone, value }: { tone: "gold" | "silver" | "bronze"; value
   return (
     <span className="grid justify-items-center gap-0.5">
       <MedalBadge tone={tone} />
-      <span className="font-display text-base font-bold leading-none text-white sm:text-lg">
+      <span className="font-display text-sm font-bold leading-none text-white sm:text-lg">
         {value}
       </span>
     </span>
@@ -282,7 +282,7 @@ function MedalBadge({ tone, label }: { tone: "gold" | "silver" | "bronze"; label
   const number = tone === "gold" ? "1" : tone === "silver" ? "2" : "3";
   return (
     <span
-      className={`medal-badge medal-badge-${tone}`}
+      className={`medal-badge medal-badge-${tone} !h-5 !w-5 !text-[9px] min-[380px]:!h-6 min-[380px]:!w-6 sm:!h-8 sm:!w-8 sm:!text-sm`}
       aria-label={label ?? tone}
       role="img"
     >
