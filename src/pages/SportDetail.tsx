@@ -867,19 +867,6 @@ const FEMALE_FOOTBALL_POTS = {
   "Pot B": ["MIC", "BTN", "PRE-MED", "CBG"],
 } as const;
 
-const FOOTBALL_MEDALS: Record<FootballGender, IndoorMedalWinner[]> = {
-  male: [
-    { medal: "Gold", team: "FISHERIES" },
-    { medal: "Silver", team: "MSM" },
-    { medal: "Bronze", team: "PRE-MED" },
-  ],
-  female: [
-    { medal: "Gold", team: "MIC" },
-    { medal: "Silver", team: "BCH" },
-    { medal: "Bronze", team: "ZLY" },
-  ],
-};
-
 const FOOTBALL_MATCHES: FootballMatch[] = [
   {
     id: "male-b-md1-2",
@@ -3132,7 +3119,6 @@ function FootballResultsList({
   departments: Map<string, Department>;
 }) {
   const completed = matches.filter(isFootballMatchCompleted).sort(compareFootballResultOrder);
-  const medals = matches[0] ? FOOTBALL_MEDALS[matches[0].gender] : null;
 
   if (!completed.length) {
     return (
@@ -3144,22 +3130,17 @@ function FootballResultsList({
   }
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
-      <section className="grid gap-3 xl:grid-cols-2">
-        {completed.map((match) => (
-          <FootballMatchCard
-            key={match.id}
-            match={match}
-            departments={departments}
-            now={new Date(0)}
-            liveFixtures={[]}
-          />
-        ))}
-      </section>
-      {medals && (
-        <IndoorMedalSummary medals={medals} departments={departments} title={`${matches[0]?.gender ?? ""} football`} />
-      )}
-    </div>
+    <section className="grid gap-3 xl:grid-cols-2">
+      {completed.map((match) => (
+        <FootballMatchCard
+          key={match.id}
+          match={match}
+          departments={departments}
+          now={new Date(0)}
+          liveFixtures={[]}
+        />
+      ))}
+    </section>
   );
 }
 
