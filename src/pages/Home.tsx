@@ -70,11 +70,11 @@ const HOME_SPORTS: HomeSport[] = [
 const TODAY_SPORTS = [
   {
     name: "Basketball",
-    time: "9:30 AM",
-    meta: "3rd: CBG vs BTN / Final: MIC vs ZLY 10:30 AM",
+    time: "Final played",
+    meta: "ZLY beat MIC 40-38 in the final",
     route: "/sports/basketball",
     icon: "basketball",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "basketball"),
   },
   {
@@ -88,20 +88,20 @@ const TODAY_SPORTS = [
   },
   {
     name: "Female football",
-    time: "11:30 AM",
-    meta: "3rd: ZLY vs PRE-MED / Final: BCH vs MIC 12:30 PM",
+    time: "Completed",
+    meta: "MIC beat BCH 3-1 / ZLY won bronze on pens",
     route: "/sports/female-football",
     icon: "football",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
   },
   {
     name: "Long jump",
-    time: "12:00 PM",
-    meta: "Field final before athletics finals",
+    time: "Completed",
+    meta: "Female: BTN gold / Male: ZLY gold",
     route: "/sports/athletics",
     icon: "athletics",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "athletics"),
   },
   {

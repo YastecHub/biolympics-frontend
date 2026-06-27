@@ -92,6 +92,13 @@ type TrackEvent = {
   entry: string;
 };
 
+type TrackResult = {
+  id: string;
+  name: string;
+  category: string;
+  rows: { place: number; department: string; note?: string }[];
+};
+
 type TableTennisMatch = {
   id: string;
   category: "Male" | "Female";
@@ -498,7 +505,7 @@ const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
   { id: "basketball-sf-1", sportSlug: "basketball", sportName: "Basketball", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "CBG", venue: "Sports Centre", winner: "MIC", status: "completed", note: "MIC advanced to the final." },
   { id: "basketball-sf-2", sportSlug: "basketball", sportName: "Basketball", stage: "Semi Final", matchDay: "SF", home: "BTN", away: "ZLY", venue: "Sports Centre", winner: "ZLY", status: "completed", note: "ZLY advanced to the final." },
   { id: "basketball-third", sportSlug: "basketball", sportName: "Basketball", stage: "Third Place", matchDay: "Bronze", home: "CBG", away: "BTN", scheduledTime: "9:30 AM", venue: "Sports Centre" },
-  { id: "basketball-final", sportSlug: "basketball", sportName: "Basketball", stage: "Final", matchDay: "Final", home: "MIC", away: "ZLY", scheduledTime: "10:30 AM", venue: "Sports Centre" },
+  { id: "basketball-final", sportSlug: "basketball", sportName: "Basketball", stage: "Final", matchDay: "Final", home: "MIC", away: "ZLY", scheduledTime: "10:30 AM", venue: "Sports Centre", homeScore: 38, awayScore: 40, status: "completed", note: "ZLY won the basketball final 40-38." },
   { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "ZLY won 2-0." },
   { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "BTN won 2-1." },
   { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 1, awayScore: 2, status: "completed", note: "MIC won 2-1." },
@@ -603,6 +610,119 @@ const TRACK_EVENTS: TrackEvent[] = [
     category: "Mixed",
     stage: "Finals from 2:00 PM",
     entry: "2 males and 2 females per department",
+  },
+];
+
+const TRACK_RESULTS: TrackResult[] = [
+  {
+    id: "long-jump-female",
+    name: "Long Jump",
+    category: "Female",
+    rows: [
+      { place: 1, department: "BTN" },
+      { place: 2, department: "ZLY" },
+      { place: 3, department: "MIC" },
+    ],
+  },
+  {
+    id: "long-jump-male",
+    name: "Long Jump",
+    category: "Male",
+    rows: [
+      { place: 1, department: "ZLY" },
+      { place: 2, department: "BTN" },
+      { place: 3, department: "MSM" },
+    ],
+  },
+  {
+    id: "100m-female",
+    name: "100m",
+    category: "Female",
+    rows: [
+      { place: 1, department: "BTN" },
+      { place: 2, department: "ZLY" },
+      { place: 3, department: "MSM" },
+    ],
+  },
+  {
+    id: "100m-male",
+    name: "100m",
+    category: "Male",
+    rows: [
+      { place: 1, department: "PRE-MED" },
+      { place: 2, department: "BCH" },
+      { place: 3, department: "MSM" },
+    ],
+  },
+  {
+    id: "200m-female",
+    name: "200m",
+    category: "Female",
+    rows: [
+      { place: 1, department: "BTN" },
+      { place: 2, department: "ZLY" },
+      { place: 3, department: "MIC", note: "Ziphora" },
+    ],
+  },
+  {
+    id: "200m-male",
+    name: "200m",
+    category: "Male",
+    rows: [
+      { place: 1, department: "PRE-MED" },
+      { place: 2, department: "CBG" },
+      { place: 3, department: "BCH" },
+    ],
+  },
+  {
+    id: "400m-female",
+    name: "400m",
+    category: "Female",
+    rows: [
+      { place: 1, department: "MSM" },
+      { place: 2, department: "PRE-MED" },
+      { place: 3, department: "FISHERIES" },
+    ],
+  },
+  {
+    id: "400m-male",
+    name: "400m",
+    category: "Male",
+    rows: [
+      { place: 1, department: "PRE-MED" },
+      { place: 2, department: "CBG", note: "LB" },
+      { place: 3, department: "CBG" },
+    ],
+  },
+  {
+    id: "relay-female",
+    name: "4x100m Relay",
+    category: "Female",
+    rows: [
+      { place: 1, department: "MIC" },
+      { place: 2, department: "PRE-MED" },
+      { place: 3, department: "ZLY" },
+    ],
+  },
+  {
+    id: "relay-male",
+    name: "4x100m Relay",
+    category: "Male",
+    rows: [
+      { place: 1, department: "PRE-MED" },
+      { place: 2, department: "CBG" },
+      { place: 3, department: "MSM" },
+    ],
+  },
+  {
+    id: "relay-mixed",
+    name: "4x100m Relay",
+    category: "Mixed",
+    rows: [
+      { place: 1, department: "MIC" },
+      { place: 2, department: "CBG" },
+      { place: 3, department: "PRE-MED" },
+    ],
   },
 ];
 
@@ -951,8 +1071,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     penaltyWinner: "BCH",
     summary: "BCH advanced to the final after beating PRE-MED 3-1 on penalties.",
   },
-  { id: "female-third", gender: "female", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "ZLY", away: "PRE-MED", scheduledTime: "11:30 AM", venue: "Sports Centre", startIso: "2026-06-27T11:30:00+01:00", durationMinutes: 40, summary: "Final-day bronze match." },
-  { id: "female-final", gender: "female", group: "Knockout", stage: "Final", matchDay: "Final", home: "BCH", away: "MIC", scheduledTime: "12:30 PM", venue: "Sports Centre", startIso: "2026-06-27T12:30:00+01:00", durationMinutes: 40, summary: "BCH face MIC for the female football title." },
+  { id: "female-third", gender: "female", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "ZLY", scheduledTime: "11:30 AM", venue: "Sports Centre", startIso: "2026-06-27T11:30:00+01:00", durationMinutes: 40, homeScore: 0, awayScore: 0, status: "completed", penaltyScore: "ZLY 2-1", penaltyWinner: "ZLY", summary: "ZLY won the female football bronze match 2-1 on penalties." },
+  { id: "female-final", gender: "female", group: "Knockout", stage: "Final", matchDay: "Final", home: "BCH", away: "MIC", scheduledTime: "12:30 PM", venue: "Sports Centre", startIso: "2026-06-27T12:30:00+01:00", durationMinutes: 40, homeScore: 1, awayScore: 3, status: "completed", summary: "MIC beat BCH 3-1 to win the female football final." },
 ];
 
 function useCurrentMinute() {
@@ -2548,6 +2668,10 @@ function TrackEventsDetail() {
   const [view, setView] = useState<TrackView>("events");
   const following = useFollowStore((s) => s.isFollowing("sports", "track-events"));
   const toggle = useFollowStore((s) => s.toggleSport);
+  const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
+  const departmentByAbbr = new Map(
+    (departments.data ?? []).map((department) => [department.abbreviation, department]),
+  );
 
   return (
     <div className="space-y-7">
@@ -2595,7 +2719,7 @@ function TrackEventsDetail() {
         ) : view === "fixtures" ? (
           <TrackFixtures />
         ) : (
-          <EmptyState title="No track results yet." hint="Heat and final results will appear here once races are recorded." />
+          <TrackResults departments={departmentByAbbr} />
         )}
       </section>
     </div>
@@ -2666,6 +2790,21 @@ function TrackFixtures() {
             {event.stage.includes("Final") ? "Final-day schedule" : "Finals follow after qualifiers are confirmed"}
           </p>
         </article>
+      ))}
+    </div>
+  );
+}
+
+function TrackResults({ departments }: { departments: Map<string, Department> }) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {TRACK_RESULTS.map((result) => (
+        <DepartmentPodiumCard
+          key={result.id}
+          title={`${result.category} ${result.name}`}
+          rows={result.rows}
+          departments={departments}
+        />
       ))}
     </div>
   );
@@ -2783,9 +2922,9 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
                 <PotCard key={title} title={title} teams={[...teams]} departments={departmentByAbbr} />
               ))}
               <div className="card p-5 lg:col-span-2">
-                <p className="font-display text-2xl font-bold">Female final fixtures confirmed</p>
+                <p className="font-display text-2xl font-bold">Female medal matches completed</p>
                 <p className="mt-2 text-sm text-white/62">
-                  BCH face MIC in the final, while ZLY meet PRE-MED for third place.
+                  MIC beat BCH 3-1 in the final, while ZLY won bronze against PRE-MED on penalties.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && ["Final", "Third Place"].includes(match.stage)).map((match) => (
@@ -3024,7 +3163,7 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
               ? "MIC face PRE-MED at 11:00 AM before Fisheries meet Marine Sciences at 3:00 PM."
-              : "ZLY face PRE-MED at 11:30 AM before BCH meet MIC at 12:30 PM."}
+              : "ZLY won bronze on penalties before MIC beat BCH 3-1 in the final."}
           </p>
         </div>
         <div className="grid min-w-48 gap-1 rounded-xl bg-black/15 p-3 text-sm ring-1 ring-white/10">
