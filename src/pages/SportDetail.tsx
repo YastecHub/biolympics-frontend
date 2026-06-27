@@ -953,8 +953,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 0, status: "completed", summary: "CBG and MSM ended Matchday 3 goalless." },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "PRE-MED and BCH shared points after a 1-1 draw." },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "FISHERIES", away: "ZLY", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "Fisheries and ZLY ended the final Group B match 1-1." },
-  { id: "male-third", gender: "male", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "MIC", away: "PRE-MED", scheduledTime: "11:00 AM", venue: "Sports Centre", startIso: "2026-06-27T11:00:00+01:00", durationMinutes: 60, summary: "Final-day bronze match." },
-  { id: "male-final", gender: "male", group: "Knockout", stage: "Final", matchDay: "Final", home: "FISHERIES", away: "MSM", scheduledTime: "3:00 PM", venue: "Sports Centre", startIso: "2026-06-27T15:00:00+01:00", durationMinutes: 60, summary: "Fisheries face Marine Sciences for the male football title." },
+  { id: "male-third", gender: "male", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "MIC", scheduledTime: "11:00 AM", venue: "Sports Centre", startIso: "2026-06-27T11:00:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 0, status: "completed", summary: "PRE-MED beat MIC 1-0 to win male football bronze." },
+  { id: "male-final", gender: "male", group: "Knockout", stage: "Final", matchDay: "Final", home: "FISHERIES", away: "MSM", scheduledTime: "3:00 PM", venue: "Sports Centre", startIso: "2026-06-27T15:00:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", penaltyScore: "FSH 5-4", penaltyWinner: "FISHERIES", summary: "Fisheries won the football cup 5-4 on penalties after a 1-1 final against Marine Sciences." },
   {
     id: "female-ko-1",
     gender: "female",
@@ -3157,12 +3157,12 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           </p>
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
-              ? "Bronze match and final today"
+              ? "Fisheries won the football cup"
               : "Bronze match and final today"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "MIC face PRE-MED at 11:00 AM before Fisheries meet Marine Sciences at 3:00 PM."
+              ? "PRE-MED beat MIC 1-0 for bronze, and Fisheries beat Marine Sciences 5-4 on penalties after a 1-1 final."
               : "ZLY won bronze on penalties before MIC beat BCH 3-1 in the final."}
           </p>
         </div>

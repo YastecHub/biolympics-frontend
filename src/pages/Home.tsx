@@ -79,8 +79,8 @@ const TODAY_SPORTS = [
   },
   {
     name: "Male football",
-    time: "Final day complete",
-    meta: "Final medal table posted",
+    time: "Completed",
+    meta: "FSH won cup on pens / PRE-MED beat MIC 1-0",
     route: "/sports/male-football",
     icon: "football",
     status: "completed",
