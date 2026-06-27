@@ -2665,7 +2665,7 @@ function DepartmentPodiumCard({
 }
 
 function TrackEventsDetail() {
-  const [view, setView] = useState<TrackView>("events");
+  const [view, setView] = useState<TrackView>("results");
   const following = useFollowStore((s) => s.isFollowing("sports", "track-events"));
   const toggle = useFollowStore((s) => s.toggleSport);
   const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
@@ -2677,7 +2677,7 @@ function TrackEventsDetail() {
     <div className="space-y-7">
       <SportHero
         title="Track Events"
-        subtitle="100m, 200m, 400m and 4x100m relay races with heats before every final."
+        subtitle="Completed track, field and relay podiums from the final day."
         label="Home"
         meta="Heats - Finals - Relays"
         icon={sportIcon("athletics")}

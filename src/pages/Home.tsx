@@ -79,11 +79,11 @@ const TODAY_SPORTS = [
   },
   {
     name: "Male football",
-    time: "11:00 AM",
-    meta: "3rd: MIC vs PRE-MED / Final: FSH vs MSM 3:00 PM",
+    time: "Final day complete",
+    meta: "Final medal table posted",
     route: "/sports/male-football",
     icon: "football",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "male-football"),
   },
   {
@@ -106,11 +106,11 @@ const TODAY_SPORTS = [
   },
   {
     name: "Athletics finals",
-    time: "2:00 PM",
-    meta: "Track finals programme",
+    time: "Completed",
+    meta: "Track and relay podiums posted",
     route: "/sports/athletics",
     icon: "athletics",
-    status: "upNext",
+    status: "completed",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "athletics"),
   },
 ];
@@ -252,7 +252,7 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
         </span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
-        Final day schedule
+        Biolympics 2026 completed
       </p>
       {liveFixtures.length > 0 && (
         <div className="mt-3 space-y-2">
