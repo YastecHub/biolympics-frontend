@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { CardSkeleton } from "@/components/Skeletons";
@@ -31,6 +31,55 @@ const INDOOR_MEDAL_COUNTS: Record<string, { gold: number; silver: number; bronze
 };
 
 const MEDAL_POINTS = { gold: 5, silver: 2, bronze: 1 };
+const MEDAL_ORDER = ["gold", "silver", "bronze"] as const;
+
+type MedalTone = (typeof MEDAL_ORDER)[number];
+
+type MedalSource = {
+  event: string;
+  gold: string;
+  silver: string;
+  bronze: string;
+};
+
+type MedalBreakdownItem = {
+  event: string;
+  medal: MedalTone;
+};
+
+const MEDAL_SOURCES: MedalSource[] = [
+  { event: "Ludo", gold: "PRE-MED", silver: "CBG", bronze: "BCH" },
+  { event: "Chess Male", gold: "CBG", silver: "BCH", bronze: "FISHERIES" },
+  { event: "Chess Female", gold: "CBG", silver: "PRE-MED", bronze: "BTN" },
+  { event: "Scrabble Male", gold: "CBG", silver: "BCH", bronze: "FISHERIES" },
+  { event: "Scrabble Female", gold: "FISHERIES", silver: "BCH", bronze: "MIC" },
+  { event: "FIFA Console", gold: "BCH", silver: "CBG", bronze: "MIC" },
+  { event: "PES Console", gold: "BTN", silver: "MSM", bronze: "PRE-MED" },
+  { event: "COD Mobile", gold: "CBG", silver: "BCH", bronze: "PRE-MED" },
+  { event: "Table Tennis Male", gold: "FISHERIES", silver: "BCH", bronze: "PRE-MED" },
+  { event: "Table Tennis Female", gold: "MIC", silver: "ZLY", bronze: "CBG" },
+  { event: "Volleyball", gold: "MIC", silver: "ZLY", bronze: "PRE-MED" },
+  { event: "Basketball", gold: "ZLY", silver: "MIC", bronze: "BTN" },
+  { event: "Marathon Female", gold: "BCH", silver: "MIC", bronze: "BTN" },
+  { event: "Marathon Male", gold: "BTN", silver: "FISHERIES", bronze: "MSM" },
+  { event: "Swimming Female", gold: "PRE-MED", silver: "FISHERIES", bronze: "MIC" },
+  { event: "Swimming Male", gold: "ZLY", silver: "MSM", bronze: "PRE-MED" },
+  { event: "Long Jump Female", gold: "BTN", silver: "ZLY", bronze: "MIC" },
+  { event: "Long Jump Male", gold: "ZLY", silver: "BTN", bronze: "MSM" },
+  { event: "100m Female", gold: "BTN", silver: "ZLY", bronze: "MSM" },
+  { event: "100m Male", gold: "PRE-MED", silver: "BCH", bronze: "MSM" },
+  { event: "200m Female", gold: "BTN", silver: "ZLY", bronze: "MIC" },
+  { event: "200m Male", gold: "PRE-MED", silver: "CBG", bronze: "BCH" },
+  { event: "400m Female", gold: "MSM", silver: "PRE-MED", bronze: "FISHERIES" },
+  { event: "400m Male", gold: "PRE-MED", silver: "CBG", bronze: "CBG" },
+  { event: "4x100m Relay Female", gold: "MIC", silver: "PRE-MED", bronze: "ZLY" },
+  { event: "4x100m Relay Male", gold: "PRE-MED", silver: "CBG", bronze: "MSM" },
+  { event: "4x100m Relay Mixed", gold: "MIC", silver: "CBG", bronze: "PRE-MED" },
+  { event: "Female Football", gold: "MIC", silver: "BCH", bronze: "ZLY" },
+  { event: "Male Football", gold: "FISHERIES", silver: "MSM", bronze: "PRE-MED" },
+];
+
+const MEDAL_BREAKDOWN = buildMedalBreakdown(MEDAL_SOURCES);
 
 type MedalDisplayRow = {
   department_id: string;
@@ -46,6 +95,7 @@ type MedalDisplayRow = {
 };
 
 export default function MedalTable() {
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | null>(null);
   const departments = useQuery({ queryKey: ["departments"], queryFn: api.departments });
   const medals = useQuery({ queryKey: ["medal-table"], queryFn: api.medalTable });
   const departmentList = departments.data?.length ? departments.data : FALLBACK_DEPARTMENTS;
@@ -56,6 +106,7 @@ export default function MedalTable() {
   );
   const hasMedals = rows.some((row) => row.gold + row.silver + row.bronze > 0);
   const leader = hasMedals ? [...rows].sort(compareMedalRank)[0] : null;
+  const selectedRow = rows.find((row) => row.department_id === selectedDepartmentId) ?? null;
 
   if (departments.isLoading && !rows.length) {
     return <CardSkeleton count={4} />;
@@ -87,8 +138,8 @@ export default function MedalTable() {
               Medal Table
             </h1>
             <p className="mt-2 max-w-2xl text-xs leading-5 text-white/64 sm:mt-3 sm:text-sm sm:leading-6">
-              Departments climb by medals won across the games. Gold leads, then silver,
-              then bronze. Everyone starts at zero until results are awarded.
+              Departments climb by medals won across the games. Tap any department to see
+              exactly where their medals came from.
             </p>
           </div>
 
@@ -122,12 +173,42 @@ export default function MedalTable() {
 
         <div className="relative divide-y divide-white/8">
           {rows.map((row) => (
-            <MedalDepartmentRow key={row.department_id} row={row} />
+            <MedalDepartmentRow
+              key={row.department_id}
+              row={row}
+              onSelect={() => setSelectedDepartmentId(row.department_id)}
+            />
           ))}
         </div>
       </section>
+
+      {selectedRow && (
+        <MedalBreakdownSheet
+          row={selectedRow}
+          items={MEDAL_BREAKDOWN[selectedRow.department_abbr] ?? []}
+          onClose={() => setSelectedDepartmentId(null)}
+        />
+      )}
     </div>
   );
+}
+
+function normalizeBreakdownTeam(team: string) {
+  return displayDepartmentAbbr(team);
+}
+
+function buildMedalBreakdown(sources: MedalSource[]) {
+  const breakdown: Record<string, MedalBreakdownItem[]> = {};
+
+  sources.forEach((source) => {
+    MEDAL_ORDER.forEach((medal) => {
+      const team = normalizeBreakdownTeam(source[medal]);
+      breakdown[team] ??= [];
+      breakdown[team].push({ event: source.event, medal });
+    });
+  });
+
+  return breakdown;
 }
 
 function buildMedalRows(departments: Department[], medalRows: MedalRow[]): MedalDisplayRow[] {
@@ -198,11 +279,16 @@ function fallbackDepartment(
   };
 }
 
-function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
+function MedalDepartmentRow({ row, onSelect }: { row: MedalDisplayRow; onSelect: () => void }) {
   const isTopThree = row.position <= 3;
 
   return (
-    <div className="grid grid-cols-[1.65rem_minmax(0,1fr)_repeat(3,2rem)] items-center gap-1 px-2 py-2 min-[380px]:grid-cols-[1.9rem_minmax(0,1fr)_repeat(3,2.25rem)] sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:gap-2 sm:px-5 sm:py-4">
+    <button
+      type="button"
+      onClick={onSelect}
+      className="grid w-full grid-cols-[1.65rem_minmax(0,1fr)_repeat(3,2rem)] items-center gap-1 px-2 py-2 text-left transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-lime/70 min-[380px]:grid-cols-[1.9rem_minmax(0,1fr)_repeat(3,2.25rem)] sm:grid-cols-[3.5rem_minmax(0,1fr)_repeat(3,4rem)] sm:gap-2 sm:px-5 sm:py-4"
+      aria-label={`View ${row.department_abbr} medal breakdown`}
+    >
       <span className="font-display text-base font-bold italic text-white/70 sm:text-2xl">
         {row.position}
       </span>
@@ -225,6 +311,82 @@ function MedalDepartmentRow({ row }: { row: MedalDisplayRow }) {
       <MedalCount tone="gold" value={row.gold} />
       <MedalCount tone="silver" value={row.silver} />
       <MedalCount tone="bronze" value={row.bronze} />
+    </button>
+  );
+}
+
+function MedalBreakdownSheet({
+  row,
+  items,
+  onClose,
+}: {
+  row: MedalDisplayRow;
+  items: MedalBreakdownItem[];
+  onClose: () => void;
+}) {
+  const grouped = MEDAL_ORDER.map((medal) => ({
+    medal,
+    items: items.filter((item) => item.medal === medal),
+  }));
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end bg-black/70 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6">
+      <button
+        type="button"
+        aria-label="Close medal breakdown"
+        className="absolute inset-0 cursor-default"
+        onClick={onClose}
+      />
+      <aside className="relative max-h-[88vh] w-full overflow-hidden rounded-2xl border border-white/12 bg-[#041b15] shadow-2xl shadow-black/50 sm:max-w-2xl">
+        <div className="border-b border-white/10 p-4 sm:p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-brand-lime">
+                Medal breakdown
+              </p>
+              <h2 className="mt-1 font-display text-3xl font-bold uppercase text-white sm:text-4xl">
+                {row.department_abbr}
+              </h2>
+              <p className="mt-1 text-xs font-semibold text-white/55 sm:text-sm">
+                {row.gold}G {row.silver}S {row.bronze}B - {row.total_points} pts
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-white/70 ring-1 ring-white/10 transition hover:bg-white/15 hover:text-white"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+
+        <div className="max-h-[68vh] space-y-4 overflow-y-auto p-4 sm:p-5">
+          {grouped.map(({ medal, items: medalItems }) => (
+            <section key={medal} className="rounded-xl bg-white/[0.06] p-3 ring-1 ring-white/10">
+              <div className="mb-3 flex items-center gap-2">
+                <MedalBadge tone={medal} />
+                <p className="font-display text-xl font-bold capitalize text-white">
+                  {medal}
+                </p>
+                <span className="ml-auto rounded-full bg-black/20 px-2 py-1 text-xs font-bold text-white/55">
+                  {medalItems.length}
+                </span>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {medalItems.map((item) => (
+                  <div
+                    key={`${item.medal}-${item.event}`}
+                    className="rounded-lg bg-black/18 px-3 py-2 text-sm font-semibold text-white/78 ring-1 ring-white/8"
+                  >
+                    {item.event}
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </aside>
     </div>
   );
 }
