@@ -867,6 +867,19 @@ const FEMALE_FOOTBALL_POTS = {
   "Pot B": ["MIC", "BTN", "PRE-MED", "CBG"],
 } as const;
 
+const FOOTBALL_MEDALS: Record<FootballGender, IndoorMedalWinner[]> = {
+  male: [
+    { medal: "Gold", team: "FISHERIES" },
+    { medal: "Silver", team: "MSM" },
+    { medal: "Bronze", team: "PRE-MED" },
+  ],
+  female: [
+    { medal: "Gold", team: "MIC" },
+    { medal: "Silver", team: "BCH" },
+    { medal: "Bronze", team: "ZLY" },
+  ],
+};
+
 const FOOTBALL_MATCHES: FootballMatch[] = [
   {
     id: "male-b-md1-2",
@@ -954,7 +967,7 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "PRE-MED and BCH shared points after a 1-1 draw." },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "FISHERIES", away: "ZLY", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "Fisheries and ZLY ended the final Group B match 1-1." },
   { id: "male-third", gender: "male", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "MIC", scheduledTime: "11:00 AM", venue: "Sports Centre", startIso: "2026-06-27T11:00:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 0, status: "completed", summary: "PRE-MED beat MIC 1-0 to win male football bronze." },
-  { id: "male-final", gender: "male", group: "Knockout", stage: "Final", matchDay: "Final", home: "FISHERIES", away: "MSM", scheduledTime: "3:00 PM", venue: "Sports Centre", startIso: "2026-06-27T15:00:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", penaltyScore: "FSH 5-4", penaltyWinner: "FISHERIES", summary: "Fisheries won the football cup 5-4 on penalties after a 1-1 final against Marine Sciences." },
+  { id: "male-final", gender: "male", group: "Knockout", stage: "Final", matchDay: "Final", home: "FISHERIES", away: "MSM", scheduledTime: "3:00 PM", venue: "Sports Centre", startIso: "2026-06-27T15:00:00+01:00", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", penaltyScore: "FSH 4-2", penaltyWinner: "FISHERIES", summary: "Fisheries won the football cup 4-2 on penalties after a 1-1 final against Marine Sciences." },
   {
     id: "female-ko-1",
     gender: "female",
@@ -3118,7 +3131,8 @@ function FootballResultsList({
   matches: FootballMatch[];
   departments: Map<string, Department>;
 }) {
-  const completed = matches.filter(isFootballMatchCompleted);
+  const completed = matches.filter(isFootballMatchCompleted).sort(compareFootballResultOrder);
+  const medals = matches[0] ? FOOTBALL_MEDALS[matches[0].gender] : null;
 
   if (!completed.length) {
     return (
@@ -3130,18 +3144,35 @@ function FootballResultsList({
   }
 
   return (
-    <section className="grid gap-3 xl:grid-cols-2">
-      {completed.map((match) => (
-        <FootballMatchCard
-          key={match.id}
-          match={match}
-          departments={departments}
-          now={new Date(0)}
-          liveFixtures={[]}
-        />
-      ))}
-    </section>
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
+      <section className="grid gap-3 xl:grid-cols-2">
+        {completed.map((match) => (
+          <FootballMatchCard
+            key={match.id}
+            match={match}
+            departments={departments}
+            now={new Date(0)}
+            liveFixtures={[]}
+          />
+        ))}
+      </section>
+      {medals && (
+        <IndoorMedalSummary medals={medals} departments={departments} title={`${matches[0]?.gender ?? ""} football`} />
+      )}
+    </div>
   );
+}
+
+function compareFootballResultOrder(a: FootballMatch, b: FootballMatch) {
+  const priority = (match: FootballMatch) => {
+    if (match.stage === "Final") return 0;
+    if (match.stage === "Third Place") return 1;
+    return 2;
+  };
+  const byPriority = priority(a) - priority(b);
+  if (byPriority) return byPriority;
+  return FOOTBALL_MATCHES.findIndex((match) => match.id === a.id) -
+    FOOTBALL_MATCHES.findIndex((match) => match.id === b.id);
 }
 
 function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {

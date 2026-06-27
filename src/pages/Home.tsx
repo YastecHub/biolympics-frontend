@@ -80,7 +80,7 @@ const TODAY_SPORTS = [
   {
     name: "Male football",
     time: "Completed",
-    meta: "FSH won cup on pens / PRE-MED beat MIC 1-0",
+    meta: "FSH won cup 4-2 on pens / PRE-MED beat MIC 1-0",
     route: "/sports/male-football",
     icon: "football",
     status: "completed",
