@@ -61,8 +61,17 @@ const SCHEDULE_DAYS = [
   {
     day: "Sat",
     date: "27 Jun",
-    label: "Championship Day",
-    events: ["Male Football Final", "Male Football 3rd Place", "Female Football Final", "Athletics Finals", "Basketball Finals"],
+    label: "Final Day",
+    events: [
+      "Basketball 3rd: CBG vs BTN - 9:30 AM",
+      "Basketball Final: MIC vs ZLY - 10:30 AM",
+      "Male Football 3rd: MIC vs PRE-MED - 11:00 AM",
+      "Female Football 3rd: ZLY vs PRE-MED - 11:30 AM",
+      "Long Jump - 12:00 PM",
+      "Female Football Final: BCH vs MIC - 12:30 PM",
+      "Athletics Finals - 2:00 PM",
+      "Football Final: Fisheries vs Marine - 3:00 PM",
+    ],
     accent: "#84cc16",
     icon: "🏆",
   },
@@ -95,7 +104,7 @@ export default function Schedule() {
                 Schedule
               </h1>
               <p className="mt-4 max-w-xl text-base text-white/72 sm:text-lg">
-                Eight days of football, courts, tracks, indoor battles and finals. Built for quick scanning before the noise starts.
+                Eight days of football, courts, tracks, indoor battles and finals, ending with today's championship schedule.
               </p>
             </div>
 
@@ -174,3 +183,4 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

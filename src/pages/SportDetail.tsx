@@ -79,6 +79,7 @@ type MixedSportMatch = {
   venue?: string;
   homeScore?: number;
   awayScore?: number;
+  winner?: string;
   status?: "scheduled" | "completed" | "postponed";
   note?: string;
 };
@@ -490,10 +491,14 @@ const MIXED_SPORT_MEDALS: Partial<Record<MixedSportSlug, IndoorMedalWinner[]>> =
 };
 
 const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
-  { id: "basketball-ko-1", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "MSM", away: "MIC", scheduledTime: "12:00 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-1", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "MSM", away: "MIC", scheduledTime: "12:00 PM", venue: "Sports Centre", winner: "MIC", status: "completed", note: "MIC advanced." },
   { id: "basketball-ko-2", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "BCH", away: "BTN", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 16, awayScore: 18, status: "completed", note: "BTN won 18-16." },
   { id: "basketball-ko-3", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "PRE-MED", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 30, awayScore: 16, status: "completed", note: "CBG won 30-16." },
-  { id: "basketball-ko-4", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "1:00 PM", venue: "Sports Centre" },
+  { id: "basketball-ko-4", sportSlug: "basketball", sportName: "Basketball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "1:00 PM", venue: "Sports Centre", winner: "ZLY", status: "completed", note: "ZLY advanced." },
+  { id: "basketball-sf-1", sportSlug: "basketball", sportName: "Basketball", stage: "Semi Final", matchDay: "SF", home: "MIC", away: "CBG", venue: "Sports Centre", winner: "MIC", status: "completed", note: "MIC advanced to the final." },
+  { id: "basketball-sf-2", sportSlug: "basketball", sportName: "Basketball", stage: "Semi Final", matchDay: "SF", home: "BTN", away: "ZLY", venue: "Sports Centre", winner: "ZLY", status: "completed", note: "ZLY advanced to the final." },
+  { id: "basketball-third", sportSlug: "basketball", sportName: "Basketball", stage: "Third Place", matchDay: "Bronze", home: "CBG", away: "BTN", scheduledTime: "9:30 AM", venue: "Sports Centre" },
+  { id: "basketball-final", sportSlug: "basketball", sportName: "Basketball", stage: "Final", matchDay: "Final", home: "MIC", away: "ZLY", scheduledTime: "10:30 AM", venue: "Sports Centre" },
   { id: "volleyball-ko-1", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "FISHERIES", away: "ZLY", scheduledTime: "12:00 PM", venue: "Sports Centre", homeScore: 0, awayScore: 2, status: "completed", note: "ZLY won 2-0." },
   { id: "volleyball-ko-2", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "BTN", away: "MSM", scheduledTime: "12:20 PM", venue: "Sports Centre", homeScore: 2, awayScore: 1, status: "completed", note: "BTN won 2-1." },
   { id: "volleyball-ko-3", sportSlug: "volleyball", sportName: "Volleyball", stage: "Knockout", matchDay: "K/O", home: "CBG", away: "MIC", scheduledTime: "12:40 PM", venue: "Sports Centre", homeScore: 1, awayScore: 2, status: "completed", note: "MIC won 2-1." },
@@ -505,18 +510,22 @@ const MIXED_SPORT_MATCHES: MixedSportMatch[] = [
 ];
 
 function isMixedSportMatchCompleted(match: MixedSportMatch) {
-  return match.status === "completed" || (
+  return match.status === "completed" || Boolean(match.winner) || (
     typeof match.homeScore === "number" && typeof match.awayScore === "number"
   );
 }
 
 function mixedSportScore(match: MixedSportMatch) {
   if (!isMixedSportMatchCompleted(match)) return null;
+  if (typeof match.homeScore !== "number" || typeof match.awayScore !== "number") {
+    return match.winner ? `${displayDepartmentAbbr(match.winner)} wins` : "Result recorded";
+  }
   return `${match.homeScore ?? 0} - ${match.awayScore ?? 0}`;
 }
 
 function mixedSportWinner(match: MixedSportMatch) {
   if (!isMixedSportMatchCompleted(match)) return null;
+  if (match.winner) return match.winner;
   const homeScore = match.homeScore ?? 0;
   const awayScore = match.awayScore ?? 0;
   if (homeScore === awayScore) return null;
@@ -547,45 +556,52 @@ function tableTennisWinner(match: TableTennisMatch) {
 
 const TRACK_EVENTS: TrackEvent[] = [
   {
+    id: "long-jump",
+    name: "Long Jump",
+    category: "Field Event",
+    stage: "Final at 12:00 PM",
+    entry: "Final-day field event before the main athletics finals.",
+  },
+  {
     id: "track-100m",
     name: "100m",
     category: "Male - Female",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "4 reps per department: 2 males and 2 females",
   },
   {
     id: "track-200m",
     name: "200m",
     category: "Male - Female",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "4 reps per department: 2 males and 2 females",
   },
   {
     id: "track-400m",
     name: "400m",
     category: "Male - Female",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "4 reps per department: 2 males and 2 females",
   },
   {
     id: "track-relay-male",
     name: "Male 4x100m Relay",
     category: "Male",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "4 male runners per department",
   },
   {
     id: "track-relay-female",
     name: "Female 4x100m Relay",
     category: "Female",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "4 female runners per department",
   },
   {
     id: "track-relay-mixed",
     name: "Mixed 4x100m Relay",
     category: "Mixed",
-    stage: "Heats before final",
+    stage: "Finals from 2:00 PM",
     entry: "2 males and 2 females per department",
   },
 ];
@@ -674,7 +690,7 @@ const TABLE_TENNIS_RESULTS: IndoorResultGroup[] = [
   },
 ];
 
-const FOOTBALL_RESULTS_DATE = "Updated through 23/06/2026";
+const FOOTBALL_RESULTS_DATE = "Final day - 27/06/2026";
 const FOOTBALL_VENUE = "ISL Football Pitch";
 
 const MARATHON_RESULTS = [
@@ -817,6 +833,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
   { id: "male-a-md3-2", gender: "male", group: "Group A", stage: "Group Stage", matchDay: "MD3", home: "CBG", away: "MSM", scheduledTime: "1:45 PM", venue: "Sports Centre", startIso: "2026-06-23T13:45:00+01:00", durationMinutes: 60, homeScore: 0, awayScore: 0, status: "completed", summary: "CBG and MSM ended Matchday 3 goalless." },
   { id: "male-b-md3-1", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "PRE-MED", away: "BCH", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "PRE-MED and BCH shared points after a 1-1 draw." },
   { id: "male-b-md3-2", gender: "male", group: "Group B", stage: "Group Stage", matchDay: "MD3", home: "FISHERIES", away: "ZLY", scheduledTime: "Today", venue: "Sports Centre", durationMinutes: 60, homeScore: 1, awayScore: 1, status: "completed", summary: "Fisheries and ZLY ended the final Group B match 1-1." },
+  { id: "male-third", gender: "male", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "MIC", away: "PRE-MED", scheduledTime: "11:00 AM", venue: "Sports Centre", startIso: "2026-06-27T11:00:00+01:00", durationMinutes: 60, summary: "Final-day bronze match." },
+  { id: "male-final", gender: "male", group: "Knockout", stage: "Final", matchDay: "Final", home: "FISHERIES", away: "MSM", scheduledTime: "3:00 PM", venue: "Sports Centre", startIso: "2026-06-27T15:00:00+01:00", durationMinutes: 60, summary: "Fisheries face Marine Sciences for the male football title." },
   {
     id: "female-ko-1",
     gender: "female",
@@ -933,8 +951,8 @@ const FOOTBALL_MATCHES: FootballMatch[] = [
     penaltyWinner: "BCH",
     summary: "BCH advanced to the final after beating PRE-MED 3-1 on penalties.",
   },
-  { id: "female-third", gender: "female", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "PRE-MED", away: "ZLY", venue: FOOTBALL_VENUE },
-  { id: "female-final", gender: "female", group: "Knockout", stage: "Final", matchDay: "Final", home: "MIC", away: "BCH", venue: FOOTBALL_VENUE },
+  { id: "female-third", gender: "female", group: "Knockout", stage: "Third Place", matchDay: "Bronze", home: "ZLY", away: "PRE-MED", scheduledTime: "11:30 AM", venue: "Sports Centre", startIso: "2026-06-27T11:30:00+01:00", durationMinutes: 40, summary: "Final-day bronze match." },
+  { id: "female-final", gender: "female", group: "Knockout", stage: "Final", matchDay: "Final", home: "BCH", away: "MIC", scheduledTime: "12:30 PM", venue: "Sports Centre", startIso: "2026-06-27T12:30:00+01:00", durationMinutes: 40, summary: "BCH face MIC for the female football title." },
 ];
 
 function useCurrentMinute() {
@@ -1920,7 +1938,7 @@ function MixedSportMatchDetail({
         title={`${match.home} vs ${match.away}`}
         subtitle={
           isMixedSportMatchCompleted(match)
-            ? `Full time: ${displayDepartmentAbbr(match.home)} ${match.homeScore ?? 0} - ${match.awayScore ?? 0} ${displayDepartmentAbbr(match.away)}.`
+            ? `Full time: ${displayDepartmentAbbr(match.home)} ${mixedSportScore(match) ?? ""} ${displayDepartmentAbbr(match.away)}.`
             : match.status === "postponed"
               ? `${displayDepartmentAbbr(match.home)} vs ${displayDepartmentAbbr(match.away)} has been postponed.`
               : `${match.scheduledTime ?? "Time TBA"} at ${match.venue ?? "Venue TBA"}. Scoreline, key moments and highlights will appear once the match is played.`
@@ -2638,12 +2656,14 @@ function TrackFixtures() {
           </span>
           <div className="relative mb-4 flex items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.14em] text-white/50">
             <span>{event.category}</span>
-            <span className="rounded-full bg-white/10 px-2 py-1 text-brand-lime">Heats</span>
+            <span className="rounded-full bg-white/10 px-2 py-1 text-brand-lime">
+              {event.stage.includes("Final") ? "Final" : "Heats"}
+            </span>
           </div>
           <h3 className="relative font-display text-3xl font-bold">{event.name}</h3>
           <p className="relative mt-2 text-sm text-white/62">{event.stage}</p>
           <p className="relative mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-white/48">
-            Finals follow after qualifiers are confirmed
+            {event.stage.includes("Final") ? "Final-day schedule" : "Finals follow after qualifiers are confirmed"}
           </p>
         </article>
       ))}
@@ -2765,7 +2785,7 @@ function FootballDetail({ initialGender }: { initialGender: FootballGender }) {
               <div className="card p-5 lg:col-span-2">
                 <p className="font-display text-2xl font-bold">Female final fixtures confirmed</p>
                 <p className="mt-2 text-sm text-white/62">
-                  MIC face BCH in the final, while PRE-MED meet ZLY for third place.
+                  BCH face MIC in the final, while ZLY meet PRE-MED for third place.
                 </p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {FOOTBALL_MATCHES.filter((match) => match.gender === "female" && ["Final", "Third Place"].includes(match.stage)).map((match) => (
@@ -2998,18 +3018,18 @@ function FootballMatchdayBriefing({ gender }: { gender: FootballGender }) {
           </p>
           <h3 className="mt-1 font-display text-2xl font-bold text-white">
             {gender === "male"
-              ? "Group stage complete"
-              : "MIC vs BCH final confirmed"}
+              ? "Bronze match and final today"
+              : "Bronze match and final today"}
           </h3>
           <p className="mt-1 max-w-2xl text-sm text-white/64">
             {gender === "male"
-              ? "Group B closed with two 1-1 draws: PRE-MED vs BCH and FSH vs ZLY."
-              : "MIC beat ZLY 1-0, and BCH advanced past PRE-MED on penalties after a 0-0 draw."}
+              ? "MIC face PRE-MED at 11:00 AM before Fisheries meet Marine Sciences at 3:00 PM."
+              : "ZLY face PRE-MED at 11:30 AM before BCH meet MIC at 12:30 PM."}
           </p>
         </div>
         <div className="grid min-w-48 gap-1 rounded-xl bg-black/15 p-3 text-sm ring-1 ring-white/10">
-          <span className="font-bold text-white">{gender === "male" ? FOOTBALL_RESULTS_DATE : "Final pairings set"}</span>
-          <span className="text-white/62">{gender === "male" ? "Sports Centre" : FOOTBALL_VENUE}</span>
+          <span className="font-bold text-white">{FOOTBALL_RESULTS_DATE}</span>
+          <span className="text-white/62">Sports Centre</span>
         </div>
       </div>
     </article>

@@ -69,31 +69,49 @@ const HOME_SPORTS: HomeSport[] = [
 
 const TODAY_SPORTS = [
   {
-    name: "Female football",
-    time: "Final set",
-    meta: "Final: MIC vs BCH / 3rd: PRE-MED vs ZLY",
-    route: "/sports/female-football",
-    icon: "football",
-    status: "completed",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
+    name: "Basketball",
+    time: "9:30 AM",
+    meta: "3rd: CBG vs BTN / Final: MIC vs ZLY 10:30 AM",
+    route: "/sports/basketball",
+    icon: "basketball",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "basketball"),
   },
   {
     name: "Male football",
-    time: "Groups complete",
-    meta: "Latest: PRE-MED 1-1 BCH / FSH 1-1 ZLY",
+    time: "11:00 AM",
+    meta: "3rd: MIC vs PRE-MED / Final: FSH vs MSM 3:00 PM",
     route: "/sports/male-football",
     icon: "football",
-    status: "completed",
+    status: "upNext",
     isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "male-football"),
   },
   {
-    name: "Volleyball",
-    time: "Completed",
-    meta: "Gold: MIC 2-0 ZLY / Bronze: PRE-MED 2-1 BTN",
-    route: "/sports/volleyball",
-    icon: "volleyball",
-    status: "completed",
-    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "volleyball"),
+    name: "Female football",
+    time: "11:30 AM",
+    meta: "3rd: ZLY vs PRE-MED / Final: BCH vs MIC 12:30 PM",
+    route: "/sports/female-football",
+    icon: "football",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "female-football"),
+  },
+  {
+    name: "Long jump",
+    time: "12:00 PM",
+    meta: "Field final before athletics finals",
+    route: "/sports/athletics",
+    icon: "athletics",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "athletics"),
+  },
+  {
+    name: "Athletics finals",
+    time: "2:00 PM",
+    meta: "Track finals programme",
+    route: "/sports/athletics",
+    icon: "athletics",
+    status: "upNext",
+    isLive: (_now: Date, liveFixtures: Fixture[]) => isSportLive(liveFixtures, "athletics"),
   },
 ];
 
@@ -230,11 +248,11 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
           News / Updates
         </span>
         <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">
-          Tuesday, June 23
+          Saturday, June 27
         </span>
       </div>
       <p className="mt-3 font-display text-2xl font-bold tracking-normal text-white sm:text-3xl">
-        Today's sports lineup
+        Final day schedule
       </p>
       {liveFixtures.length > 0 && (
         <div className="mt-3 space-y-2">
@@ -257,7 +275,7 @@ function HeroUpdateNotice({ now, liveFixtures }: { now: Date; liveFixtures: Fixt
           ))}
         </div>
       )}
-      <div className="mt-3 grid gap-2 sm:grid-cols-3">
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {TODAY_SPORTS.map((sport) => {
           const isLive = sport.isLive(now, liveFixtures);
           const isUpNext = sport.status === "upNext" && !isLive;
